@@ -1,6 +1,6 @@
 const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
 const { addItem } = require('../../utils/inventoryManager');
-const fs = require('fs');
+const { readData, writeData } = require('../../utils/database');
 const path = require('path');
 
 const OWNER_ID = '339772388566892546';
@@ -22,11 +22,7 @@ module.exports = {
     await interaction.deferReply({ ephemeral: true });
 
     try {
-      const economyFile = path.join(__dirname, '..', '..', '..', 'data', 'economy.json');
       
-      if (!fs.existsSync(economyFile)) {
-        return interaction.editReply('❌ No economy.json file found to migrate.');
-      }
 
       const economyData = JSON.parse(fs.readFileSync(economyFile, 'utf8'));
       
@@ -48,7 +44,6 @@ module.exports = {
       }
 
       // Backup old economy file
-      const backupFile = path.join(__dirname, '..', '..', '..', 'data', 'economy.backup.json');
       fs.copyFileSync(economyFile, backupFile);
       
       // Clear economy file

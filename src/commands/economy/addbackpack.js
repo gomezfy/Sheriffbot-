@@ -1,6 +1,6 @@
 const { SlashCommandBuilder, EmbedBuilder, PermissionFlagsBits } = require('discord.js');
 const { getInventory } = require('../../utils/inventoryManager');
-const fs = require('fs');
+const { readData, writeData } = require('../../utils/database');
 const path = require('path');
 
 const OWNER_ID = '339772388566892546';
@@ -14,7 +14,7 @@ function loadInventory() {
 }
 
 function saveInventory(data) {
-  fs.writeFileSync(inventoryPath, JSON.stringify(data, null, 2));
+  writeData('inventory.json', data);
 }
 
 module.exports = {

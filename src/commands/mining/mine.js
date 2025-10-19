@@ -2,17 +2,14 @@ const { SlashCommandBuilder, EmbedBuilder, ActionRowBuilder, ButtonBuilder, Butt
 const { addItem } = require('../../utils/inventoryManager');
 const { addUserSilver } = require('../../utils/dataManager');
 const { showProgressBar } = require('../../utils/progressBar');
-const fs = require('fs');
+const { readData, writeData } = require('../../utils/database');
 const path = require('path');
 
-const miningFile = path.join(__dirname, '..', '..', '..', 'data', 'mining.json');
 const GOLD_VALUE = 700; // Silver Coins por barra de ouro
 const SOLO_COOLDOWN = 50 * 60 * 1000; // 50 minutos
 const COOP_COOLDOWN = 2 * 60 * 60 * 1000; // 2 horas
 
 // Garantir que o arquivo existe
-if (!fs.existsSync(miningFile)) {
-  fs.writeFileSync(miningFile, JSON.stringify({}, null, 2));
 }
 
 function getMiningData() {
@@ -21,7 +18,7 @@ function getMiningData() {
 }
 
 function saveMiningData(data) {
-  fs.writeFileSync(miningFile, JSON.stringify(data, null, 2));
+  writeData('mining.json', data);
 }
 
 function canMine(userId) {

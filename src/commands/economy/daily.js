@@ -1,27 +1,22 @@
 const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
 const { addItem, getItem } = require('../../utils/inventoryManager');
 const { t } = require('../../utils/i18n');
-const fs = require('fs');
+const { readData, writeData } = require('../../utils/database');
 const path = require('path');
 
-const dailyFile = path.join(__dirname, '..', '..', '..', 'data', 'daily.json');
 
 // Initialize daily file if it doesn't exist
-if (!fs.existsSync(dailyFile)) {
-  fs.writeFileSync(dailyFile, JSON.stringify({}, null, 2));
 }
 
 function getLastDaily(userId) {
-  const data = fs.readFileSync(dailyFile, 'utf8');
-  const dailyData = JSON.parse(data);
+  const dailyData = readData('daily.json');
   return dailyData[userId] || 0;
 }
 
 function setLastDaily(userId) {
-  const data = fs.readFileSync(dailyFile, 'utf8');
-  const dailyData = JSON.parse(data);
+  const dailyData = readData('daily.json');
   dailyData[userId] = Date.now();
-  fs.writeFileSync(dailyFile, JSON.stringify(dailyData, null, 2));
+  writeData('daily.json', dailyData);
 }
 
 module.exports = {

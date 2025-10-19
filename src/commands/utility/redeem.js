@@ -1,5 +1,5 @@
 const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
-const fs = require('fs');
+const { readData, writeData } = require('../../utils/database');
 const path = require('path');
 
 const economyPath = path.join(__dirname, '..', '..', '..', 'data', 'economy.json');
@@ -14,7 +14,7 @@ function loadEconomy() {
 }
 
 function saveEconomy(data) {
-    fs.writeFileSync(economyPath, JSON.stringify(data, null, 2));
+    writeData('economy.json', data);
 }
 
 function loadRedemptionCodes() {
@@ -25,7 +25,7 @@ function loadRedemptionCodes() {
 }
 
 function saveRedemptionCodes(data) {
-    fs.writeFileSync(redemptionCodesPath, JSON.stringify(data, null, 2));
+    writeData('economy.json', data);
 }
 
 function loadInventory() {
@@ -36,7 +36,7 @@ function loadInventory() {
 }
 
 function saveInventory(data) {
-    fs.writeFileSync(inventoryPath, JSON.stringify(data, null, 2));
+    writeData('economy.json', data);
 }
 
 module.exports = {

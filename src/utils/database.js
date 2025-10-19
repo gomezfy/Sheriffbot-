@@ -1,58 +1,49 @@
 const fs = require('fs');
 const path = require('path');
 
-const dataDir = path.join(__dirname, '../data');
+const dataDir = path.join(__dirname, '..', 'data');
 
-/**
- * Inicializa o sistema de arquivos
- * Cria a pasta data e arquivos JSON necessários
- */
 function initializeDatabase() {
-    // Criar pasta data se não existir
+    // Criar pasta data
     if (!fs.existsSync(dataDir)) {
         fs.mkdirSync(dataDir, { recursive: true });
         console.log('✅ Pasta data/ criada!');
     }
 
-    // Lista de arquivos JSON necessários
+    // Lista de arquivos necessários
     const requiredFiles = [
-        'daily.json',
-        'economy.json',
-        'economy.backup.json',
-        'profiles.json',
-        'xp.json',
-        'inventory.json',
-        'wanted.json',
-        'welcome.json',
-        'logs.json',
-        'bounties.json',
-        'backgrounds.json',
-        'punishment.json',
-        'mining.json',
-        'work.json'
+        'daily.json', 'economy.json', 'economy.backup.json', 'profiles.json',
+        'xp.json', 'inventory.json', 'wanted.json', 'welcome.json',
+        'logs.json', 'bounties.json', 'backgrounds.json', 'punishment.json',
+        'mining.json', 'work.json', 'redemption-codes.json'
     ];
 
     // Criar arquivos que não existem
+    let created = 0;
     requiredFiles.forEach(filename => {
         const filePath = path.join(dataDir, filename);
         if (!fs.existsSync(filePath)) {
             fs.writeFileSync(filePath, '{}', 'utf8');
-            console.log(`✅ Criado: ${filename}`);
+            created++;
         }
     });
-
-    console.log('✅ Sistema de dados inicializado!');
+    
+    if (created > 0) {
+        console.log(`✅ Criados ${created} arquivos de dados!`);
+    }
+    console.log('✅ Sistema de dados pronto!');
 }
 
-/**
- * Lê dados de um arquivo JSON
- * @param {string} filename - Nome do arquivo (ex: 'daily.json')
- * @returns {Object} Dados do arquivo ou objeto vazio
- */
 function readData(filename) {
     const filePath = path.join(dataDir, filename);
     
     try {
+        // Garantir que a pasta existe
+        if (!fs.existsSync(dataDir)) {
+            fs.mkdirSync(dataDir, { recursive: true });
+        }
+        
+        // Criar arquivo se não existe
         if (!fs.existsSync(filePath)) {
             fs.writeFileSync(filePath, '{}', 'utf8');
             return {};
@@ -70,19 +61,13 @@ function readData(filename) {
     }
 }
 
-/**
- * Escreve dados em um arquivo JSON
- * @param {string} filename - Nome do arquivo (ex: 'daily.json')
- * @param {Object} data - Dados para escrever
- * @returns {boolean} Sucesso da operação
- */
 function writeData(filename, data) {
     const filePath = path.join(dataDir, filename);
     
     try {
-        const dir = path.dirname(filePath);
-        if (!fs.existsSync(dir)) {
-            fs.mkdirSync(dir, { recursive: true });
+        // Garantir que a pasta existe
+        if (!fs.existsSync(dataDir)) {
+            fs.mkdirSync(dataDir, { recursive: true });
         }
         
         fs.writeFileSync(filePath, JSON.stringify(data, null, 2), 'utf8');

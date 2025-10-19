@@ -17,7 +17,7 @@ function loadRedemptionCodes() {
 }
 
 function saveRedemptionCodes(data) {
-    fs.writeFileSync(redemptionCodesPath, JSON.stringify(data, null, 2));
+    writeData('redemption-codes.json', data);
 }
 
 function generateRedemptionCode(productId) {
