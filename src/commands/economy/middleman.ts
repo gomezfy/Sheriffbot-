@@ -1,4 +1,5 @@
-import { SlashCommandBuilder, EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, StringSelectMenuBuilder, StringSelectMenuOptionBuilder, ChatInputCommandInteraction, ComponentType } from 'discord.js';
+import { SlashCommandBuilder, EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, StringSelectMenuBuilder, StringSelectMenuOptionBuilder, ChatInputCommandInteraction, ComponentType, AttachmentBuilder } from 'discord.js';
+import path from 'path';
 const { getInventory, removeItem } = require('../../utils/inventoryManager');
 const { addUserSilver } = require('../../utils/dataManager');
 
@@ -17,9 +18,12 @@ module.exports = {
 
     const shopUrl = `https://${process.env.REPLIT_DEV_DOMAIN || 'sheriff-bot.repl.co'}/shop.html`;
 
+    const blackMarketImage = new AttachmentBuilder(path.join(__dirname, '..', '..', '..', 'assets', 'black-market.png'));
+
     const embed = new EmbedBuilder()
       .setColor(0xFFD700)
       .setTitle('💱 MIDDLEMAN - CURRENCY EXCHANGE')
+      .setImage('attachment://black-market.png')
       .setDescription('**Welcome to the Middleman, partner!**\n\nExchange your valuable items for Silver Coins at fair rates.\n\n**📊 EXCHANGE RATES**\n🎫 1 Saloon Token = **50** 🪙 Silver Coins\n🥇 1 Gold Bar = **700** 🪙 Silver Coins')
       .addFields(
         {
@@ -61,6 +65,7 @@ module.exports = {
     const response = await interaction.reply({
       embeds: [embed],
       components: [row1, row2],
+      files: [blackMarketImage],
       fetchReply: true
     });
 
@@ -82,34 +87,51 @@ module.exports = {
           return i.reply({ content: '❌ You don\'t have any Saloon Tokens to convert!', ephemeral: true });
         }
 
-        const selectMenu = new StringSelectMenuBuilder()
-          .setCustomId('token_amount')
-          .setPlaceholder('Select how many Tokens to convert')
-          .addOptions(
-            new StringSelectMenuOptionBuilder()
-              .setLabel(`1 Token → ${TOKEN_TO_SILVER} Silver`)
-              .setValue('1')
-              .setEmoji('🎫'),
+        const options = [
+          new StringSelectMenuOptionBuilder()
+            .setLabel(`1 Token → ${TOKEN_TO_SILVER} Silver`)
+            .setValue('1')
+            .setEmoji('🎫')
+        ];
+
+        if (currentTokens >= 5) {
+          options.push(
             new StringSelectMenuOptionBuilder()
               .setLabel(`5 Tokens → ${TOKEN_TO_SILVER * 5} Silver`)
               .setValue('5')
               .setEmoji('🎫')
-              .setDefault(currentTokens < 5),
+          );
+        }
+
+        if (currentTokens >= 10) {
+          options.push(
             new StringSelectMenuOptionBuilder()
               .setLabel(`10 Tokens → ${TOKEN_TO_SILVER * 10} Silver`)
               .setValue('10')
               .setEmoji('🎫')
-              .setDefault(currentTokens < 10),
+          );
+        }
+
+        if (currentTokens >= 25) {
+          options.push(
             new StringSelectMenuOptionBuilder()
               .setLabel(`25 Tokens → ${TOKEN_TO_SILVER * 25} Silver`)
               .setValue('25')
               .setEmoji('🎫')
-              .setDefault(currentTokens < 25),
-            new StringSelectMenuOptionBuilder()
-              .setLabel(`All (${currentTokens} Tokens) → ${TOKEN_TO_SILVER * currentTokens} Silver`)
-              .setValue('all')
-              .setEmoji('💰')
           );
+        }
+
+        options.push(
+          new StringSelectMenuOptionBuilder()
+            .setLabel(`All (${currentTokens} Tokens) → ${TOKEN_TO_SILVER * currentTokens} Silver`)
+            .setValue('all')
+            .setEmoji('💰')
+        );
+
+        const selectMenu = new StringSelectMenuBuilder()
+          .setCustomId('token_amount')
+          .setPlaceholder('Select how many Tokens to convert')
+          .addOptions(...options);
 
         const selectRow = new ActionRowBuilder<StringSelectMenuBuilder>().addComponents(selectMenu);
 
@@ -164,29 +186,42 @@ module.exports = {
           return i.reply({ content: '❌ You don\'t have any Gold Bars to convert!', ephemeral: true });
         }
 
-        const selectMenu = new StringSelectMenuBuilder()
-          .setCustomId('gold_amount')
-          .setPlaceholder('Select how many Gold Bars to convert')
-          .addOptions(
-            new StringSelectMenuOptionBuilder()
-              .setLabel(`1 Gold Bar → ${GOLD_TO_SILVER} Silver`)
-              .setValue('1')
-              .setEmoji('🥇'),
+        const goldOptions = [
+          new StringSelectMenuOptionBuilder()
+            .setLabel(`1 Gold Bar → ${GOLD_TO_SILVER} Silver`)
+            .setValue('1')
+            .setEmoji('🥇')
+        ];
+
+        if (currentGold >= 5) {
+          goldOptions.push(
             new StringSelectMenuOptionBuilder()
               .setLabel(`5 Gold Bars → ${GOLD_TO_SILVER * 5} Silver`)
               .setValue('5')
               .setEmoji('🥇')
-              .setDefault(currentGold < 5),
+          );
+        }
+
+        if (currentGold >= 10) {
+          goldOptions.push(
             new StringSelectMenuOptionBuilder()
               .setLabel(`10 Gold Bars → ${GOLD_TO_SILVER * 10} Silver`)
               .setValue('10')
               .setEmoji('🥇')
-              .setDefault(currentGold < 10),
-            new StringSelectMenuOptionBuilder()
-              .setLabel(`All (${currentGold} Bars) → ${GOLD_TO_SILVER * currentGold} Silver`)
-              .setValue('all')
-              .setEmoji('💰')
           );
+        }
+
+        goldOptions.push(
+          new StringSelectMenuOptionBuilder()
+            .setLabel(`All (${currentGold} Bars) → ${GOLD_TO_SILVER * currentGold} Silver`)
+            .setValue('all')
+            .setEmoji('💰')
+        );
+
+        const selectMenu = new StringSelectMenuBuilder()
+          .setCustomId('gold_amount')
+          .setPlaceholder('Select how many Gold Bars to convert')
+          .addOptions(...goldOptions);
 
         const selectRow = new ActionRowBuilder<StringSelectMenuBuilder>().addComponents(selectMenu);
 
