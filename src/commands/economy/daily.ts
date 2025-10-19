@@ -45,13 +45,25 @@ module.exports = {
       const hoursLeft = Math.floor(timeLeft / (60 * 60 * 1000));
       const minutesLeft = Math.floor((timeLeft % (60 * 60 * 1000)) / (60 * 1000));
       
+      const currentBonus = Math.min(userData.streak * 0.1, 1.0);
+      const nextBonus = Math.min((userData.streak + 1) * 0.1, 1.0);
+      
+      const cooldownEmbed = new EmbedBuilder()
+        .setColor(0xFF6B6B)
+        .setTitle('⏰ DAILY REWARD - ON COOLDOWN')
+        .setDescription('**You already claimed your daily reward today!**\n\nCome back later to continue your streak and earn more rewards.')
+        .addFields(
+          { name: '⏱️ Time Remaining', value: `\`\`\`${hoursLeft}h ${minutesLeft}m\`\`\``, inline: true },
+          { name: '🔥 Current Streak', value: `\`\`\`${userData.streak} day${userData.streak !== 1 ? 's' : ''}\`\`\``, inline: true },
+          { name: '📈 Current Bonus', value: `\`\`\`+${Math.floor(currentBonus * 100)}%\`\`\``, inline: true },
+          { name: '💡 Next Reward', value: `Claim tomorrow to reach **${userData.streak + 1} days** and unlock **+${Math.floor(nextBonus * 100)}%** bonus!`, inline: false }
+        )
+        .setThumbnail(interaction.user.displayAvatarURL())
+        .setFooter({ text: '🤠 Keep your streak going, partner!' })
+        .setTimestamp();
+      
       await interaction.reply({
-        embeds: [{
-          color: 0xFF6B6B,
-          title: '⏰ DAILY REWARD COOLDOWN',
-          description: `You already claimed your daily reward!\n\n**Time remaining:** ${hoursLeft}h ${minutesLeft}m\n**Current streak:** ${userData.streak} day${userData.streak !== 1 ? 's' : ''}`,
-          footer: { text: 'Come back tomorrow!' }
-        }],
+        embeds: [cooldownEmbed],
         ephemeral: true
       });
       return;
@@ -96,23 +108,43 @@ module.exports = {
     dailyData[userId] = userData;
     saveDailyData(dailyData);
 
-    const embed = new EmbedBuilder()
-      .setColor('#FFD700')
+    const streakColor = newStreak >= 7 ? 0xFF1493 : newStreak >= 3 ? 0xFF6B35 : 0xFFD700;
+    const nextStreak = newStreak + 1;
+    const nextBonus = Math.min(nextStreak * 0.1, 1.0);
+    
+    let description = '';
+    if (wasStreakBroken && userData.streak > 1) {
+      description = '```diff\n- Your streak was broken! Starting fresh from day 1.\n```';
+    } else if (newStreak === 1) {
+      description = '```yaml\n🌟 Welcome! Start claiming daily to build your streak!\n```';
+    } else if (newStreak >= 7) {
+      description = '```diff\n+ 🎉 Amazing! You have a 7+ day streak!\n```';
+    } else {
+      description = '```diff\n+ Daily reward claimed successfully!\n```';
+    }
+
+    const rewardEmbed = new EmbedBuilder()
+      .setColor(streakColor)
       .setTitle('🌅 DAILY REWARD CLAIMED!')
-      .setDescription(wasStreakBroken && userData.streak > 1 
-        ? '```diff\n- Streak was broken! Starting fresh.\n```'
-        : '```diff\n+ Daily reward claimed successfully!\n```')
+      .setDescription(description)
       .addFields(
-        { name: '🪙 Silver Coins', value: `**+${silverAmount.toLocaleString()}**`, inline: true },
-        { name: '🎫 Saloon Tokens', value: `**+${tokenAmount}**`, inline: true },
-        { name: '⭐ XP Gained', value: `**+${xpAmount}**`, inline: true },
-        { name: '🔥 Streak', value: `**${newStreak} day${newStreak !== 1 ? 's' : ''}**`, inline: true },
-        { name: '📈 Streak Bonus', value: `**+${Math.floor(streakBonus * 100)}%**`, inline: true },
-        { name: '\u200B', value: '\u200B', inline: true }
+        { name: '💰 Rewards Received', value: '\u200B', inline: false },
+        { name: '🪙 Silver Coins', value: `\`+${silverAmount.toLocaleString()}\``, inline: true },
+        { name: '🎫 Saloon Tokens', value: `\`+${tokenAmount}\``, inline: true },
+        { name: '⭐ Experience', value: `\`+${xpAmount} XP\``, inline: true },
+        { name: '🔥 Streak Status', value: '\u200B', inline: false },
+        { name: 'Current Streak', value: `\`\`\`${newStreak} day${newStreak !== 1 ? 's' : ''}\`\`\``, inline: true },
+        { name: 'Current Bonus', value: `\`\`\`+${Math.floor(streakBonus * 100)}%\`\`\``, inline: true },
+        { name: 'Max Bonus', value: `\`\`\`+100% (10 days)\`\`\``, inline: true }
       )
-      .setFooter({ text: `Come back in 24 hours to maintain your streak!` })
+      .setThumbnail(interaction.user.displayAvatarURL())
+      .setFooter({ text: newStreak < 10 ? `🎯 Next bonus: +${Math.floor(nextBonus * 100)}% at ${nextStreak} days | Come back in 24 hours!` : '🏆 Max bonus reached! Come back in 24 hours!' })
       .setTimestamp();
 
-    await interaction.editReply({ embeds: [embed] });
+    if (newStreak >= 7) {
+      rewardEmbed.setImage('https://media.giphy.com/media/g9582DNuQppxC/giphy.gif');
+    }
+
+    await interaction.editReply({ embeds: [rewardEmbed] });
   },
 };
