@@ -55,11 +55,7 @@ module.exports = {
         new ButtonBuilder()
           .setLabel('🛒 Visit Shop')
           .setStyle(ButtonStyle.Link)
-          .setURL(shopUrl),
-        new ButtonBuilder()
-          .setLabel('🆘 Support')
-          .setStyle(ButtonStyle.Link)
-          .setURL('https://discord.gg/gXwaYFNhfp')
+          .setURL(shopUrl)
       );
 
     const response = await interaction.reply({
