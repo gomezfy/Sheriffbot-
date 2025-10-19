@@ -1,4 +1,4 @@
-import { SlashCommandBuilder, EmbedBuilder, ChatInputCommandInteraction } from 'discord.js';
+import { SlashCommandBuilder, EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, ChatInputCommandInteraction } from 'discord.js';
 
 export = {
   data: new SlashCommandBuilder()
@@ -82,16 +82,19 @@ export = {
                  '+ 🎲 Play games to earn more coins\n' +
                  '```',
           inline: false
-        },
-        {
-          name: '🆘 **SUPPORT**',
-          value: 'Need help? Join our support server:\nhttps://discord.gg/gXwaYFNhfp',
-          inline: false
         }
       )
       .setFooter({ text: '🌵 Stay safe in the Wild West, partner!' })
       .setTimestamp();
 
-    await interaction.reply({ embeds: [embed], ephemeral: true });
+    const supportButton = new ActionRowBuilder<ButtonBuilder>()
+      .addComponents(
+        new ButtonBuilder()
+          .setLabel('🆘 Support Server')
+          .setStyle(ButtonStyle.Link)
+          .setURL('https://discord.gg/gXwaYFNhfp')
+      );
+
+    await interaction.reply({ embeds: [embed], components: [supportButton], ephemeral: true });
   },
 };
