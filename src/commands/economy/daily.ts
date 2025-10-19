@@ -54,6 +54,7 @@ module.exports = {
         }],
         ephemeral: true
       });
+      return;
     }
 
     await interaction.deferReply();
@@ -85,6 +86,7 @@ module.exports = {
           footer: { text: 'Free up space and try again!' }
         }]
       });
+      return;
     }
 
     addUserXP(userId, xpAmount);
