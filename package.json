@@ -1,16 +1,20 @@
 {
   "name": "sheriff-bot",
   "version": "1.0.0",
-  "description": "Bot Discord Sheriff configurado para Discloud",
-  "main": "src/index.js",
+  "description": "Sheriff Rex - Western Discord Bot with TypeScript",
+  "main": "dist/src/index.js",
   "scripts": {
-    "start": "node src/index.js",
-    "dev": "node src/index.js"
+    "start": "ts-node src/index.ts",
+    "dev": "ts-node src/index.ts",
+    "build": "tsc",
+    "deploy": "ts-node src/deploy-commands.ts"
   },
   "keywords": [
     "discord",
     "bot",
-    "discloud"
+    "typescript",
+    "western",
+    "economy"
   ],
   "author": "",
   "license": "MIT",
