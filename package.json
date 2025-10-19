@@ -1,0 +1,30 @@
+{
+  "name": "sheriff-bot",
+  "version": "1.0.0",
+  "description": "Bot Discord Sheriff configurado para Discloud",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "node src/index.js"
+  },
+  "keywords": [
+    "discord",
+    "bot",
+    "discloud"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "@napi-rs/canvas": "^0.1.80",
+    "adm-zip": "^0.5.16",
+    "axios": "^1.12.2",
+    "discord.js": "^14.23.2",
+    "dotenv": "^16.6.1",
+    "express": "^5.1.0",
+    "express-session": "^1.18.2",
+    "stripe": "^19.1.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

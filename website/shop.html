@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Sheriff Bot Shop - Buy Saloon Tokens and Gold Bars">
+    <title>Sheriff Bot Shop 🛒 - Buy Premium Currency</title>
+    
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <script src="https://js.stripe.com/v3/"></script>
+    <script src="js/i18n.js"></script>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-brand">
+                <img src="assets/logo.png" alt="Sheriff Rex-Bot" class="brand-logo">
+            </div>
+            <ul class="nav-links">
+                <li><a href="index.html#features">Features</a></li>
+                <li><a href="index.html#commands">Commands</a></li>
+                <li><a href="shop.html" class="active">🛒 Shop</a></li>
+                <li><a href="dashboard.html">⚙️ Dashboard</a></li>
+            </ul>
+            <a href="https://discord.com/api/oauth2/authorize?client_id=1426734768111747284&permissions=277025770496&scope=bot%20applications.commands" target="_blank" class="cta-button">
+                Add Bot
+            </a>
+        </div>
+    </nav>
+
+    <!-- Shop Section -->
+    <section class="shop-hero">
+        <div class="container">
+            <h1 class="hero-title">
+                <span class="title-icon">🛒</span>
+                GENERAL STORE
+            </h1>
+            <p class="hero-subtitle">Buy Premium Currency for Your Wild West Adventure</p>
+            <p class="shop-description">
+                Purchase Saloon Tokens and Gold Bars to boost your economy in the bot!<br>
+                All payments are securely processed by Stripe. No Discord login required.
+            </p>
+            <div class="security-badge">
+                💳 <strong>100% secure payment via Stripe</strong> • ⚡ Instant delivery • 🔒 PCI Compliant
+            </div>
+        </div>
+    </section>
+
+    <section class="shop-section">
+        <div class="container">
+            <!-- Product Grid -->
+            <div class="shop-grid">
+                <!-- Product 1: Starter Pack -->
+                <div class="product-card">
+                    <div class="product-badge">🌟 Starter</div>
+                    <img src="assets/saloon-token.png" alt="Saloon Tokens" class="product-image">
+                    <h3 class="product-name">Starter Pack</h3>
+                    <p class="product-desc">Perfect for beginners!</p>
+                    <div class="product-items">
+                        <div class="item">🎫 100 Saloon Tokens</div>
+                        <div class="item">🪙 5,000 Silver Coins</div>
+                    </div>
+                    <div class="product-price">
+                        <span class="price">$1.99</span>
+                        <span class="price-note">USD</span>
+                    </div>
+                    <button class="btn btn-primary buy-button" data-product="starter">
+                        <span>💳</span> Buy Now
+                    </button>
+                </div>
+
+                <!-- Product 2: Popular Pack -->
+                <div class="product-card popular">
+                    <div class="product-badge popular-badge">⭐ MOST POPULAR</div>
+                    <img src="assets/saloon-token.png" alt="Saloon Tokens" class="product-image popular-glow">
+                    <h3 class="product-name">Popular Pack</h3>
+                    <p class="product-desc">Best value for money!</p>
+                    <div class="product-items">
+                        <div class="item">🎫 300 Saloon Tokens</div>
+                        <div class="item">🪙 15,000 Silver Coins</div>
+                        <div class="item bonus">🎁 +50 Bonus Tokens</div>
+                    </div>
+                    <div class="product-price">
+                        <span class="price">$4.99</span>
+                        <span class="price-note">USD</span>
+                        <span class="discount">Save 60%!</span>
+                    </div>
+                    <button class="btn btn-primary buy-button" data-product="popular">
+                        <span>💳</span> Buy Now
+                    </button>
+                </div>
+
+                <!-- Product 3: Gold Pack -->
+                <div class="product-card">
+                    <div class="product-badge">⚡ Best Deal</div>
+                    <img src="assets/gold-bar.png" alt="Gold Bar" class="product-image gold-shine">
+                    <h3 class="product-name">Gold Pack</h3>
+                    <p class="product-desc">For serious outlaws!</p>
+                    <div class="product-items">
+                        <div class="item">🎫 750 Saloon Tokens</div>
+                        <div class="item">🪙 40,000 Silver Coins</div>
+                        <div class="item bonus">🎁 +150 Bonus Tokens</div>
+                        <div class="item bonus">🌟 VIP Badge</div>
+                    </div>
+                    <div class="product-price">
+                        <span class="price">$9.99</span>
+                        <span class="price-note">USD</span>
+                        <span class="discount">Save 65%!</span>
+                    </div>
+                    <button class="btn btn-primary buy-button" data-product="gold">
+                        <span>💳</span> Buy Now
+                    </button>
+                </div>
+
+                <!-- Product 4: Ultimate Pack -->
+                <div class="product-card ultimate">
+                    <div class="product-badge ultimate-badge">💎 ULTIMATE</div>
+                    <img src="assets/gold-bar.png" alt="Gold Bar & Tokens" class="product-image ultimate-glow">
+                    <h3 class="product-name">Ultimate Pack</h3>
+                    <p class="product-desc">For the richest sheriffs!</p>
+                    <div class="product-items">
+                        <div class="item">🎫 2,000 Saloon Tokens</div>
+                        <div class="item">🪙 100,000 Silver Coins</div>
+                        <div class="item bonus">🎁 +500 Bonus Tokens</div>
+                        <div class="item bonus">🌟 VIP Badge</div>
+                        <div class="item bonus">🎨 Exclusive Background</div>
+                    </div>
+                    <div class="product-price">
+                        <span class="price">$19.99</span>
+                        <span class="price-note">USD</span>
+                        <span class="discount">Save 70%!</span>
+                    </div>
+                    <button class="btn btn-primary buy-button" data-product="ultimate">
+                        <span>💳</span> Buy Now
+                    </button>
+                </div>
+
+                <!-- Product 5: Backpack Upgrade -->
+                <div class="product-card">
+                    <div class="product-badge">🎒 UPGRADE</div>
+                    <img src="assets/backpack.png" alt="Backpack" class="product-image">
+                    <h3 class="product-name">Backpack Upgrade</h3>
+                    <p class="product-desc">Expand your inventory!</p>
+                    <div class="product-items">
+                        <div class="item">📦 Inventory: 100kg → 500kg</div>
+                        <div class="item">🔓 Permanent Upgrade</div>
+                        <div class="item bonus">⚡ Instant Activation</div>
+                    </div>
+                    <div class="product-price">
+                        <span class="price">$9.99</span>
+                        <span class="price-note">USD</span>
+                    </div>
+                    <button class="btn btn-primary buy-button" data-product="backpack">
+                        <span>💳</span> Buy Now
+                    </button>
+                </div>
+            </div>
+
+            <!-- Info Section -->
+            <div class="shop-info">
+                <div class="info-card">
+                    <h3>🔒 Secure Payment</h3>
+                    <p>All payments are processed securely through Stripe. We never store your card information.</p>
+                </div>
+                <div class="info-card">
+                    <h3>⚡ Instant Delivery</h3>
+                    <p>After payment, you'll receive a unique code to redeem in Discord using <code>/redeem</code></p>
+                </div>
+                <div class="info-card">
+                    <h3>🎯 How to Redeem</h3>
+                    <p>1. Complete your purchase<br>2. Copy your redemption code<br>3. Use <code>/redeem code:[your code]</code> in Discord</p>
+                </div>
+            </div>
+
+            <!-- FAQ -->
+            <div class="shop-faq">
+                <h2>❓ Frequently Asked Questions</h2>
+                <div class="faq-item">
+                    <h4>How do I receive my tokens?</h4>
+                    <p>After completing your purchase, you'll be redirected to a success page with a unique redemption code. Use this code with the <code>/redeem</code> command in any Discord server with Sheriff Bot. Example: <code>/redeem code:SHERIFF-GOLD-ABC123</code></p>
+                </div>
+                <div class="faq-item">
+                    <h4>Can I refund my purchase?</h4>
+                    <p>Due to the digital nature of our products, all sales are final once the redemption code is generated. Please make sure to select the correct package before purchasing.</p>
+                </div>
+                <div class="faq-item">
+                    <h4>What payment methods do you accept?</h4>
+                    <p>We accept all major credit cards (Visa, Mastercard, American Express) and digital wallets through Stripe.</p>
+                </div>
+                <div class="faq-item">
+                    <h4>Is this official?</h4>
+                    <p>Yes! This is the official Sheriff Bot shop. Never buy tokens from third-party sellers as they may be scams.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-bottom">
+                <p>&copy; 2025 Sheriff Bot. All rights reserved.</p>
+                <p>Powered by <a href="https://stripe.com" target="_blank">Stripe</a></p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/shop.js"></script>
+</body>
+</html>
