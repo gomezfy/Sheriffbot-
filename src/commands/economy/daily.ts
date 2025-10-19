@@ -36,7 +36,18 @@ module.exports = {
       };
     }
     
-    const userData = dailyData[userId];
+    let userData = dailyData[userId];
+    
+    // Fix corrupted data (if userData is just a number instead of an object)
+    if (typeof userData === 'number') {
+      userData = {
+        lastClaim: userData,
+        streak: 1
+      };
+      dailyData[userId] = userData;
+      saveDailyData(dailyData);
+    }
+    
     const now = Date.now();
     const timeSinceLastClaim = now - userData.lastClaim;
     
