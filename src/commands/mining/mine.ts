@@ -74,6 +74,7 @@ module.exports = {
         }],
         ephemeral: true
       });
+      return;
     }
 
     // Criar botões
