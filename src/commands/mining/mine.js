@@ -10,7 +10,6 @@ const SOLO_COOLDOWN = 50 * 60 * 1000; // 50 minutos
 const COOP_COOLDOWN = 2 * 60 * 60 * 1000; // 2 horas
 
 // Garantir que o arquivo existe
-}
 
 function getMiningData() {
   const data = fs.readFileSync(miningFile, 'utf8');

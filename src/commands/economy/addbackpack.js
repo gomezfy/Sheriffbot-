@@ -41,7 +41,6 @@ module.exports = {
     // Load inventory data directly (to ensure we get fresh data)
     const inventory = loadInventory();
 
-    // Initialize inventory if doesn't exist
     if (!inventory[targetUser.id]) {
       inventory[targetUser.id] = {
         items: {},

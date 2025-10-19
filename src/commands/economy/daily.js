@@ -4,10 +4,6 @@ const { t } = require('../../utils/i18n');
 const { readData, writeData } = require('../../utils/database');
 const path = require('path');
 
-
-// Initialize daily file if it doesn't exist
-}
-
 function getLastDaily(userId) {
   const dailyData = readData('daily.json');
   return dailyData[userId] || 0;

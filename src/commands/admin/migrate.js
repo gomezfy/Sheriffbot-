@@ -23,7 +23,6 @@ module.exports = {
 
     try {
       
-
       const economyData = JSON.parse(fs.readFileSync(economyFile, 'utf8'));
       
       let migrated = 0;
