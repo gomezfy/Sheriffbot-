@@ -7,6 +7,11 @@ package-lock.json
 .env.local
 .env.production
 
+# TypeScript build artifacts
+dist/
+*.tsbuildinfo
+*.d.ts.map
+
 # Data files (user-generated content)
 src/data/*.json
 !src/data/.gitkeep

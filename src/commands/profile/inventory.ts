@@ -33,7 +33,7 @@ module.exports = {
     let itemsList = '';
     let totalItems = 0;
     const currencies = ['saloon_token', 'silver'];
-    const otherItems = [];
+    const otherItems: [string, number][] = [];
     
     for (const [itemId, quantity] of Object.entries(inventory.items)) {
       const quantityNum = Number(quantity);

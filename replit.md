@@ -10,13 +10,16 @@ Sheriff Rex Bot is a feature-rich Discord bot with a Wild West theme. It include
 - Website: Running on port 5000
 
 ## Recent Changes
-**October 19, 2025** - Initial Replit Setup
-- Installed Node.js 20 and all dependencies
+**October 19, 2025** - TypeScript Migration & Replit Setup
+- Migrated entire codebase from JavaScript to TypeScript (56 files)
+- Removed all Discloud references and configurations
+- Installed Node.js 20, TypeScript, and all dependencies
 - Configured environment secrets (Discord tokens, session secret)
-- Created workflow for bot + website (single process)
+- Created workflow for bot + website (single process with ts-node)
 - Configured deployment settings for VM (always-on bot)
-- Added .gitignore for node_modules, .env, and data files
+- Added .gitignore for node_modules, .env, data files, and TypeScript artifacts
 - Created .env.example with all required environment variables
+- Updated all commands, events, and utilities with proper TypeScript types
 
 ## Project Architecture
 
@@ -33,18 +36,19 @@ sheriff-bot/
 │   │   ├── profile/       # User profiles (3 commands)
 │   │   └── utility/       # Helper commands (3 commands)
 │   ├── data/              # JSON database files
-│   ├── events/            # Discord event handlers
-│   ├── utils/             # Utility modules
-│   ├── deploy-commands.js # Register slash commands
-│   └── index.js           # Main bot entry point
+│   ├── events/            # Discord event handlers (TypeScript)
+│   ├── utils/             # Utility modules (TypeScript)
+│   ├── deploy-commands.ts # Register slash commands
+│   └── index.ts           # Main bot entry point
 ├── website/               # Web frontend
 │   ├── assets/            # Images and resources
 │   ├── css/               # Stylesheets
 │   ├── js/                # Client-side JavaScript
-│   ├── routes/            # API routes (dashboard OAuth)
+│   ├── routes/            # API routes (TypeScript)
 │   ├── *.html             # Web pages
-│   └── server.js          # Express web server
-└── assets/                # Bot assets (avatar, images)
+│   └── server.ts          # Express web server (TypeScript)
+├── assets/                # Bot assets (avatar, images)
+└── tsconfig.json          # TypeScript configuration
 ```
 
 ### Key Features
@@ -63,6 +67,7 @@ sheriff-bot/
 - **E-commerce Integration** via Stripe (redemption codes)
 
 ### Technology Stack
+- **Language:** TypeScript (compiled with ts-node)
 - **Runtime:** Node.js 20
 - **Discord Library:** discord.js v14
 - **Web Framework:** Express v5
@@ -94,7 +99,7 @@ sheriff-bot/
 ### Development
 The project automatically runs via the configured workflow:
 ```bash
-node src/index.js
+ts-node src/index.ts
 ```
 
 This single command starts both:
@@ -104,8 +109,15 @@ This single command starts both:
 ### Deploying Slash Commands
 If you add new commands or modify existing ones:
 ```bash
-node src/deploy-commands.js
+ts-node src/deploy-commands.ts
 ```
+
+### TypeScript Compilation
+The project uses `ts-node` for direct TypeScript execution without a build step. If you need to compile to JavaScript:
+```bash
+tsc
+```
+This will generate compiled JavaScript in the `dist/` directory according to `tsconfig.json`.
 
 ### Production Deployment
 The project is configured for VM deployment (always-on) since it's a stateful Discord bot that needs to maintain persistent connections.
