@@ -40,12 +40,12 @@ module.exports = {
       .addComponents(
         new ButtonBuilder()
           .setCustomId('convert_tokens')
-          .setLabel('🎫 Convert Tokens → Silver')
+          .setLabel('Convert Tokens → Silver')
           .setStyle(ButtonStyle.Primary)
           .setDisabled(saloonTokens === 0),
         new ButtonBuilder()
           .setCustomId('convert_gold')
-          .setLabel('🥇 Convert Gold → Silver')
+          .setLabel('Convert Gold → Silver')
           .setStyle(ButtonStyle.Success)
           .setDisabled(goldBars === 0)
       );
