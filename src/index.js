@@ -3,6 +3,19 @@ const { Client, GatewayIntentBits, Collection, Events, ActivityType } = require(
 const fs = require('fs');
 const path = require('path');
 const Logger = require('./utils/logger');
+// ===== INICIALIZAR SISTEMA DE DADOS =====
+// Isso evita erros de "ENOENT: no such file or directory"
+const { initializeDatabase } = require('./utils/database');
+
+console.log('🔄 Inicializando sistema de dados...');
+try {
+  initializeDatabase();
+} catch (error) {
+  console.error('❌ Erro ao inicializar dados:', error.message);
+  console.error('⚠️  O bot continuará, mas pode ter problemas com comandos que usam dados');
+}
+// ========================================
+
 
 const client = new Client({
   intents: [
