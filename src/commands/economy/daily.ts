@@ -1,5 +1,5 @@
 import { SlashCommandBuilder, EmbedBuilder, ChatInputCommandInteraction } from 'discord.js';
-const { addUserXP } = require('../../utils/xpManager');
+import { addXP } from '../../utils/xpManager';
 const { addItem } = require('../../utils/inventoryManager');
 const { showProgressBar } = require('../../utils/progressBar');
 const { readData, writeData } = require('../../utils/database');
@@ -89,7 +89,7 @@ module.exports = {
       return;
     }
 
-    addUserXP(userId, xpAmount);
+    addXP(userId, xpAmount);
     
     userData.lastClaim = now;
     userData.streak = newStreak;
