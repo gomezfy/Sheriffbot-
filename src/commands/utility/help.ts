@@ -82,6 +82,11 @@ export = {
                  '+ 🎲 Play games to earn more coins\n' +
                  '```',
           inline: false
+        },
+        {
+          name: '🆘 **SUPPORT**',
+          value: 'Need help? Join our support server:\nhttps://discord.gg/gXwaYFNhfp',
+          inline: false
         }
       )
       .setFooter({ text: '🌵 Stay safe in the Wild West, partner!' })
