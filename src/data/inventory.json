@@ -1,10 +1,11 @@
 {
   "339772388566892546": {
     "items": {
-      "silver": 20819,
-      "saloon_token": 12388
+      "silver": null,
+      "saloon_token": null,
+      "gold": 3
     },
-    "weight": 2.2055000000000002,
+    "weight": null,
     "maxWeight": 100
   },
   "1426344797421047838": {
