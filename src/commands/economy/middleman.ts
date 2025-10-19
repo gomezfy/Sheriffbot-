@@ -40,22 +40,18 @@ module.exports = {
       .setFooter({ text: '🤠 Fair trades guaranteed by the Sheriff!' })
       .setTimestamp();
 
-    const row1 = new ActionRowBuilder<ButtonBuilder>()
+    const buttons = new ActionRowBuilder<ButtonBuilder>()
       .addComponents(
         new ButtonBuilder()
           .setCustomId('convert_tokens')
-          .setLabel('Convert Tokens → Silver')
+          .setLabel('Tokens → Silver')
           .setStyle(ButtonStyle.Primary)
           .setDisabled(saloonTokens === 0),
         new ButtonBuilder()
           .setCustomId('convert_gold')
-          .setLabel('Convert Gold → Silver')
+          .setLabel('Gold → Silver')
           .setStyle(ButtonStyle.Success)
-          .setDisabled(goldBars === 0)
-      );
-
-    const row2 = new ActionRowBuilder<ButtonBuilder>()
-      .addComponents(
+          .setDisabled(goldBars === 0),
         new ButtonBuilder()
           .setLabel('🛒 Visit Shop')
           .setStyle(ButtonStyle.Link)
@@ -64,7 +60,7 @@ module.exports = {
 
     const response = await interaction.reply({
       embeds: [embed],
-      components: [row1, row2],
+      components: [buttons],
       files: [blackMarketImage],
       fetchReply: true
     });
