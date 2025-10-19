@@ -6,95 +6,101 @@ export = {
     .setDescription('Shows all available commands and their descriptions'),
   async execute(interaction: ChatInputCommandInteraction): Promise<void> {
     const embed = new EmbedBuilder()
-      .setColor('#D2B48C')
-      .setTitle('🤠 SHERIFF BOT - COMMAND GUIDE')
-      .setDescription('Here are all the commands available in the frontier, partner!')
+      .setColor(0xFFD700)
+      .setTitle('🤠 SHERIFF REX - COMMAND GUIDE')
+      .setDescription('**Welcome to the Wild West!** Here\'s everything you need to survive on the frontier.\n\n**💰 ECONOMY SYSTEM**\n🪙 **Silver Coins** - Main currency for trading\n🥇 **Gold Bars** - Valuable items (1 bar = 700 Silver)\n💼 **Inventory** - Max weight 100kg (upgrade with backpacks)')
       .addFields(
         {
-          name: '💰 **ECONOMY COMMANDS**',
-          value: '```\n' +
-                 '/daily - Claim your daily Silver Coins reward\n' +
-                 '/claim - Claim special rewards\n' +
-                 '/inventory - Check your saddlebag inventory\n' +
-                 '/give - Give Silver Coins or items to another player\n' +
+          name: '💰 Economy & Trading',
+          value: '```yaml\n' +
+                 '/daily     : Claim daily Silver Coins reward\n' +
+                 '/work      : Work at Western jobs to earn coins\n' +
+                 '/inventory : Check your saddlebag contents\n' +
+                 '/give      : Transfer coins or items to players\n' +
+                 '/claim     : Redeem special reward codes\n' +
                  '```',
           inline: false
         },
         {
-          name: '⛏️ **MINING & WORK**',
-          value: '```\n' +
-                 '/mine - Mine for gold in the mountains\n' +
-                 '  • Solo Mining: 50min cooldown, 1-3 Gold Bars\n' +
-                 '  • Cooperative Mining: 2h cooldown, 4-6 Gold Bars (split)\n' +
+          name: '⛏️ Mining & Resources',
+          value: '```yaml\n' +
+                 '/mine : Mine for gold in the mountains\n' +
+                 '  Solo   - 50min cooldown | 1-3 Gold Bars\n' +
+                 '  Co-op  - 2h cooldown    | 4-6 Gold Bars (split)\n' +
                  '```',
           inline: false
         },
         {
-          name: '🎲 **GAME COMMANDS**',
-          value: '```\n' +
-                 '/dice - Challenge a player to a dice duel\n' +
-                 '/poker - Play a game of poker\n' +
-                 '/casino - Visit the casino and try your luck\n' +
-                 '/bankrob - Plan a bank robbery with a partner\n' +
+          name: '🎲 Gambling & Games',
+          value: '```yaml\n' +
+                 '/casino  : Spin the lucky wheel\n' +
+                 '/dice    : Challenge players to dice duel\n' +
+                 '/poker   : Play Texas Hold\'em poker\n' +
+                 '/bankrob : Rob the bank with a partner\n' +
+                 '/duel    : Western showdown (coming soon)\n' +
                  '```',
           inline: false
         },
         {
-          name: '🔫 **BOUNTY & WANTED COMMANDS**',
-          value: '```\n' +
-                 '/wanted - Check who\'s wanted in town\n' +
-                 '/bounties - View active bounties\n' +
-                 '/clearbounty - Clear a bounty (admin only)\n' +
+          name: '👤 Profile & Stats',
+          value: '```yaml\n' +
+                 '/profile     : View Western profile card\n' +
+                 '/avatar      : Display user avatar\n' +
+                 '/leaderboard : Top 10 richest players\n' +
                  '```',
           inline: false
         },
         {
-          name: '👤 **PROFILE & INFO COMMANDS**',
-          value: '```\n' +
-                 '/perfil - View your or another user\'s profile\n' +
-                 '/avatar - Display a user\'s avatar\n' +
-                 '/servidor - View server information\n' +
-                 '/ping - Check bot latency\n' +
+          name: '🔫 Bounty System',
+          value: '```yaml\n' +
+                 '/wanted   : Check wanted posters\n' +
+                 '/bounties : View active bounties\n' +
                  '```',
           inline: false
         },
         {
-          name: '⚙️ **ADMIN COMMANDS**',
-          value: '```\n' +
-                 '/setwelcome - Configure welcome messages for new members\n' +
-                 '/addgold - Add Gold Bars to a user\n' +
-                 '/removegold - Remove Gold Bars from a user\n' +
-                 '/addsilver - Add Silver Coins to a user\n' +
-                 '/removesilver - Remove Silver Coins from a user\n' +
-                 '/setuptoken - Setup economy token role\n' +
-                 '/announcement - Send an announcement\n' +
-                 '/migrate - Migrate economy data\n' +
+          name: '⚙️ Server Management (Admin Only)',
+          value: '```yaml\n' +
+                 '/setwelcome  : Configure welcome messages\n' +
+                 '/setlogs     : Setup server logs channel\n' +
+                 '/setwanted   : Configure wanted posters\n' +
+                 '/announcement: Send server announcements\n' +
+                 '/addsilver   : Give Silver Coins to users\n' +
+                 '/addgold     : Give Gold Bars to users\n' +
                  '```',
           inline: false
         },
         {
-          name: '💡 **ECONOMY SYSTEM**',
-          value: '```diff\n' +
-                 '+ 🪙 Silver Coins: Main currency for trading\n' +
-                 '+ 🥇 Gold Bars: Valuable items (1 bar = 700 Silver)\n' +
-                 '+ 💼 Inventory System: Max weight 100kg\n' +
-                 '+ ⛏️ Mine gold solo or with friends\n' +
-                 '+ 🎲 Play games to earn more coins\n' +
+          name: '🔧 Utility Commands',
+          value: '```yaml\n' +
+                 '/help     : Show this command guide\n' +
+                 '/ping     : Check bot response time\n' +
+                 '/servidor : View server information\n' +
+                 '/idioma   : Change bot language\n' +
                  '```',
           inline: false
         }
       )
-      .setFooter({ text: '🌵 Stay safe in the Wild West, partner!' })
-      .setTimestamp();
+      .setFooter({ text: '🌵 Sheriff Rex Bot • Use commands wisely, partner!' })
+      .setTimestamp()
+      .setThumbnail('https://cdn.discordapp.com/avatars/1426734768111747284/77c49c0e33e64e32cc5bc42f9e6cfe82.png');
 
-    const supportButton = new ActionRowBuilder<ButtonBuilder>()
+    const buttons = new ActionRowBuilder<ButtonBuilder>()
       .addComponents(
         new ButtonBuilder()
           .setLabel('🆘 Support Server')
           .setStyle(ButtonStyle.Link)
-          .setURL('https://discord.gg/gXwaYFNhfp')
+          .setURL('https://discord.gg/gXwaYFNhfp'),
+        new ButtonBuilder()
+          .setLabel('➕ Add Bot')
+          .setStyle(ButtonStyle.Link)
+          .setURL('https://discord.com/api/oauth2/authorize?client_id=1426734768111747284&permissions=277025770496&scope=bot%20applications.commands'),
+        new ButtonBuilder()
+          .setLabel('🌐 Website')
+          .setStyle(ButtonStyle.Link)
+          .setURL(`https://${process.env.REPLIT_DEV_DOMAIN || 'sheriff-bot.repl.co'}`)
       );
 
-    await interaction.reply({ embeds: [embed], components: [supportButton], ephemeral: true });
+    await interaction.reply({ embeds: [embed], components: [buttons], ephemeral: true });
   },
 };
