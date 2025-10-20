@@ -4,9 +4,14 @@ const { getUserXP, getXPForLevel, getXPForNextLevel } = require('../../utils/xpM
 const { getUserProfile } = require('../../utils/profileManager');
 const { parseTextWithEmojis } = require('../../utils/emojiMapper');
 const { getCustomEmojiPath } = require('../../utils/customEmojis');
-import { createCanvas, loadImage } from '@napi-rs/canvas';
+import { createCanvas, loadImage, GlobalFonts } from '@napi-rs/canvas';
 import fs from 'fs';
 import path from 'path';
+
+// Register Nunito font
+GlobalFonts.registerFromPath(path.join(__dirname, '../../../assets/fonts/Nunito-Bold.ttf'), 'Nunito');
+GlobalFonts.registerFromPath(path.join(__dirname, '../../../assets/fonts/Nunito-SemiBold.ttf'), 'Nunito SemiBold');
+GlobalFonts.registerFromPath(path.join(__dirname, '../../../assets/fonts/Nunito-Regular.ttf'), 'Nunito Regular');
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -129,12 +134,12 @@ async function createProfileCard(user: User, stats: any): Promise<AttachmentBuil
 
   // Username (top right of avatar)
   ctx.fillStyle = '#FFFFFF';
-  ctx.font = 'bold 48px Arial';
+  ctx.font = 'bold 48px Nunito';
   ctx.fillText(user.username, 250, 90);
 
   // Tag
   ctx.fillStyle = '#B0B0B0';
-  ctx.font = '24px Arial';
+  ctx.font = '24px Nunito Regular';
   ctx.fillText(`#${user.discriminator}`, 250, 125);
 
   // Currency section (below avatar)
@@ -163,11 +168,11 @@ async function createProfileCard(user: User, stats: any): Promise<AttachmentBuil
 
   // Level icon and number
   ctx.fillStyle = levelColor;
-  ctx.font = 'bold 50px Arial';
+  ctx.font = 'bold 50px Nunito';
   ctx.fillText('⭐', xpPanelX + 20, xpPanelY + 65);
   
   ctx.fillStyle = '#FFFFFF';
-  ctx.font = 'bold 42px Arial';
+  ctx.font = 'bold 42px Nunito';
   ctx.fillText(`Level ${stats.level}`, xpPanelX + 90, xpPanelY + 45);
 
   // XP text
@@ -178,7 +183,7 @@ async function createProfileCard(user: User, stats: any): Promise<AttachmentBuil
   const xpNeededForLevel = xpForNextLevel - xpForCurrentLevel;
 
   ctx.fillStyle = '#B0B0B0';
-  ctx.font = '18px Arial';
+  ctx.font = '18px Nunito Regular';
   ctx.fillText(`${xpInCurrentLevel.toLocaleString()} / ${xpNeededForLevel.toLocaleString()} XP`, xpPanelX + 90, xpPanelY + 75);
 
   // XP Progress bar
@@ -199,12 +204,12 @@ async function createProfileCard(user: User, stats: any): Promise<AttachmentBuil
 
   // Title
   ctx.fillStyle = '#FFFFFF';
-  ctx.font = 'bold 24px Arial';
+  ctx.font = 'bold 24px Nunito';
   ctx.fillText('📝 About Me', 420, bioY + 35);
 
   // Bio text (wrapped) - with emoji support
   ctx.fillStyle = '#D0D0D0';
-  ctx.font = '16px Arial';
+  ctx.font = '16px Nunito Regular';
   await wrapTextWithEmojis(ctx, stats.bio, 420, bioY + 65, 310, 20);
 
   // Footer
@@ -212,7 +217,7 @@ async function createProfileCard(user: User, stats: any): Promise<AttachmentBuil
   ctx.fillRect(0, 538, 800, 2);
   
   ctx.fillStyle = '#7289DA';
-  ctx.font = '14px Arial';
+  ctx.font = '14px Nunito Regular';
   ctx.fillText('Sheriff Bot • Cowboy Profile', 20, 535);
 
   if (stats.background) {
@@ -240,12 +245,12 @@ async function drawCurrencyBoxWithImage(ctx: any, x: number, y: number, width: n
   ctx.drawImage(iconImage, x + 15, y + 16, iconSize, iconSize);
 
   // Label
-  ctx.font = '18px Arial';
+  ctx.font = '18px Nunito Regular';
   ctx.fillStyle = '#B0B0B0';
   ctx.fillText(label, x + 75, y + 30);
 
   // Value
-  ctx.font = 'bold 28px Arial';
+  ctx.font = 'bold 28px Nunito';
   ctx.fillStyle = '#FFFFFF';
   ctx.fillText(value, x + 75, y + 60);
 }
@@ -263,17 +268,17 @@ async function drawCurrencyBox(ctx: any, x: number, y: number, width: number, he
   ctx.stroke();
 
   // Icon
-  ctx.font = 'bold 36px Arial';
+  ctx.font = 'bold 36px Nunito';
   ctx.fillStyle = color;
   ctx.fillText(icon, x + 20, y + 50);
 
   // Label
-  ctx.font = '18px Arial';
+  ctx.font = '18px Nunito Regular';
   ctx.fillStyle = '#B0B0B0';
   ctx.fillText(label, x + 75, y + 30);
 
   // Value
-  ctx.font = 'bold 28px Arial';
+  ctx.font = 'bold 28px Nunito';
   ctx.fillStyle = '#FFFFFF';
   ctx.fillText(value, x + 75, y + 60);
 }

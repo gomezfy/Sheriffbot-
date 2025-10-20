@@ -1,5 +1,10 @@
-import { createCanvas, loadImage } from '@napi-rs/canvas';
+import { createCanvas, loadImage, GlobalFonts } from '@napi-rs/canvas';
 import { User } from 'discord.js';
+import path from 'path';
+
+// Register Nunito font
+GlobalFonts.registerFromPath(path.join(__dirname, '../../assets/fonts/Nunito-Bold.ttf'), 'Nunito');
+GlobalFonts.registerFromPath(path.join(__dirname, '../../assets/fonts/Nunito-Regular.ttf'), 'Nunito Regular');
 
 export async function generateWantedPoster(user: User, bountyAmount: number): Promise<Buffer> {
   const width = 600;
@@ -20,7 +25,7 @@ export async function generateWantedPoster(user: User, bountyAmount: number): Pr
   ctx.strokeRect(30, 30, width - 60, height - 60);
 
   ctx.fillStyle = '#000000';
-  ctx.font = 'bold 70px serif';
+  ctx.font = 'bold 70px Nunito';
   ctx.textAlign = 'center';
   ctx.fillText('WANTED', width / 2, 120);
   
@@ -51,20 +56,20 @@ export async function generateWantedPoster(user: User, bountyAmount: number): Pr
   }
 
   ctx.fillStyle = '#000000';
-  ctx.font = 'bold 40px serif';
+  ctx.font = 'bold 40px Nunito';
   ctx.textAlign = 'center';
   const username = user.tag.length > 20 ? user.tag.substring(0, 17) + '...' : user.tag;
   ctx.fillText(username, width / 2, 440);
 
-  ctx.font = 'bold 35px serif';
+  ctx.font = 'bold 35px Nunito';
   ctx.fillText('REWARD', width / 2, 520);
 
   ctx.fillStyle = '#8b4513';
-  ctx.font = 'bold 60px serif';
+  ctx.font = 'bold 60px Nunito';
   ctx.fillText(`${bountyAmount.toLocaleString()} SILVER`, width / 2, 600);
 
   ctx.fillStyle = '#000000';
-  ctx.font = '20px serif';
+  ctx.font = '20px Nunito Regular';
   ctx.fillText('DEAD OR ALIVE', width / 2, 680);
   
   ctx.strokeStyle = '#654321';
