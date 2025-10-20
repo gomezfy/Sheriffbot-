@@ -1,1 +1,16 @@
-[]
+[
+  {
+    "targetId": "1082867940501749760",
+    "targetTag": "sampson46",
+    "totalAmount": 3000,
+    "contributors": [
+      {
+        "id": "339772388566892546",
+        "tag": "gomezfy_",
+        "amount": 3000
+      }
+    ],
+    "createdAt": 1760966934036,
+    "updatedAt": 1760966934036
+  }
+]
