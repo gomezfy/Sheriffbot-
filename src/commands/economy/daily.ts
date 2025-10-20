@@ -1,5 +1,6 @@
-import { SlashCommandBuilder, EmbedBuilder, ChatInputCommandInteraction } from 'discord.js';
+import { SlashCommandBuilder, ChatInputCommandInteraction } from 'discord.js';
 import { addXP } from '../../utils/xpManager';
+import { economyEmbed, errorEmbed, warningEmbed, formatCurrency, formatDuration, field } from '../../utils/embeds';
 const { addItem } = require('../../utils/inventoryManager');
 const { showProgressBar } = require('../../utils/progressBar');
 const { readData, writeData } = require('../../utils/database');
@@ -53,16 +54,15 @@ module.exports = {
     
     if (timeSinceLastClaim < dailyCooldown) {
       const timeLeft = dailyCooldown - timeSinceLastClaim;
-      const hoursLeft = Math.floor(timeLeft / (60 * 60 * 1000));
-      const minutesLeft = Math.floor((timeLeft % (60 * 60 * 1000)) / (60 * 1000));
+      
+      const embed = warningEmbed(
+        'Daily Reward',
+        `You already claimed your daily reward!\n\n**Time remaining:** ${formatDuration(timeLeft)}\n**Current streak:** ${userData.streak} day${userData.streak !== 1 ? 's' : ''}`,
+        'Come back tomorrow!'
+      );
       
       await interaction.reply({
-        embeds: [{
-          color: 0xFF6B6B,
-          title: '⏰ Daily Reward',
-          description: `You already claimed your daily reward!\n\n**Time remaining:** ${hoursLeft}h ${minutesLeft}m\n**Current streak:** ${userData.streak} day${userData.streak !== 1 ? 's' : ''}`,
-          footer: { text: 'Come back tomorrow!' }
-        }],
+        embeds: [embed],
         ephemeral: true
       });
       return;
@@ -89,13 +89,15 @@ module.exports = {
 
     if (!silverResult.success || !tokenResult.success) {
       const error = !silverResult.success ? silverResult.error : tokenResult.error;
+      
+      const embed = errorEmbed(
+        'Daily Reward Failed',
+        `${error}\n\nYour inventory is too full to claim this reward!`,
+        'Free up space and try again!'
+      );
+      
       await interaction.editReply({
-        embeds: [{
-          color: 0xFF0000,
-          title: '❌ DAILY REWARD FAILED',
-          description: `${error}\n\nYour inventory is too full to claim this reward!`,
-          footer: { text: 'Free up space and try again!' }
-        }]
+        embeds: [embed]
       });
       return;
     }
@@ -107,22 +109,20 @@ module.exports = {
     dailyData[userId] = userData;
     saveDailyData(dailyData);
 
-    const embed = new EmbedBuilder()
-      .setColor(0xFFD700)
-      .setTitle('🌅 Daily Reward')
-      .setDescription(wasStreakBroken && userData.streak > 1 
+    const embed = economyEmbed(
+      'Daily Reward',
+      wasStreakBroken && userData.streak > 1 
         ? '⚠️ Your streak was broken! Starting fresh.'
-        : '✅ Daily reward claimed successfully!')
-      .addFields(
-        { name: '🪙 Silver Coins', value: `+${silverAmount.toLocaleString()}`, inline: true },
-        { name: '🎫 Saloon Tokens', value: `+${tokenAmount}`, inline: true },
-        { name: '⭐ XP', value: `+${xpAmount}`, inline: true },
-        { name: '🔥 Streak', value: `${newStreak} day${newStreak !== 1 ? 's' : ''}`, inline: true },
-        { name: '📈 Bonus', value: `+${Math.floor(streakBonus * 100)}%`, inline: true },
-        { name: '\u200B', value: '\u200B', inline: true }
-      )
-      .setFooter({ text: 'Come back in 24 hours!' })
-      .setTimestamp();
+        : '✅ Daily reward claimed successfully!',
+      'Come back in 24 hours!'
+    ).addFields(
+      field('Silver Coins', `+${formatCurrency(silverAmount, 'silver')}`, true),
+      field('Saloon Tokens', `+${formatCurrency(tokenAmount, 'tokens')}`, true),
+      field('XP Earned', `+${xpAmount}`, true),
+      field('Streak', `${newStreak} day${newStreak !== 1 ? 's' : ''} 🔥`, true),
+      field('Bonus', `+${Math.floor(streakBonus * 100)}%`, true),
+      field('\u200B', '\u200B', true)
+    );
 
     await interaction.editReply({ embeds: [embed] });
   },

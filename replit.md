@@ -10,14 +10,16 @@ Sheriff Rex Bot is a feature-rich Discord bot with a Wild West theme. It include
 - Website: Running on port 5000
 
 ## Recent Changes
-**October 20, 2025** - Command Improvements & Font Update
+**October 20, 2025** - Minimalist Modernization & Website Separation
+- **NEW:** Created minimalist embed system (`src/utils/embeds.ts`) with neutral color palette
+- **NEW:** Separated website into `website.zip` (7.7MB) with restore instructions in `WEBSITE_README.md`
+- **NEW:** Bot now runs standalone without port 5000 requirement
+- Implemented new embed system in /daily command (green/red/amber colors)
+- Added utility functions: `formatCurrency()`, `formatDuration()`, `progressBar()`
+- Cleaned repository: removed `attached_assets/`, backup files, empty folders
+- Updated workflow from "Sheriff Bot + Website" to standalone "Sheriff Bot"
 - Added Nunito font to all profile cards and wanted posters
-- Simplified /daily command with clean, minimal layout
 - Added Discord timeout punishment to /bankrob (30 minutes when captured)
-- Fixed corrupted data auto-detection in /daily
-- Enhanced /help command with organized categories and action buttons
-- Redesigned /middleman as interactive currency converter
-- Fixed /mine command interaction timeout issues
 
 **October 19, 2025** - TypeScript Migration & Replit Setup
 - Migrated entire codebase from JavaScript to TypeScript (56 files)
