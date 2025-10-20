@@ -200,10 +200,12 @@ client.login(token)
   .then(() => {
     console.log('✅ Login successful!');
     
-    console.log('\n🌐 Starting website server...');
-    require('../website/server');
-    console.log('✅ Website started successfully!');
-    console.log('📍 Bot + Website running together!\n');
+    // Website archived in website.zip - see WEBSITE_README.md to restore
+    // console.log('\n🌐 Starting website server...');
+    // require('../website/server');
+    // console.log('✅ Website started successfully!');
+    
+    console.log('📍 Bot is running!\n');
   })
   .catch((error: Error) => {
     console.error('❌ LOGIN ERROR:');
