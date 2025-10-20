@@ -37,6 +37,7 @@ module.exports = {
         content: '❌ You can\'t place a bounty on a bot!',
         ephemeral: true
       });
+      return;
     }
 
     if (target.id === interaction.user.id) {
@@ -44,6 +45,7 @@ module.exports = {
         content: '❌ You can\'t place a bounty on yourself, partner!',
         ephemeral: true
       });
+      return;
     }
 
     const existingBounty = getBountyByTarget(target.id);
@@ -52,6 +54,7 @@ module.exports = {
         content: `❌ ${target.tag} already has an active bounty of **${existingBounty.amount.toLocaleString()} 🪙**!\n\nWait until it's cleared before placing a new one.`,
         ephemeral: true
       });
+      return;
     }
 
     const userBalance = getUserSilver(interaction.user.id);
@@ -60,6 +63,7 @@ module.exports = {
         content: `❌ You don't have enough Silver Coins!\n\nYou have **${userBalance.toLocaleString()} 🪙** but need **${amount.toLocaleString()} 🪙**.`,
         ephemeral: true
       });
+      return;
     }
 
     await interaction.deferReply();
@@ -69,6 +73,7 @@ module.exports = {
       await interaction.editReply({
         content: `❌ Error removing coins: ${removeResult.error}`
       });
+      return;
     }
 
     addBounty(target.id, target.tag, interaction.user.id, interaction.user.tag, amount);
