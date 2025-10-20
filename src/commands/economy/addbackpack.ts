@@ -24,7 +24,7 @@ module.exports = {
 
     const targetUser = interaction.options.getUser('user', true);
 
-    const result = upgradeBackpack(targetUser.id);
+    const result = upgradeBackpack(targetUser.id, 500);
 
     if (!result.success) {
       await interaction.reply({

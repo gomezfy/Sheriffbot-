@@ -7,19 +7,26 @@ Sheriff Rex Bot is a feature-rich Discord bot with a Wild West theme. It include
 - Bot Name: Sheriff Rex#5281
 - Connected to: 3 Discord servers
 - Active Users: 1
-- Website: Archived in `website.zip` (see `WEBSITE_README.md` to restore)
+- Website: **LIVE** on port 5000 with Stripe integration
 
 ## Recent Changes
-**October 20, 2025** - Minimalist Modernization & Website Separation
-- **NEW:** Created minimalist embed system (`src/utils/embeds.ts`) with neutral color palette
-- **NEW:** Separated website into `website.zip` (7.7MB) with restore instructions in `WEBSITE_README.md`
-- **NEW:** Bot now runs standalone without port 5000 requirement
-- Implemented new embed system in /daily command (green/red/amber colors)
+**October 20, 2025** - E-commerce Integration & Minimalist UI
+- **NEW:** `/redeem` command - Redeem purchase codes from website shop for backpack upgrades
+- **NEW:** E-commerce shop with 4 backpack upgrade tiers (200kg → 500kg, $2.99-$9.99)
+- **NEW:** Website restored and running on port 5000 with Stripe payment integration
+- **UPDATED:** `/inventory` command - Minimalist design with clean embeds and upgrade suggestions
+- **UPDATED:** `inventoryManager.ts` - Simplified `getNextUpgrade()` to show website pricing
+- **UPDATED:** `generatecode.ts` - Now supports 4 backpack tiers (backpack_200, backpack_300, backpack_400, backpack_500)
+- Implemented minimalist embed system in `/inventory` (blue info embeds, progress bars)
+- Website shows next available upgrade with pricing information
+- Total Commands: 35 (added `/redeem`)
+
+**October 20, 2025** - Minimalist Modernization
+- Created minimalist embed system (`src/utils/embeds.ts`) with neutral color palette
+- Implemented new embed system in `/daily` command (green/red/amber colors)
 - Added utility functions: `formatCurrency()`, `formatDuration()`, `progressBar()`
-- Cleaned repository: removed `attached_assets/`, backup files, empty folders
-- Updated workflow from "Sheriff Bot + Website" to standalone "Sheriff Bot"
 - Added Nunito font to all profile cards and wanted posters
-- Added Discord timeout punishment to /bankrob (30 minutes when captured)
+- Added Discord timeout punishment to `/bankrob` (30 minutes when captured)
 
 **October 19, 2025** - TypeScript Migration & Replit Setup
 - Migrated entire codebase from JavaScript to TypeScript (56 files)
@@ -38,10 +45,10 @@ Sheriff Rex Bot is a feature-rich Discord bot with a Wild West theme. It include
 ```
 sheriff-bot/
 ├── src/                    # Bot source code
-│   ├── commands/          # Slash commands (34 total)
+│   ├── commands/          # Slash commands (35 total)
 │   │   ├── admin/         # Server management (8 commands)
 │   │   ├── bounty/        # Bounty system (3 commands)
-│   │   ├── economy/       # Economy system (12 commands)
+│   │   ├── economy/       # Economy system (13 commands - includes /redeem)
 │   │   ├── gambling/      # Casino games (5 commands)
 │   │   ├── mining/        # Mining system (1 command)
 │   │   ├── profile/       # User profiles (3 commands)
@@ -55,17 +62,21 @@ sheriff-bot/
 │   └── index.ts           # Main bot entry point
 ├── assets/                # Bot assets (avatar, images, fonts)
 │   └── fonts/             # Nunito font family
-├── website.zip            # 🆕 Archived web frontend (7.7MB)
-├── WEBSITE_README.md      # 🆕 Website restore instructions
+├── server.ts              # 🆕 Express website server with Stripe
+├── *.html                 # Website pages (index, shop, dashboard)
 └── tsconfig.json          # TypeScript configuration
 ```
 
 ### Key Features
-- **34 Commands** across 6 categories
+- **35 Commands** across 6 categories
 - **Minimalist Embed System** with neutral color palette (green/red/amber/blue/gray/gold)
+- **E-commerce Shop** with 4 backpack upgrade tiers ($2.99-$9.99)
+- **Stripe Payment Processing** for real money purchases
+- **Redemption Code System** - Purchase on website, redeem in Discord
 - **47 Custom Emojis** for immersive Western theme
 - **3 Languages** supported (PT-BR, EN-US, ES-ES)
 - **Dual Economy** system (Saloon Tokens + Silver Coins)
+- **Progressive Backpack Upgrades** (100kg → 200kg → 300kg → 400kg → 500kg)
 - **Work System** with 5 Western-themed jobs
 - **Leaderboard Rankings** (Top 10 users)
 - **PvP Duels** system
@@ -73,8 +84,7 @@ sheriff-bot/
 - **Gambling Games** (Bank Robbery, Casino, Dice, Poker)
 - **Bounty System** with wanted posters
 - **Visual Profile Cards** using Canvas with Nunito font
-- **Web Dashboard** (archived - see website.zip)
-- **E-commerce Integration** via Stripe (archived)
+- **Web Dashboard** with Discord OAuth
 
 ### Technology Stack
 - **Language:** TypeScript (compiled with ts-node)
@@ -112,7 +122,7 @@ The project automatically runs via the configured workflow:
 ts-node src/index.ts
 ```
 
-This command starts the Discord bot standalone (no web server)
+This command starts both the Discord bot AND the website server on port 5000
 
 ### Deploying Slash Commands
 If you add new commands or modify existing ones:
@@ -130,13 +140,20 @@ This will generate compiled JavaScript in the `dist/` directory according to `ts
 ### Production Deployment
 The project is configured for VM deployment (always-on) since it's a stateful Discord bot that needs to maintain persistent connections.
 
-## Web Dashboard (Archived)
-The web dashboard has been archived to `website.zip`. To restore it, see `WEBSITE_README.md`.
+## Web Dashboard (LIVE)
+The web dashboard is running on port 5000 and includes:
 
-**Previous features (when active):**
-- Homepage, Shop, Dashboard with Discord OAuth
-- Stripe payment integration for in-game currency
+**Active Features:**
+- Homepage with bot information and "Add to Discord" button
+- **Shop** - Purchase backpack upgrades with Stripe checkout
+  - Small Backpack (200kg) - $2.99
+  - Medium Backpack (300kg) - $4.99
+  - Large Backpack (400kg) - $6.99
+  - Ultimate Backpack (500kg) - $9.99
+- Dashboard with Discord OAuth (login required)
 - User statistics and leaderboards
+- Redemption code generation on purchase
+- E-commerce tracking in `data/redemption-codes.json`
 
 ## Data Storage
 All data is stored in JSON files in the `src/data/` directory:

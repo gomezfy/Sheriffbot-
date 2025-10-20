@@ -207,67 +207,86 @@ export function getBackpackLevel(userId: string): number {
 }
 
 export function getNextUpgrade(userId: string): any {
-  const currentLevel = getBackpackLevel(userId);
+  const inventory = getInventory(userId);
+  const currentCapacity = inventory.maxWeight;
   
-  if (currentLevel >= UPGRADE_TIERS.length) {
-    return { success: false, error: 'Already at maximum capacity!' };
+  // Website upgrade tiers with prices
+  const websiteUpgrades = [
+    { capacity: 200, price: '2.99' },
+    { capacity: 300, price: '4.99' },
+    { capacity: 400, price: '6.99' },
+    { capacity: 500, price: '9.99' }
+  ];
+  
+  // Find next upgrade
+  for (const upgrade of websiteUpgrades) {
+    if (currentCapacity < upgrade.capacity) {
+      return { capacity: upgrade.capacity, price: upgrade.price };
+    }
   }
   
-  return { 
-    success: true, 
-    current: UPGRADE_TIERS[currentLevel - 1],
-    next: UPGRADE_TIERS[currentLevel]
-  };
+  // Already at max
+  return null;
 }
 
 export function upgradeBackpack(userId: string, newCapacity?: number): any {
   const inventory = getInventory(userId);
   const currentLevel = getBackpackLevel(userId);
   
-  // Manual upgrade to specific capacity (admin use)
-  if (newCapacity) {
+  // DIRECT UPGRADE (for redemption codes / admin)
+  if (newCapacity !== undefined) {
+    // Check if new capacity is valid
     if (newCapacity <= inventory.maxWeight) {
       return { success: false, error: 'New capacity must be greater than current!' };
     }
     
+    // Check if new capacity is valid tier (200, 300, 400, or 500)
+    const validCapacities = [200, 300, 400, 500];
+    if (!validCapacities.includes(newCapacity)) {
+      return { success: false, error: 'Invalid capacity tier!' };
+    }
+    
+    const oldCapacity = inventory.maxWeight;
     inventory.maxWeight = newCapacity;
     saveInventory(userId, inventory);
     
     return { 
       success: true, 
-      oldCapacity: inventory.maxWeight,
+      oldCapacity: oldCapacity,
       newCapacity: newCapacity,
       level: getBackpackLevel(userId)
     };
   }
   
-  // Normal upgrade to next tier
-  const nextUpgradeInfo = getNextUpgrade(userId);
-  
-  if (!nextUpgradeInfo.success) {
-    return nextUpgradeInfo;
+  // LEGACY UPGRADE PATH (for in-game currency purchases)
+  // Auto-upgrade to next tier using silver coins
+  if (currentLevel >= UPGRADE_TIERS.length) {
+    return { success: false, error: 'Already at maximum capacity!' };
   }
   
-  const nextTier = nextUpgradeInfo.next;
+  const nextTier = UPGRADE_TIERS[currentLevel];
   
-  // Check if user has enough currency
-  const userCurrency = getItem(userId, nextTier.currency);
-  
-  if (userCurrency < nextTier.cost) {
-    return { 
-      success: false, 
-      error: `Not enough ${nextTier.currency}!`,
-      required: nextTier.cost,
-      current: userCurrency,
-      missing: nextTier.cost - userCurrency
-    };
-  }
-  
-  // Deduct cost
-  const removeResult = removeItem(userId, nextTier.currency, nextTier.cost);
-  
-  if (!removeResult.success) {
-    return removeResult;
+  // Check if currency is required
+  if (nextTier.currency && nextTier.cost > 0) {
+    // Check if user has enough currency
+    const userCurrency = getItem(userId, nextTier.currency);
+    
+    if (userCurrency < nextTier.cost) {
+      return { 
+        success: false, 
+        error: `Not enough ${nextTier.currency}!`,
+        required: nextTier.cost,
+        current: userCurrency,
+        missing: nextTier.cost - userCurrency
+      };
+    }
+    
+    // Deduct cost
+    const removeResult = removeItem(userId, nextTier.currency, nextTier.cost);
+    
+    if (!removeResult.success) {
+      return removeResult;
+    }
   }
   
   // Apply upgrade

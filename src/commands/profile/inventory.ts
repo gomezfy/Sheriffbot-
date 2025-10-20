@@ -1,11 +1,12 @@
-import { SlashCommandBuilder, EmbedBuilder, ChatInputCommandInteraction } from 'discord.js';
-const { getInventory, calculateWeight, MAX_WEIGHT, ITEMS } = require('../../utils/inventoryManager');
+import { SlashCommandBuilder, ChatInputCommandInteraction } from 'discord.js';
+import { infoEmbed, warningEmbed, formatCurrency, progressBar } from '../../utils/embeds';
+const { getInventory, calculateWeight, ITEMS, getNextUpgrade } = require('../../utils/inventoryManager');
 const { t } = require('../../utils/i18n');
 
 module.exports = {
   data: new SlashCommandBuilder()
     .setName('inventory')
-    .setDescription('View your inventory')
+    .setDescription('🎒 View your backpack inventory')
     .addUserOption(option =>
       option
         .setName('user')
@@ -17,10 +18,13 @@ module.exports = {
     
     // Only allow viewing own inventory for privacy
     if (targetUser.id !== interaction.user.id) {
-      await interaction.reply({
-        content: t(interaction, 'inventory_private'),
-        ephemeral: true
-      });
+      const embed = warningEmbed(
+        'Private Inventory',
+        'For privacy reasons, you can only view your own inventory.',
+        'Use /inventory without parameters to see yours'
+      );
+      
+      await interaction.reply({ embeds: [embed], ephemeral: true });
       return;
     }
     
@@ -28,92 +32,92 @@ module.exports = {
     
     const inventory = getInventory(targetUser.id);
     const currentWeight = calculateWeight(inventory);
+    const maxWeight = inventory.maxWeight;
     
-    // Criar lista de itens (excluindo moedas, pois já aparecem separadamente)
-    let itemsList = '';
-    let totalItems = 0;
+    // Currency totals
+    const saloonTokens = inventory.items['saloon_token'] || 0;
+    const silverCoins = inventory.items['silver'] || 0;
+    
+    // Count items (excluding currencies)
     const currencies = ['saloon_token', 'silver'];
     const otherItems: [string, number][] = [];
+    let totalItems = 0;
     
     for (const [itemId, quantity] of Object.entries(inventory.items)) {
       const quantityNum = Number(quantity);
+      totalItems += quantityNum;
+      
       if (!currencies.includes(itemId)) {
         otherItems.push([itemId, quantityNum]);
-        totalItems += quantityNum;
-      } else {
-        totalItems += quantityNum; // Contar moedas no total
       }
     }
     
+    // Build items list
+    let itemsList = '';
     if (otherItems.length === 0) {
-      itemsList = '```\n' + t(interaction, 'inventory_no_items') + '\n```';
+      itemsList = '*Your backpack is empty. Start working or mining to collect items!*';
     } else {
-      itemsList = '```diff\n';
       for (const [itemId, quantity] of otherItems) {
         const item = (ITEMS as any)[itemId as string];
-        const quantityNum = Number(quantity);
         if (item) {
-          const itemWeight = item.weight * quantityNum;
-          // Only show weight if it's significant (>= 0.1kg)
-          const weightDisplay = itemWeight >= 0.1 ? ` (${itemWeight.toFixed(1)}kg)` : '';
-          itemsList += `+ ${item.emoji} ${item.name} x${quantityNum.toLocaleString()}${weightDisplay}\n`;
+          const itemWeight = item.weight * quantity;
+          const weightDisplay = itemWeight >= 0.1 ? ` • ${itemWeight.toFixed(1)}kg` : '';
+          itemsList += `${item.emoji} **${item.name}** ×${quantity.toLocaleString()}${weightDisplay}\n`;
         }
       }
-      itemsList += '```';
     }
     
-    // Get user's max weight (can be upgraded to 500kg)
-    const userMaxWeight = inventory.maxWeight; // getInventory() always returns maxWeight
+    // Weight status
+    const weightPercentage = (currentWeight / maxWeight) * 100;
+    const weightColor = weightPercentage >= 90 ? 'red' : weightPercentage >= 70 ? 'amber' : 'green';
+    const weightBar = progressBar(currentWeight, maxWeight, 20);
     
-    // Weight progress bar
-    const weightPercentage = (currentWeight / userMaxWeight) * 100;
-    const filledBars = Math.floor(weightPercentage / 10);
-    const emptyBars = 10 - filledBars;
+    // Check for upgrade
+    const nextUpgrade = getNextUpgrade(targetUser.id);
+    let upgradeInfo = '';
     
-    let weightBar = '🟩'.repeat(filledBars) + '⬜'.repeat(emptyBars);
-    
-    if (weightPercentage >= 90) {
-      weightBar = '🟥'.repeat(filledBars) + '⬜'.repeat(emptyBars);
-    } else if (weightPercentage >= 70) {
-      weightBar = '🟨'.repeat(filledBars) + '⬜'.repeat(emptyBars);
+    if (nextUpgrade) {
+      upgradeInfo = `\n💡 **Next Upgrade:** ${nextUpgrade.capacity}kg for **$${nextUpgrade.price}** at the shop`;
+    } else {
+      upgradeInfo = '\n✨ **Maximum capacity reached!**';
     }
     
-    // Create currency summary
-    const saloonTokens = inventory.items['saloon_token'] || 0;
-    const silverCoins = inventory.items['silver'] || 0;
-    const currencyDisplay = `\`\`\`yaml\n🎫 Saloon Tokens: ${saloonTokens.toLocaleString()}\n🪙 Silver Coins: ${silverCoins.toLocaleString()}\n\`\`\``;
-    
-    const embed = new EmbedBuilder()
-      .setColor(weightPercentage >= 90 ? '#8B4513' : weightPercentage >= 70 ? '#D2691E' : '#DEB887')
-      .setTitle(t(interaction, 'inventory_title', { username: targetUser.username }))
-      .setDescription(t(interaction, 'inventory_desc'))
+    // Create embed
+    const embed = infoEmbed(
+      `🎒 ${targetUser.username}'s Backpack`,
+      `Manage your items, currency, and inventory space.`
+    )
       .addFields(
-        { name: t(interaction, 'inventory_currency'), value: currencyDisplay, inline: false },
-        { name: t(interaction, 'inventory_items'), value: itemsList, inline: false },
-        { 
-          name: t(interaction, 'inventory_weight'), 
-          value: `\`\`\`yaml\n${currentWeight.toFixed(2)}kg / ${userMaxWeight}kg\n\`\`\`\n${weightBar}`, 
-          inline: false 
+        {
+          name: '💰 Currency',
+          value: `${formatCurrency(saloonTokens, 'tokens')}\n${formatCurrency(silverCoins, 'silver')}`,
+          inline: true
         },
-        { name: t(interaction, 'inventory_items_count'), value: `\`${totalItems.toLocaleString()}\` items`, inline: true },
-        { name: t(interaction, 'inventory_different_items'), value: `\`${Object.keys(inventory.items).length}/50\``, inline: true }
+        {
+          name: '📊 Inventory Stats',
+          value: `**Items:** ${totalItems.toLocaleString()}\n**Types:** ${Object.keys(inventory.items).length}/50\n**Weight:** ${currentWeight.toFixed(1)}kg / ${maxWeight}kg`,
+          inline: true
+        },
+        {
+          name: '📦 Items in Backpack',
+          value: itemsList,
+          inline: false
+        },
+        {
+          name: '⚖️ Weight Capacity',
+          value: `${weightBar}\n${currentWeight.toFixed(1)}kg / ${maxWeight}kg (${weightPercentage.toFixed(0)}%)${upgradeInfo}`,
+          inline: false
+        }
       )
-      .setThumbnail(targetUser.displayAvatarURL({ size: 128 }))
-      .setFooter({ 
-        text: weightPercentage >= 90 
-          ? t(interaction, 'inventory_nearly_full')
-          : targetUser.id === interaction.user.id 
-            ? t(interaction, 'inventory_use_give')
-            : `${targetUser.username}'s saddlebag` 
-      })
-      .setTimestamp();
+      .setThumbnail(targetUser.displayAvatarURL({ size: 128 }));
     
-    if (weightPercentage >= 100) {
-      embed.addFields({
-        name: t(interaction, 'inventory_full_warning'),
-        value: '```diff\n' + t(interaction, 'inventory_full_msg') + '\n```',
-        inline: false
-      });
+    // Warning if nearly full
+    if (weightPercentage >= 90) {
+      embed.setFooter({ text: '⚠️ Your backpack is nearly full! Use /give to transfer items or upgrade your capacity.' });
+    } else if (weightPercentage >= 100) {
+      embed.setFooter({ text: '🚨 BACKPACK FULL! You cannot collect more items until you free up space.' });
+    } else {
+      embed.setFooter({ text: 'Use /give to transfer items to other players' });
     }
     
     await interaction.editReply({ embeds: [embed] });
