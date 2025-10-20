@@ -222,4 +222,4 @@ router.post('/guilds/:guildId/config', requireAuth as any, async (req: Request, 
     }
 });
 
-export = router;
+export default router;

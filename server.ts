@@ -3,6 +3,7 @@ import session from 'express-session';
 import path from 'path';
 import fs from 'fs';
 import Stripe from 'stripe';
+import dashboardRoutes from './routes/dashboard';
 
 const app = express();
 const PORT = parseInt(process.env.PORT || (process.env.REPL_SLUG ? '5000' : '8080'));
@@ -184,7 +185,6 @@ app.get('/dashboard', (req: Request, res: Response) => {
     res.sendFile(path.join(__dirname, 'dashboard.html'));
 });
 
-const dashboardRoutes = require('./routes/dashboard');
 app.use('/api', dashboardRoutes);
 
 app.get('/api/config', (req: Request, res: Response) => {
