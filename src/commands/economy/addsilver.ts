@@ -1,7 +1,7 @@
-import { SlashCommandBuilder, EmbedBuilder, ChatInputCommandInteraction } from 'discord.js';
+import { SlashCommandBuilder, EmbedBuilder, ChatInputCommandInteraction, MessageFlags } from 'discord.js';
 const { addItem } = require('../../utils/inventoryManager');
 
-const OWNER_ID = '339772388566892546';
+const OWNER_ID = process.env.OWNER_ID;
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -25,8 +25,9 @@ module.exports = {
     if (interaction.user.id !== OWNER_ID) {
       await interaction.reply({
         content: '❌ This command is only available to the bot owner!',
-        ephemeral: true
+        flags: [MessageFlags.Ephemeral]
       });
+      return;
     }
 
     const targetUser = interaction.options.getUser('user', true);
@@ -37,8 +38,9 @@ module.exports = {
     if (!result.success) {
       await interaction.reply({
         content: `❌ Failed to add coins: ${result.error}`,
-        ephemeral: true
+        flags: [MessageFlags.Ephemeral]
       });
+      return;
     }
 
     const embed = new EmbedBuilder()

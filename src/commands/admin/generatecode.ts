@@ -1,10 +1,10 @@
-import { SlashCommandBuilder, EmbedBuilder, ChatInputCommandInteraction } from 'discord.js';
+import { SlashCommandBuilder, EmbedBuilder, ChatInputCommandInteraction, MessageFlags } from 'discord.js';
 import * as fs from 'fs';
 import * as path from 'path';
 import { writeData } from '../../utils/database';
 
 const redemptionCodesPath = path.join(__dirname, '..', '..', '..', 'data', 'redemption-codes.json');
-const OWNER_ID = '339772388566892546';
+const OWNER_ID = process.env.OWNER_ID;
 
 interface RedemptionCode {
   productId: string;

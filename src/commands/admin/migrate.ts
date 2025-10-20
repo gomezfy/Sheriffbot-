@@ -1,9 +1,9 @@
-import { SlashCommandBuilder, EmbedBuilder, ChatInputCommandInteraction } from 'discord.js';
+import { SlashCommandBuilder, EmbedBuilder, ChatInputCommandInteraction, MessageFlags } from 'discord.js';
 import { addItem } from '../../utils/inventoryManager';
 import * as fs from 'fs';
 import * as path from 'path';
 
-const OWNER_ID = '339772388566892546';
+const OWNER_ID = process.env.OWNER_ID;
 const economyFile = path.join(__dirname, '..', '..', '..', 'data', 'economy.json');
 const backupFile = path.join(__dirname, '..', '..', '..', 'data', 'economy.backup.json');
 
@@ -16,7 +16,7 @@ module.exports = {
     if (interaction.user.id !== OWNER_ID) {
       await interaction.reply({ 
         content: '❌ This command is only available to the bot owner!', 
-        ephemeral: true 
+        flags: [MessageFlags.Ephemeral]
       });
       return;
     }

@@ -10,6 +10,16 @@ Sheriff Rex Bot is a feature-rich Discord bot with a Wild West theme. It include
 - Website: Removido (disponível em website.zip para hospedagem separada)
 
 ## Recent Changes
+**October 20, 2025** - Comandos de Owner Restritos + Correções de Bugs
+- **FIXED:** `/leaderboard` - Adicionado `return` statements faltando
+- **FIXED:** `/casino` - Corrigido `InteractionAlreadyReplied` error com `return` statements
+- **FIXED:** `/bankrob` - Corrigido permissão de timeout (verifica `ModerateMembers` antes)
+- **UPDATED:** Comandos de Owner agora usam `OWNER_ID` do environment (7 comandos)
+- **UPDATED:** Comandos Owner só aparecem para o dono do bot (.setDefaultMemberPermissions(0))
+- **UPDATED:** Substituído deprecated `ephemeral: true` por `flags: [MessageFlags.Ephemeral]`
+- **UPDATED:** Substituído deprecated `fetchReply: true` por `response.fetch()`
+- Comandos restritos: addgold, addsilver, addtokens, addbackpack, removegold, generatecode, migrate
+
 **October 20, 2025** - Preparação para Hospedagem Separada
 - **REMOVIDO:** Arquivos do website da raiz do projeto (index.html, shop.html, dashboard.html, etc)
 - **REMOVIDO:** Pasta routes/ e js/ (código do servidor web)
@@ -125,6 +135,7 @@ sheriff-bot/
 - `CLIENT_ID` - Discord application client ID
 - `DISCORD_CLIENT_SECRET` - OAuth secret for dashboard login
 - `SESSION_SECRET` - Secure session encryption key
+- `OWNER_ID` - Discord User ID do dono do bot (para comandos de owner)
 
 ### Optional Secrets (For Payment Processing)
 - `STRIPE_SECRET_KEY` - Stripe API secret key
