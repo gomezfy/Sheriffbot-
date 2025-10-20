@@ -17,8 +17,8 @@ Sheriff Rex Bot is a feature-rich Discord bot with a Wild West theme. It include
 - **ATUALIZADO:** src/index.ts - Removida inicialização do servidor web
 - **ATUALIZADO:** website.zip (21 KB) - Backup completo com correções ES6
 - **ATUALIZADO:** Workflow agora é apenas "Sheriff Bot" (sem website)
-- Bot pronto para hospedar independente (Discord apenas)
-- Website disponível em website.zip para hospedar na Discloud
+- Bot pronto para hospedar na **Vertra Cloud** (Discord apenas)
+- Website disponível em website.zip para hospedar separadamente na **Vertra Cloud**
 
 **October 20, 2025** - E-commerce Integration & Minimalist UI
 - **NEW:** `/redeem` command - Redeem purchase codes from website shop for backpack upgrades
@@ -163,7 +163,7 @@ This will generate compiled JavaScript in the `dist/` directory according to `ts
 The project is configured for VM deployment (always-on) since it's a stateful Discord bot that needs to maintain persistent connections.
 
 ## Web Dashboard (Separado)
-O website foi removido deste projeto e está disponível em `website.zip` para hospedar separadamente na Discloud.
+O website foi removido deste projeto e está disponível em `website.zip` para hospedar separadamente na **Vertra Cloud**.
 
 **Conteúdo do website.zip (21 KB):**
 

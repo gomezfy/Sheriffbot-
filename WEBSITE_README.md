@@ -1,6 +1,6 @@
-# 🌐 Sheriff Bot Website - Hospedagem Separada na Discloud
+# 🌐 Sheriff Bot Website - Hospedagem Separada na Vertra Cloud
 
-O website foi removido do projeto do bot para hospedagem **separada na Discloud**.
+O website foi removido do projeto do bot para hospedagem **separada na Vertra Cloud**.
 
 ## 📦 Conteúdo do website.zip (21 KB)
 
@@ -13,21 +13,46 @@ O website foi removido do projeto do bot para hospedagem **separada na Discloud*
 
 ---
 
-## 🚀 Como Hospedar na Discloud
+## 🚀 Como Hospedar na Vertra Cloud
 
-### 1. Extrair arquivos
+### 1. Preparar o projeto
+
+Extrair arquivos do zip:
 ```bash
 unzip website.zip
 ```
 
-### 2. Instalar dependências
-```bash
-npm install express express-session stripe axios typescript ts-node @types/express @types/express-session @types/node
+Criar `package.json`:
+```json
+{
+  "name": "sheriff-bot-website",
+  "version": "1.0.0",
+  "main": "server.ts",
+  "scripts": {
+    "start": "ts-node server.ts",
+    "build": "tsc",
+    "dev": "ts-node server.ts"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "express-session": "^1.17.3",
+    "stripe": "^14.0.0",
+    "axios": "^1.6.0",
+    "dotenv": "^16.3.1"
+  },
+  "devDependencies": {
+    "typescript": "^5.3.0",
+    "ts-node": "^10.9.0",
+    "@types/node": "^20.0.0",
+    "@types/express": "^4.17.0",
+    "@types/express-session": "^1.17.0"
+  }
+}
 ```
 
-### 3. Configurar variáveis de ambiente
+### 2. Configurar variáveis de ambiente
 
-Crie `.env`:
+Na **Vertra Cloud Dashboard**, adicione:
 ```env
 DISCORD_CLIENT_ID=1426734768111747284
 DISCORD_CLIENT_SECRET=seu_secret_aqui
@@ -39,22 +64,19 @@ STRIPE_PUBLISHABLE_KEY=pk_live_sua_chave
 SESSION_SECRET=chave_aleatoria_32_caracteres
 
 PORT=8080
+NODE_ENV=production
 ```
 
-### 4. Criar discloud.config
-```
-ID=seu_app_id
-TYPE=site
-MAIN=server.ts
-RAM=512
-AUTORESTART=true
-VERSION=latest
-```
+### 3. Deploy na Vertra Cloud
 
-### 5. Deploy
-```bash
-discloud upload
-```
+1. Acesse https://vertracloud.app
+2. Crie uma nova aplicação (tipo: Node.js/Website)
+3. Faça upload dos arquivos ou conecte via Git
+4. Configure as variáveis de ambiente
+5. Defina comando de start: `npm start` ou `ts-node server.ts`
+6. Clique em "Deploy"
+
+**Documentação:** https://coffelify.mintlify.app/introduction
 
 ---
 
@@ -81,9 +103,10 @@ Usuários compram no site e resgatam no Discord:
 ## 📝 Notas Importantes
 
 - Use chaves **LIVE** do Stripe para produção
-- Configure webhook: `https://seu-dominio.discloud.app/webhook`
+- Configure webhook: `https://seu-app.vertracloud.app/webhook`
 - Bot e website compartilham `data/redemption-codes.json`
-- Para produção, use PostgreSQL em vez de JSON
+- Para produção, considere usar PostgreSQL (Vertra Cloud oferece databases)
+- Vertra Cloud suporta PostgreSQL, MongoDB e Redis nativamente
 
 ---
 
