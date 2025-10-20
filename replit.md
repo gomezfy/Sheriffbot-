@@ -179,9 +179,9 @@ All data is stored in JSON files in the `src/data/` directory:
 - And more...
 
 ## Adding the Bot to Discord
-Use this authorization URL:
+Use this authorization URL (with Moderate Members permission):
 ```
-https://discord.com/api/oauth2/authorize?client_id=1426734768111747284&permissions=277025770496&scope=bot%20applications.commands
+https://discord.com/api/oauth2/authorize?client_id=1426734768111747284&permissions=1376537398272&scope=bot%20applications.commands
 ```
 
 ### Required Bot Permissions
@@ -191,6 +191,7 @@ https://discord.com/api/oauth2/authorize?client_id=1426734768111747284&permissio
 - Read Message History
 - Add Reactions
 - Use Slash Commands
+- **Moderate Members** (for timeout punishment in /bankrob)
 
 ### Required Gateway Intents
 - Server Members Intent
