@@ -10,6 +10,13 @@ Sheriff Rex Bot is a feature-rich Discord bot with a Wild West theme. It include
 - Website: Removido (disponível em website.zip para hospedagem separada)
 
 ## Recent Changes
+**October 20, 2025** - Leaderboard Visual com Canvas
+- **UPDATED:** `/leaderboard` - Agora gera imagem visual profissional com canvas
+- **DESIGN:** Lado esquerdo mostra rankings de até 10 usuários
+- **DESIGN:** Lado direito mostra fotos dos 3 primeiros mais ricos
+- **FEATURES:** Medalhas 🥇🥈🥉, avatares com bordas coloridas, gradientes elegantes
+- Suporta categorias: Saloon Tokens e Silver Coins
+
 **October 20, 2025** - Limpeza de Comandos Desnecessários
 - **REMOVED:** `/work` command - Removido (comando não estava sendo usado)
 - **REMOVED:** `/claim` command - Removido (substituído pelo sistema de bounty)
