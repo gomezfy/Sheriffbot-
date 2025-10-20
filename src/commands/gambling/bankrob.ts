@@ -252,17 +252,27 @@ module.exports = {
             // Apply punishment to captured person (30 min jail)
             applyPunishment(captured.id, 'Captured during bank robbery');
             
+            // Apply Discord timeout (30 minutes)
+            try {
+              if (interaction.guild) {
+                const capturedMember = await interaction.guild.members.fetch(captured.id);
+                await capturedMember.timeout(30 * 60 * 1000, 'Captured by Sheriff during bank robbery');
+              }
+            } catch (error) {
+              console.error('Error applying timeout:', error);
+            }
+            
             // Create automatic wanted poster for escapee
             const wantedResult = await createAutoWanted(interaction.client, interaction.guildId, escapee, silverReward);
 
             const partialEmbed = new EmbedBuilder()
               .setColor('#FFA500')
               .setTitle('⚖️ PARTIAL ESCAPE!')
-              .setDescription(`**${escapee.username}** managed to escape, but **${captured.username}** was captured by the Sheriff!\n\n🚨 The escapee is now WANTED!`)
+              .setDescription(`**${escapee.username}** managed to escape, but **${captured.username}** was captured by the Sheriff!\n\n🚨 The escapee is now WANTED!\n🔇 **${captured.username} cannot send messages for 30 minutes!**`)
               .addFields(
                 { name: '💰 Total Haul', value: `${silverReward} 🪙 + ${goldBars} 🥇`, inline: false },
                 { name: '🏃 Escaped', value: `${escapee.username}\n${loot.length > 0 ? loot.join(' + ') : '(inventory full)'}`, inline: true },
-                { name: '🔒 Captured', value: `${captured.username}\n**30 min jail time**`, inline: true },
+                { name: '🔒 Captured', value: `${captured.username}\n**30 min timeout**`, inline: true },
                 { name: '🎯 Bounty Placed', value: `${wantedResult.success ? `🪙 ${wantedResult.amount.toLocaleString()} Silver Coins` : 'System error'}`, inline: false }
               )
               .setFooter({ text: `${escapee.username} is now wanted! Use /claim to capture them!` })
@@ -277,12 +287,24 @@ module.exports = {
             applyPunishment(userId, 'Captured during bank robbery');
             applyPunishment(i.user.id, 'Captured during bank robbery');
 
+            // Apply Discord timeout to both (30 minutes)
+            try {
+              if (interaction.guild) {
+                const initiatorMember = await interaction.guild.members.fetch(userId);
+                const partnerMember = await interaction.guild.members.fetch(i.user.id);
+                await initiatorMember.timeout(30 * 60 * 1000, 'Captured by Sheriff during bank robbery');
+                await partnerMember.timeout(30 * 60 * 1000, 'Captured by Sheriff during bank robbery');
+              }
+            } catch (error) {
+              console.error('Error applying timeout:', error);
+            }
+
             const failEmbed = new EmbedBuilder()
               .setColor('#FF0000')
               .setTitle('🚨 BOTH CAPTURED!')
-              .setDescription(`**${interaction.user.username}** and **${i.user.username}** were both caught by the Sheriff!\n\nNo loot was stolen, and both outlaws are now in jail!`)
+              .setDescription(`**${interaction.user.username}** and **${i.user.username}** were both caught by the Sheriff!\n\nNo loot was stolen, and both outlaws are now in jail!\n\n🔇 **You cannot send messages for 30 minutes!**`)
               .addFields(
-                { name: '🔒 Punishment', value: '**30 minutes in jail**', inline: true },
+                { name: '🔒 Punishment', value: '**30 minutes timeout**', inline: true },
                 { name: '💸 Lost', value: 'All potential loot', inline: true }
               )
               .setFooter({ text: 'Crime doesn\'t pay when the Sheriff is on duty!' })
