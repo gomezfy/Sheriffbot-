@@ -10,6 +10,12 @@ Sheriff Rex Bot is a feature-rich Discord bot with a Wild West theme. It include
 - Website: Removido (disponível em website.zip para hospedagem separada)
 
 ## Recent Changes
+**October 20, 2025** - Sistema de Captura de Outlaws Implementado
+- **NEW:** `/capture` command - Capture wanted outlaws and claim bounty rewards!
+- **FEATURES:** 50% success rate, 30-minute cooldown, complete bounty system integration
+- **REWARDS:** Automatically receive silver coins from bounty pool when successful
+- Sistema de bounty agora está completo: colocar recompensa → visualizar → capturar
+
 **October 20, 2025** - Comandos de Owner Restritos + Correções de Bugs
 - **FIXED:** `/leaderboard` - Adicionado `return` statements faltando
 - **FIXED:** `/casino` - Corrigido `InteractionAlreadyReplied` error com `return` statements
@@ -79,7 +85,7 @@ sheriff-bot/
 ├── src/                    # Bot source code
 │   ├── commands/          # Slash commands (35 total)
 │   │   ├── admin/         # Server management (8 commands)
-│   │   ├── bounty/        # Bounty system (3 commands)
+│   │   ├── bounty/        # Bounty system (4 commands - includes /capture)
 │   │   ├── economy/       # Economy system (13 commands - includes /redeem)
 │   │   ├── gambling/      # Casino games (5 commands)
 │   │   ├── mining/        # Mining system (1 command)
@@ -100,7 +106,7 @@ sheriff-bot/
 ```
 
 ### Key Features
-- **35 Commands** across 6 categories
+- **36 Commands** across 6 categories
 - **Minimalist Embed System** with neutral color palette (green/red/amber/blue/gray/gold)
 - **E-commerce Shop** with 4 backpack upgrade tiers ($2.99-$9.99)
 - **Stripe Payment Processing** for real money purchases
