@@ -1,4 +1,4 @@
-import { SlashCommandBuilder, EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, AttachmentBuilder, ChatInputCommandInteraction, Message } from 'discord.js';
+import { SlashCommandBuilder, EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, AttachmentBuilder, ChatInputCommandInteraction, Message, MessageFlags } from 'discord.js';
 const { getUserSilver, addUserSilver } = require('../../utils/dataManager');
 const { addItem } = require('../../utils/inventoryManager');
 const { applyPunishment, isPunished, formatTime, getRemainingTime } = require('../../utils/punishmentManager');
@@ -21,8 +21,9 @@ module.exports = {
       const remaining = getRemainingTime(userId);
       await interaction.reply({
         content: `🔒 **You're in jail!**\n\n${punishment.reason}\n\n⏰ Time remaining: **${formatTime(remaining)}**\n\nYou cannot commit crimes while serving your sentence!`,
-        ephemeral: true
+        flags: [MessageFlags.Ephemeral]
       });
+      return;
     }
 
     const now = Date.now();
@@ -35,16 +36,18 @@ module.exports = {
         const timeLeft = Math.ceil((expirationTime - now) / 1000 / 60);
         await interaction.reply({
           content: `⏰ The sheriff's watching you closely! Wait ${timeLeft} more minutes before attempting another robbery.`,
-          ephemeral: true
+          flags: [MessageFlags.Ephemeral]
         });
+        return;
       }
     }
 
     if (activeRobberies.has(userId)) {
       await interaction.reply({
         content: '❌ You already have an active robbery! Wait for it to finish or expire.',
-        ephemeral: true
+        flags: [MessageFlags.Ephemeral]
       });
+      return;
     }
 
     const joinButton = new ButtonBuilder()
@@ -70,7 +73,8 @@ module.exports = {
       .setFooter({ text: 'Click the button to join!' })
       .setTimestamp();
 
-    const message = await interaction.reply({ embeds: [embed], components: [row], files: [bankRobberyImage], fetchReply: true });
+    const response = await interaction.reply({ embeds: [embed], components: [row], files: [bankRobberyImage] });
+    const message = await response.fetch();
 
     activeRobberies.set(userId, {
       initiator: interaction.user,
@@ -87,7 +91,7 @@ module.exports = {
 
     collector.on('collect', async i => {
       if (i.user.id === userId) {
-        await i.reply({ content: '❌ You can\'t join your own robbery!', ephemeral: true });
+        await i.reply({ content: '❌ You can\'t join your own robbery!', flags: [MessageFlags.Ephemeral] });
         return;
       }
 
@@ -97,14 +101,14 @@ module.exports = {
         const remaining = getRemainingTime(i.user.id);
         await i.reply({
           content: `🔒 You're in jail and cannot join robberies!\n\n⏰ Time remaining: **${formatTime(remaining)}**`,
-          ephemeral: true
+          flags: [MessageFlags.Ephemeral]
         });
         return;
       }
 
       const robbery = activeRobberies.get(userId);
       if (!robbery || robbery.started) {
-        await i.reply({ content: '❌ This robbery has already started or ended!', ephemeral: true });
+        await i.reply({ content: '❌ This robbery has already started or ended!', flags: [MessageFlags.Ephemeral] });
         return;
       }
 
@@ -252,14 +256,19 @@ module.exports = {
             // Apply punishment to captured person (30 min jail)
             applyPunishment(captured.id, 'Captured during bank robbery');
             
-            // Apply Discord timeout (30 minutes)
+            // Apply Discord timeout (30 minutes) - only if bot has permissions
             try {
               if (interaction.guild) {
                 const capturedMember = await interaction.guild.members.fetch(captured.id);
-                await capturedMember.timeout(30 * 60 * 1000, 'Captured by Sheriff during bank robbery');
+                const botMember = await interaction.guild.members.fetchMe();
+                
+                // Check if bot has MODERATE_MEMBERS permission
+                if (botMember.permissions.has('ModerateMembers')) {
+                  await capturedMember.timeout(30 * 60 * 1000, 'Captured by Sheriff during bank robbery');
+                }
               }
             } catch (error) {
-              console.error('Error applying timeout:', error);
+              // Silently fail - timeout is optional bonus feature
             }
             
             // Create automatic wanted poster ONLY for ESCAPEE
@@ -287,16 +296,21 @@ module.exports = {
             applyPunishment(userId, 'Captured during bank robbery');
             applyPunishment(i.user.id, 'Captured during bank robbery');
 
-            // Apply Discord timeout to both (30 minutes)
+            // Apply Discord timeout to both (30 minutes) - only if bot has permissions
             try {
               if (interaction.guild) {
                 const initiatorMember = await interaction.guild.members.fetch(userId);
                 const partnerMember = await interaction.guild.members.fetch(i.user.id);
-                await initiatorMember.timeout(30 * 60 * 1000, 'Captured by Sheriff during bank robbery');
-                await partnerMember.timeout(30 * 60 * 1000, 'Captured by Sheriff during bank robbery');
+                const botMember = await interaction.guild.members.fetchMe();
+                
+                // Check if bot has MODERATE_MEMBERS permission
+                if (botMember.permissions.has('ModerateMembers')) {
+                  await initiatorMember.timeout(30 * 60 * 1000, 'Captured by Sheriff during bank robbery');
+                  await partnerMember.timeout(30 * 60 * 1000, 'Captured by Sheriff during bank robbery');
+                }
               }
             } catch (error) {
-              console.error('Error applying timeout:', error);
+              // Silently fail - timeout is optional bonus feature
             }
 
             const failEmbed = new EmbedBuilder()
