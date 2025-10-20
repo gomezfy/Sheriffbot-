@@ -38,6 +38,7 @@ Sheriff Rex Bot is a feature-rich Discord bot with a Wild West theme. It include
 - Added utility functions: `formatCurrency()`, `formatDuration()`, `progressBar()`
 - Added Nunito font to all profile cards and wanted posters
 - Added Discord timeout punishment to `/bankrob` (30 minutes when captured)
+- **UPDATED:** `/bankrob` - Automatic wanted poster creation for escapees only (not for captured outlaws)
 
 **October 19, 2025** - TypeScript Migration & Replit Setup
 - Migrated entire codebase from JavaScript to TypeScript (56 files)

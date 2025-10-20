@@ -262,7 +262,7 @@ module.exports = {
               console.error('Error applying timeout:', error);
             }
             
-            // Create automatic wanted poster for escapee
+            // Create automatic wanted poster ONLY for ESCAPEE
             const wantedResult = await createAutoWanted(interaction.client, interaction.guildId, escapee, silverReward);
 
             const partialEmbed = new EmbedBuilder()
