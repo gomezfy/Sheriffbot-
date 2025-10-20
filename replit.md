@@ -7,7 +7,7 @@ Sheriff Rex Bot is a feature-rich Discord bot with a Wild West theme. It include
 - Bot Name: Sheriff Rex#5281
 - Connected to: 3 Discord servers
 - Active Users: 1
-- Website: Running on port 5000
+- Website: Archived in `website.zip` (see `WEBSITE_README.md` to restore)
 
 ## Recent Changes
 **October 20, 2025** - Minimalist Modernization & Website Separation
@@ -38,32 +38,31 @@ Sheriff Rex Bot is a feature-rich Discord bot with a Wild West theme. It include
 ```
 sheriff-bot/
 ├── src/                    # Bot source code
-│   ├── commands/          # Slash commands (33 total)
+│   ├── commands/          # Slash commands (34 total)
 │   │   ├── admin/         # Server management (8 commands)
 │   │   ├── bounty/        # Bounty system (3 commands)
-│   │   ├── economy/       # Economy system (10 commands)
+│   │   ├── economy/       # Economy system (12 commands)
 │   │   ├── gambling/      # Casino games (5 commands)
 │   │   ├── mining/        # Mining system (1 command)
 │   │   ├── profile/       # User profiles (3 commands)
-│   │   └── utility/       # Helper commands (3 commands)
+│   │   └── utility/       # Helper commands (2 commands)
 │   ├── data/              # JSON database files
 │   ├── events/            # Discord event handlers (TypeScript)
 │   ├── utils/             # Utility modules (TypeScript)
+│   │   ├── embeds.ts      # 🆕 Minimalist embed system
+│   │   └── ...            # Other utility modules
 │   ├── deploy-commands.ts # Register slash commands
 │   └── index.ts           # Main bot entry point
-├── website/               # Web frontend
-│   ├── assets/            # Images and resources
-│   ├── css/               # Stylesheets
-│   ├── js/                # Client-side JavaScript
-│   ├── routes/            # API routes (TypeScript)
-│   ├── *.html             # Web pages
-│   └── server.ts          # Express web server (TypeScript)
-├── assets/                # Bot assets (avatar, images)
+├── assets/                # Bot assets (avatar, images, fonts)
+│   └── fonts/             # Nunito font family
+├── website.zip            # 🆕 Archived web frontend (7.7MB)
+├── WEBSITE_README.md      # 🆕 Website restore instructions
 └── tsconfig.json          # TypeScript configuration
 ```
 
 ### Key Features
-- **33 Commands** across 6 categories
+- **34 Commands** across 6 categories
+- **Minimalist Embed System** with neutral color palette (green/red/amber/blue/gray/gold)
 - **47 Custom Emojis** for immersive Western theme
 - **3 Languages** supported (PT-BR, EN-US, ES-ES)
 - **Dual Economy** system (Saloon Tokens + Silver Coins)
@@ -73,9 +72,9 @@ sheriff-bot/
 - **Mining System** (Solo + Co-op modes)
 - **Gambling Games** (Bank Robbery, Casino, Dice, Poker)
 - **Bounty System** with wanted posters
-- **Visual Profile Cards** using Canvas
-- **Web Dashboard** with Discord OAuth authentication
-- **E-commerce Integration** via Stripe (redemption codes)
+- **Visual Profile Cards** using Canvas with Nunito font
+- **Web Dashboard** (archived - see website.zip)
+- **E-commerce Integration** via Stripe (archived)
 
 ### Technology Stack
 - **Language:** TypeScript (compiled with ts-node)
@@ -113,9 +112,7 @@ The project automatically runs via the configured workflow:
 ts-node src/index.ts
 ```
 
-This single command starts both:
-1. Discord bot (connects to Discord API)
-2. Web server (listens on port 5000)
+This command starts the Discord bot standalone (no web server)
 
 ### Deploying Slash Commands
 If you add new commands or modify existing ones:
@@ -133,17 +130,13 @@ This will generate compiled JavaScript in the `dist/` directory according to `ts
 ### Production Deployment
 The project is configured for VM deployment (always-on) since it's a stateful Discord bot that needs to maintain persistent connections.
 
-## Web Dashboard
-- **Homepage:** `/` - Landing page with bot information
-- **Shop:** `/shop` - Purchase in-game currency with Stripe
-- **Dashboard:** `/dashboard` - User dashboard (requires Discord OAuth)
-- **Success/Cancel:** `/success`, `/cancel` - Payment result pages
+## Web Dashboard (Archived)
+The web dashboard has been archived to `website.zip`. To restore it, see `WEBSITE_README.md`.
 
-### Discord OAuth Flow
-1. User clicks "Login with Discord" on dashboard
-2. Redirects to Discord OAuth authorization
-3. Discord redirects back to `/api/auth/callback`
-4. Session created, user can view their stats
+**Previous features (when active):**
+- Homepage, Shop, Dashboard with Discord OAuth
+- Stripe payment integration for in-game currency
+- User statistics and leaderboards
 
 ## Data Storage
 All data is stored in JSON files in the `src/data/` directory:
@@ -185,13 +178,13 @@ None specified yet.
 2. Verify `DISCORD_TOKEN` is valid
 3. Check Discord Developer Portal for intent settings
 4. Review logs for connection errors
+5. Run `ts-node src/deploy-commands.ts` to re-register commands
 
-### Website Not Loading
-1. Verify workflow is running on port 5000
-2. Check browser console for JavaScript errors
-3. Review server logs for Express errors
+### Website Not Working
+- The website is archived in `website.zip`
+- See `WEBSITE_README.md` for restoration instructions
 
-### Payment Issues
+### Payment Issues (if website restored)
 1. Ensure `STRIPE_SECRET_KEY` is configured
 2. Verify Stripe account is in live mode (for production)
 3. Check webhook configuration matches Stripe dashboard

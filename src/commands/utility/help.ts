@@ -1,14 +1,17 @@
-import { SlashCommandBuilder, EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, ChatInputCommandInteraction } from 'discord.js';
+import { SlashCommandBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, ChatInputCommandInteraction } from 'discord.js';
+import { infoEmbed, field } from '../../utils/embeds';
 
 export = {
   data: new SlashCommandBuilder()
     .setName('help')
     .setDescription('Shows all available commands and their descriptions'),
   async execute(interaction: ChatInputCommandInteraction): Promise<void> {
-    const embed = new EmbedBuilder()
-      .setColor(0xFFD700)
-      .setTitle('🤠 SHERIFF REX - COMMAND GUIDE')
-      .setDescription('**Welcome to the Wild West!** Here\'s everything you need to survive on the frontier.\n\n**💰 ECONOMY SYSTEM**\n🪙 **Silver Coins** - Main currency for trading\n🥇 **Gold Bars** - Valuable items (1 bar = 700 Silver)\n💼 **Inventory** - Max weight 100kg (upgrade with backpacks)')
+    const embed = infoEmbed(
+      '🤠 Sheriff Rex - Command Guide',
+      '**Welcome to the Wild West!** Here\'s everything you need to survive on the frontier.\n\n**💰 ECONOMY SYSTEM**\n🪙 **Silver Coins** - Main currency\n🥇 **Gold Bars** - Valuable items (1 bar = 700 Silver)\n💼 **Inventory** - Max weight 100kg',
+      '🌵 Sheriff Rex Bot • Use commands wisely, partner!'
+    )
+      .setThumbnail('https://cdn.discordapp.com/avatars/1426734768111747284/77c49c0e33e64e32cc5bc42f9e6cfe82.png')
       .addFields(
         {
           name: '💰 Economy & Trading',
@@ -80,10 +83,7 @@ export = {
                  '```',
           inline: false
         }
-      )
-      .setFooter({ text: '🌵 Sheriff Rex Bot • Use commands wisely, partner!' })
-      .setTimestamp()
-      .setThumbnail('https://cdn.discordapp.com/avatars/1426734768111747284/77c49c0e33e64e32cc5bc42f9e6cfe82.png');
+      );
 
     const buttons = new ActionRowBuilder<ButtonBuilder>()
       .addComponents(
