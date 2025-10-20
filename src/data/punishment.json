@@ -1,1 +1,14 @@
-{}
+{
+  "339772388566892546": {
+    "reason": "Captured during bank robbery",
+    "appliedAt": 1760933205084,
+    "expiresAt": 1760935005084,
+    "duration": 1800000
+  },
+  "1082867940501749760": {
+    "reason": "Captured during bank robbery",
+    "appliedAt": 1760933205084,
+    "expiresAt": 1760935005084,
+    "duration": 1800000
+  }
+}
