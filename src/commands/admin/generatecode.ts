@@ -13,7 +13,7 @@ interface RedemptionCode {
   coins: number;
   vip: boolean;
   background: boolean;
-  backpack?: boolean;
+  backpack?: number | boolean;
   createdAt: number;
   createdBy: string;
   redeemed: boolean;
@@ -25,7 +25,7 @@ interface Product {
   coins: number;
   vip: boolean;
   background: boolean;
-  backpack?: boolean;
+  backpack?: number | boolean;
 }
 
 function loadRedemptionCodes(): Record<string, RedemptionCode> {
@@ -62,7 +62,10 @@ module.exports = {
           { name: 'Popular Pack ($4.99)', value: 'popular' },
           { name: 'Gold Pack ($9.99)', value: 'gold' },
           { name: 'Ultimate Pack ($19.99)', value: 'ultimate' },
-          { name: 'Backpack Upgrade ($9.99)', value: 'backpack' }
+          { name: 'Small Backpack 200kg ($2.99)', value: 'backpack_200' },
+          { name: 'Medium Backpack 300kg ($4.99)', value: 'backpack_300' },
+          { name: 'Large Backpack 400kg ($6.99)', value: 'backpack_400' },
+          { name: 'Ultimate Backpack 500kg ($9.99)', value: 'backpack_500' }
         ))
     .setDefaultMemberPermissions(0),
   async execute(interaction: ChatInputCommandInteraction): Promise<void> {
@@ -108,13 +111,37 @@ module.exports = {
           vip: true,
           background: true
         },
-        backpack: {
-          name: 'Backpack Upgrade',
+        backpack_200: {
+          name: 'Small Backpack',
           tokens: 0,
           coins: 0,
           vip: false,
           background: false,
-          backpack: true
+          backpack: 200
+        },
+        backpack_300: {
+          name: 'Medium Backpack',
+          tokens: 0,
+          coins: 0,
+          vip: false,
+          background: false,
+          backpack: 300
+        },
+        backpack_400: {
+          name: 'Large Backpack',
+          tokens: 0,
+          coins: 0,
+          vip: false,
+          background: false,
+          backpack: 400
+        },
+        backpack_500: {
+          name: 'Ultimate Backpack',
+          tokens: 0,
+          coins: 0,
+          vip: false,
+          background: false,
+          backpack: 500
         }
       };
 
@@ -160,7 +187,8 @@ module.exports = {
       }
 
       if (product.backpack) {
-        embed.addFields({ name: '🎒 Backpack Upgrade', value: '100kg → 500kg', inline: true });
+        const capacity = typeof product.backpack === 'number' ? product.backpack : 500;
+        embed.addFields({ name: '🎒 Backpack Upgrade', value: `Capacity: ${capacity}kg`, inline: true });
       }
 
       await interaction.editReply({ embeds: [embed] });

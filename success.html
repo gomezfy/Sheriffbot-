@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment Successful! 🎉</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
+</head>
+<body>
+    <section class="success-page">
+        <div class="container">
+            <div class="success-content">
+                <div class="success-icon">✅</div>
+                <h1 class="success-title">PAYMENT SUCCESSFUL!</h1>
+                <p class="success-subtitle">Thank you for your purchase, partner! 🤠</p>
+                
+                <div class="redemption-code-box">
+                    <h3>Your Redemption Code:</h3>
+                    <div class="code-display" id="redemptionCode">
+                        Loading...
+                    </div>
+                    <button class="btn btn-secondary copy-button" id="copyButton">
+                        <span>📋</span> Copy Code
+                    </button>
+                </div>
+
+                <div class="instructions">
+                    <h3>🎯 How to Redeem:</h3>
+                    <ol>
+                        <li>Copy the redemption code above</li>
+                        <li>Open Discord and go to any server with Sheriff Bot</li>
+                        <li>Use the command: <code>/redeem code:[paste your code]</code></li>
+                        <li>Your tokens and coins will be added instantly!</li>
+                    </ol>
+                    <p style="text-align: center; margin-top: 1.5rem; color: var(--accent-gold);">
+                        <strong>Example:</strong> <code>/redeem code:SHERIFF-GOLD-ABC123-XYZ789</code>
+                    </p>
+                </div>
+
+                <div class="order-details" id="orderDetails">
+                    <h3>📦 Order Details:</h3>
+                    <p id="orderInfo">Verifying payment...</p>
+                </div>
+
+                <div class="action-buttons">
+                    <a href="shop.html" class="btn btn-primary">
+                        <span>🛒</span> Buy More
+                    </a>
+                    <a href="index.html" class="btn btn-secondary">
+                        <span>🏠</span> Back to Home
+                    </a>
+                </div>
+
+                <div class="support-note">
+                    <p>⚠️ <strong>Important:</strong> Save this code! You won't be able to retrieve it again.</p>
+                    <p>Need help? Contact support in our <a href="https://discord.gg/your-server" target="_blank">Discord server</a></p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        // Get parameters from URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const sessionId = urlParams.get('session_id');
+        const code = urlParams.get('code');
+
+        // Display redemption code
+        if (code) {
+            document.getElementById('redemptionCode').textContent = code;
+        }
+
+        // Verify payment and show details
+        if (sessionId) {
+            fetch(`/api/verify-session/${sessionId}`)
+                .then(res => res.json())
+                .then(data => {
+                    const orderInfo = document.getElementById('orderInfo');
+                    if (data.status === 'paid') {
+                        orderInfo.innerHTML = `
+                            <p><strong>Status:</strong> <span style="color: #4CAF50;">✅ Paid</span></p>
+                            <p><strong>Email:</strong> ${data.customerEmail}</p>
+                            <p><strong>Tokens:</strong> ${data.metadata?.tokens || 'N/A'} Saloon Tokens</p>
+                            <p><strong>Coins:</strong> ${data.metadata?.coins || 'N/A'} Silver Coins</p>
+                            ${data.metadata?.vip === 'true' ? '<p><strong>Bonus:</strong> 🌟 VIP Badge</p>' : ''}
+                            ${data.metadata?.background === 'true' ? '<p><strong>Bonus:</strong> 🎨 Exclusive Background</p>' : ''}
+                        `;
+                    }
+                })
+                .catch(error => {
+                    console.error('Verification error:', error);
+                    document.getElementById('orderInfo').textContent = 'Could not verify payment details.';
+                });
+        }
+
+        // Copy code to clipboard
+        document.getElementById('copyButton').addEventListener('click', () => {
+            const code = document.getElementById('redemptionCode').textContent;
+            navigator.clipboard.writeText(code).then(() => {
+                const button = document.getElementById('copyButton');
+                const originalHTML = button.innerHTML;
+                button.innerHTML = '<span>✅</span> Copied!';
+                setTimeout(() => {
+                    button.innerHTML = originalHTML;
+                }, 2000);
+            }).catch(err => {
+                alert('Failed to copy code. Please copy it manually.');
+            });
+        });
+    </script>
+</body>
+</html>
