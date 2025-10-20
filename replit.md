@@ -3,13 +3,23 @@
 ## Overview
 Sheriff Rex Bot is a feature-rich Discord bot with a Wild West theme. It includes a complete economy system, gambling games, mining mechanics, bounty hunting, and an integrated web dashboard with e-commerce functionality powered by Stripe.
 
-**Current Status:** Fully functional and running on Replit
+**Current Status:** Bot pronto para hospedagem independente
 - Bot Name: Sheriff Rex#5281
 - Connected to: 3 Discord servers
 - Active Users: 1
-- Website: **LIVE** on port 5000 with Stripe integration
+- Website: Removido (disponível em website.zip para hospedagem separada)
 
 ## Recent Changes
+**October 20, 2025** - Preparação para Hospedagem Separada
+- **REMOVIDO:** Arquivos do website da raiz do projeto (index.html, shop.html, dashboard.html, etc)
+- **REMOVIDO:** Pasta routes/ e js/ (código do servidor web)
+- **REMOVIDO:** server.ts da raiz
+- **ATUALIZADO:** src/index.ts - Removida inicialização do servidor web
+- **ATUALIZADO:** website.zip (21 KB) - Backup completo com correções ES6
+- **ATUALIZADO:** Workflow agora é apenas "Sheriff Bot" (sem website)
+- Bot pronto para hospedar independente (Discord apenas)
+- Website disponível em website.zip para hospedar na Discloud
+
 **October 20, 2025** - E-commerce Integration & Minimalist UI
 - **NEW:** `/redeem` command - Redeem purchase codes from website shop for backpack upgrades
 - **NEW:** E-commerce shop with 4 backpack upgrade tiers (200kg → 500kg, $2.99-$9.99)
@@ -134,7 +144,7 @@ The project automatically runs via the configured workflow:
 ts-node src/index.ts
 ```
 
-This command starts both the Discord bot AND the website server on port 5000
+This command starts ONLY the Discord bot (website removed for separate hosting)
 
 ### Deploying Slash Commands
 If you add new commands or modify existing ones:
@@ -152,20 +162,25 @@ This will generate compiled JavaScript in the `dist/` directory according to `ts
 ### Production Deployment
 The project is configured for VM deployment (always-on) since it's a stateful Discord bot that needs to maintain persistent connections.
 
-## Web Dashboard (LIVE)
-The web dashboard is running on port 5000 and includes:
+## Web Dashboard (Separado)
+O website foi removido deste projeto e está disponível em `website.zip` para hospedar separadamente na Discloud.
 
-**Active Features:**
-- Homepage with bot information and "Add to Discord" button
-- **Shop** - Purchase backpack upgrades with Stripe checkout
-  - Small Backpack (200kg) - $2.99
-  - Medium Backpack (300kg) - $4.99
-  - Large Backpack (400kg) - $6.99
-  - Ultimate Backpack (500kg) - $9.99
-- Dashboard with Discord OAuth (login required)
-- User statistics and leaderboards
-- Redemption code generation on purchase
-- E-commerce tracking in `data/redemption-codes.json`
+**Conteúdo do website.zip (21 KB):**
+
+**Arquivos incluídos:**
+- `server.ts` (10.4 KB) - Servidor Express com Stripe
+- `routes/dashboard.ts` (7.5 KB) - API do dashboard
+- `index.html` (35 KB) - Homepage
+- `shop.html` (14 KB) - Loja com 4 upgrades ($2.99-$9.99)
+- `dashboard.html` (15 KB) - Dashboard com Discord OAuth
+- `success.html` / `cancel.html` - Páginas de pagamento
+
+**Features:**
+- Sistema de pagamento Stripe completo
+- Discord OAuth para login
+- 4 produtos de upgrade de mochila
+- Geração automática de códigos de resgate
+- Dashboard com estatísticas e configurações
 
 ## Data Storage
 All data is stored in JSON files in the `src/data/` directory:

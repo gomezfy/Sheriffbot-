@@ -199,12 +199,7 @@ console.log('🔐 Token found, attempting login...');
 client.login(token)
   .then(() => {
     console.log('✅ Login successful!');
-    
-    console.log('\n🌐 Starting website server...');
-    require('../server');
-    console.log('✅ Website started successfully!');
-    
-    console.log('📍 Bot + Website running!\n');
+    console.log('🤠 Sheriff Bot is ready!\n');
   })
   .catch((error: Error) => {
     console.error('❌ LOGIN ERROR:');

@@ -16,19 +16,18 @@ author = "agent"
 
 [[workflows.workflow.tasks]]
 task = "workflow.run"
-args = "Sheriff Bot + Website"
+args = "Sheriff Bot"
 
 [[workflows.workflow]]
-name = "Sheriff Bot + Website"
+name = "Sheriff Bot"
 author = "agent"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
 args = "ts-node src/index.ts"
-waitForPort = 5000
 
 [workflows.workflow.metadata]
-outputType = "webview"
+outputType = "console"
 
 [[ports]]
 localPort = 5000
