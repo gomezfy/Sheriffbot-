@@ -29,6 +29,7 @@ module.exports = {
         await interaction.editReply({
           content: '❌ No users found on the XP leaderboard!'
         });
+        return;
       }
 
       let leaderboardText = '';
@@ -58,6 +59,7 @@ module.exports = {
       await interaction.editReply({
         content: `❌ No users found on the ${category} leaderboard!`
       });
+      return;
     }
 
     const emoji = category === 'tokens' ? '🎫' : '🪙';
