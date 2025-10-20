@@ -16,10 +16,12 @@ Sheriff Rex Bot is a feature-rich Discord bot with a Wild West theme. It include
 - **NEW:** Website restored and running on port 5000 with Stripe payment integration
 - **UPDATED:** `/inventory` command - Minimalist design with clean embeds and upgrade suggestions
 - **UPDATED:** `/work` command - Minimalist design, removed broken XP system, added proper cooldown handling
+- **UPDATED:** `/wanted` command - Fixed import error, minimalist design with proper embed system
 - **UPDATED:** `inventoryManager.ts` - Simplified `getNextUpgrade()` to show website pricing
 - **UPDATED:** `generatecode.ts` - Now supports 4 backpack tiers (backpack_200, backpack_300, backpack_400, backpack_500)
 - **FIXED:** Critical bug in `/work` - removed non-functional addUserXP, fixed missing return in cooldown
-- Implemented minimalist embed system in `/inventory` and `/work` (green/amber/blue embeds)
+- **FIXED:** Critical bug in `/wanted` - wrong function name (createWantedPoster → generateWantedPoster)
+- Implemented minimalist embed system in `/inventory`, `/work`, and `/wanted` (green/amber/blue/red embeds)
 - Website shows next available upgrade with pricing information
 - Total Commands: 35 (added `/redeem`)
 
