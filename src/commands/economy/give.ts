@@ -1,10 +1,11 @@
-import { SlashCommandBuilder, EmbedBuilder, ChatInputCommandInteraction } from 'discord.js';
-const { transferItem } = require('../../utils/inventoryManager');
+import { SlashCommandBuilder, ChatInputCommandInteraction } from 'discord.js';
+import { successEmbed, errorEmbed, warningEmbed, formatCurrency } from '../../utils/embeds';
+const { transferItem, ITEMS } = require('../../utils/inventoryManager');
 
 module.exports = {
   data: new SlashCommandBuilder()
     .setName('give')
-    .setDescription('Give items or currency to another user')
+    .setDescription('🎁 Transfer items or currency to another user')
     .addUserOption(option =>
       option
         .setName('user')
@@ -19,10 +20,7 @@ module.exports = {
         .addChoices(
           { name: '🎫 Saloon Tokens', value: 'saloon_token' },
           { name: '🪙 Silver Coins', value: 'silver' },
-          { name: '🥇 Gold Bar', value: 'gold' },
-          { name: '🍺 Whiskey Bottle', value: 'whiskey' },
-          { name: '🎰 Lucky Charm', value: 'lucky_charm' },
-          { name: '🗝️ Skeleton Key', value: 'skeleton_key' }
+          { name: '🥇 Gold Bar', value: 'gold' }
         )
     )
     .addIntegerOption(option =>
@@ -37,65 +35,74 @@ module.exports = {
     const itemId = interaction.options.getString('item', true);
     const amount = interaction.options.getInteger('amount', true);
 
+    // Validation: No bots
     if (recipient.bot) {
-      await interaction.reply({
-        content: '❌ You can\'t give items to bots!',
-        ephemeral: true
-      });
+      const embed = errorEmbed(
+        'Invalid Recipient',
+        'You can\'t give items to bots, partner!',
+        'Choose a real player'
+      );
+      
+      await interaction.reply({ embeds: [embed], ephemeral: true });
+      return;
     }
 
+    // Validation: No self-transfers
     if (recipient.id === interaction.user.id) {
-      await interaction.reply({
-        content: '❌ You can\'t give items to yourself!',
-        ephemeral: true
-      });
+      const embed = warningEmbed(
+        'Self-Transfer Not Allowed',
+        'You can\'t give items to yourself!',
+        'That would be mighty strange'
+      );
+      
+      await interaction.reply({ embeds: [embed], ephemeral: true });
+      return;
     }
 
+    await interaction.deferReply();
+
+    // Attempt transfer
     const result = transferItem(interaction.user.id, recipient.id, itemId, amount);
 
     if (!result.success) {
-      await interaction.reply({
-        content: `❌ ${result.error}`,
-        ephemeral: true
-      });
+      const embed = errorEmbed(
+        'Transfer Failed',
+        result.error,
+        'Check your inventory and try again'
+      );
+      
+      await interaction.editReply({ embeds: [embed] });
+      return;
     }
 
-    const itemEmojis: Record<string, string> = {
-      'saloon_token': '🎫',
-      'silver': '🪙',
-      'gold': '🥇',
-      'whiskey': '🍺',
-      'lucky_charm': '🎰',
-      'skeleton_key': '🗝️'
-    };
+    // Get item details
+    const item = ITEMS[itemId];
+    const itemEmoji = item?.emoji || '📦';
+    const itemName = item?.name || itemId;
 
-    const itemNames: Record<string, string> = {
-      'saloon_token': 'Saloon Tokens',
-      'silver': 'Silver Coins',
-      'gold': 'Gold Bars',
-      'whiskey': 'Whiskey Bottles',
-      'lucky_charm': 'Lucky Charms',
-      'skeleton_key': 'Skeleton Keys'
-    };
+    // Format currency display
+    let amountDisplay = '';
+    if (itemId === 'saloon_token') {
+      amountDisplay = formatCurrency(amount, 'tokens');
+    } else if (itemId === 'silver') {
+      amountDisplay = formatCurrency(amount, 'silver');
+    } else {
+      amountDisplay = `${itemEmoji} **${amount.toLocaleString()} ${itemName}**`;
+    }
 
-    const emoji = itemEmojis[itemId] || '📦';
-    const name = itemNames[itemId] || itemId;
-
-    const embed = new EmbedBuilder()
-      .setColor('#00FF00')
-      .setTitle('✅ Transfer Successful!')
-      .setDescription(`You gave **${amount.toLocaleString()} ${emoji} ${name}** to ${recipient}!`)
+    // Success message
+    const embed = successEmbed(
+      'Transfer Successful!',
+      `You gave ${amountDisplay} to **${recipient.tag}**`
+    )
       .addFields(
-        { name: '👤 From', value: `${interaction.user}`, inline: true },
-        { name: '👤 To', value: `${recipient}`, inline: true },
-        { name: '📦 Item', value: `${emoji} ${name}`, inline: true },
-        { name: '🔢 Amount', value: `${amount.toLocaleString()}`, inline: true },
-        { name: '💼 Your Weight', value: `${result.senderWeight.toFixed(2)}kg`, inline: true },
-        { name: '💼 Their Weight', value: `${result.recipientWeight.toFixed(2)}kg`, inline: true }
+        { name: '👤 From', value: interaction.user.tag, inline: true },
+        { name: '👤 To', value: recipient.tag, inline: true },
+        { name: '📦 Item', value: `${itemEmoji} ${itemName}`, inline: true },
+        { name: '🔢 Quantity', value: amount.toLocaleString(), inline: true }
       )
-      .setFooter({ text: 'Generosity is a cowboy virtue!' })
-      .setTimestamp();
+      .setFooter({ text: 'Generosity is a cowboy virtue!' });
 
-    await interaction.reply({ embeds: [embed] });
+    await interaction.editReply({ embeds: [embed] });
   },
 };
