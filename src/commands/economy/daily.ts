@@ -72,6 +72,7 @@ module.exports = {
     await showProgressBar(interaction, '🌅 DAILY REWARD', 'Collecting your daily reward...', 2000, '#FFD700');
 
     const wasStreakBroken = timeSinceLastClaim > (dailyCooldown * 2);
+    const previousStreak = userData.streak; // Capture previous streak before mutation
     const newStreak = wasStreakBroken ? 1 : userData.streak + 1;
     
     const baseSilver = 500;
@@ -111,7 +112,7 @@ module.exports = {
 
     const embed = economyEmbed(
       'Daily Reward',
-      wasStreakBroken && userData.streak > 1 
+      wasStreakBroken && previousStreak > 1 
         ? '⚠️ Your streak was broken! Starting fresh.'
         : '✅ Daily reward claimed successfully!',
       'Come back in 24 hours!'
