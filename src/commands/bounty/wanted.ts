@@ -63,7 +63,7 @@ module.exports = {
     if (existingBounty) {
       const embed = warningEmbed(
         'Bounty Already Active',
-        `**${target.tag}** already has an active bounty!\n\n**Current Bounty:** ${formatCurrency(existingBounty.amount, 'silver')}`,
+        `**${target.tag}** already has an active bounty!\n\n**Current Bounty:** ${formatCurrency(existingBounty.totalAmount, 'silver')}`,
         'Wait until it\'s cleared before placing a new one'
       );
       
