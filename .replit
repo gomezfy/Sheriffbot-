@@ -16,22 +16,7 @@ author = "agent"
 
 [[workflows.workflow.tasks]]
 task = "workflow.run"
-args = "Sheriff Bot"
-
-[[workflows.workflow.tasks]]
-task = "workflow.run"
 args = "Discord Bot"
-
-[[workflows.workflow]]
-name = "Sheriff Bot"
-author = "agent"
-
-[workflows.workflow.metadata]
-outputType = "console"
-
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "./node_modules/.bin/ts-node src/index.ts"
 
 [[workflows.workflow]]
 name = "Discord Bot"
