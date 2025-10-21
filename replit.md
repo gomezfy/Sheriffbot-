@@ -12,12 +12,12 @@ None specified yet.
 - **Minimalist Embed System:** Utilizes a neutral color palette (green/red/amber/blue/gray/gold) for clean and modern Discord embeds.
 - **Visual Leaderboard:** Generates professional visual leaderboards using Canvas, featuring rankings for up to 10 users, images of the top 3 richest, medals, colored avatar borders, and elegant gradients.
 - **Visual Profile Cards:** Uses Canvas with the Nunito font for visually appealing user profiles and wanted posters.
-- **Custom Emojis:** Incorporates 47 custom emojis to enhance the Western theme immersion.
+- **Custom Emojis:** Incorporates 38 custom Western-themed emojis organized in 9 categories (Reactions, Positive, Negative, Greetings, Actions, Characters, Activities, Items, Symbols) to enhance immersion.
 
 ### Technical Implementations
 - **Language & Runtime:** Built with TypeScript on Node.js 20, using `ts-node` for direct execution.
 - **Discord Integration:** Leverages `discord.js v14` for all Discord API interactions.
-- **Command Structure:** Features 34 slash commands categorized into Admin, Bounty, Economy, Gambling, Mining, Profile, and Utility.
+- **Command Structure:** Features 35 slash commands categorized into Admin, Bounty, Economy, Gambling, Mining, Profile, and Utility.
 - **Dual Economy System:** Manages both "Saloon Tokens" and "Silver Coins."
 - **Progressive Backpack Upgrades:** Implements a system for backpack capacity upgrades (100kg to 500kg).
 - **Redemption Code System:** Allows users to redeem purchase codes from the website shop for in-game items.
@@ -47,9 +47,14 @@ None specified yet.
 - **Session Management:** `express-session` (for the web dashboard)
 
 ## Recent Changes
-- **October 21, 2025:** Migrated payment processing from PayPal to Hotmart API
-  - Implemented Hotmart OAuth 2.0 authentication
-  - Added webhook integration for payment notifications (PURCHASE_COMPLETE, PURCHASE_APPROVED, PURCHASE_REFUNDED, PURCHASE_CANCELED)
-  - Created comprehensive setup documentation (HOTMART_SETUP.md)
-  - Updated shop.html with Hotmart checkout flow
-  - Removed all PayPal dependencies and references
+- **October 21, 2025:** 
+  - **Enhanced Leaderboard Design:** Completely redesigned /leaderboard with modern gradients, star-shaped badges for Top 3, Hall of Fame panel with large avatars, glow effects, user position highlighting, and expanded 1400x900px canvas
+  - **Custom Emojis Pack:** Added 38 Western-themed custom emojis from RDR2 and Cat Boy Cracker Barrel packs, organized in 9 categories
+  - **New Command:** Added /emojis command to browse all custom emojis by category
+  - **Emoji System:** Rebuilt customEmojis.ts with comprehensive emoji management, category organization, and helper functions
+  - **Payment Migration:** Migrated payment processing from PayPal to Hotmart API
+    - Implemented Hotmart OAuth 2.0 authentication
+    - Added webhook integration for payment notifications (PURCHASE_COMPLETE, PURCHASE_APPROVED, PURCHASE_REFUNDED, PURCHASE_CANCELED)
+    - Created comprehensive setup documentation (HOTMART_SETUP.md)
+    - Updated shop.html with Hotmart checkout flow
+    - Removed all PayPal dependencies and references
