@@ -42,6 +42,14 @@ None specified yet.
 ## External Dependencies
 - **Discord Library:** `discord.js v14`
 - **Web Framework:** `Express v5` (for the separate web dashboard)
-- **Payment Processing:** `PayPal API` (replacing Stripe for e-commerce)
+- **Payment Processing:** `Hotmart API` (for e-commerce and digital products)
 - **Canvas Rendering:** `@napi-rs/canvas`
 - **Session Management:** `express-session` (for the web dashboard)
+
+## Recent Changes
+- **October 21, 2025:** Migrated payment processing from PayPal to Hotmart API
+  - Implemented Hotmart OAuth 2.0 authentication
+  - Added webhook integration for payment notifications (PURCHASE_COMPLETE, PURCHASE_APPROVED, PURCHASE_REFUNDED, PURCHASE_CANCELED)
+  - Created comprehensive setup documentation (HOTMART_SETUP.md)
+  - Updated shop.html with Hotmart checkout flow
+  - Removed all PayPal dependencies and references
