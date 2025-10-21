@@ -10,6 +10,7 @@ if (!fs.existsSync(profilesFile)) {
 interface UserProfile {
   bio: string;
   background: string | null;
+  ownedBackgrounds?: string[];
 }
 
 export function getUserProfile(userId: string): UserProfile {
@@ -49,6 +50,16 @@ export function setUserBackground(userId: string, backgroundName: string): boole
   }
   
   profiles[userId].background = backgroundName;
+  fs.writeFileSync(profilesFile, JSON.stringify(profiles, null, 2));
+  
+  return true;
+}
+
+export function setUserProfile(userId: string, profile: UserProfile): boolean {
+  const data = fs.readFileSync(profilesFile, 'utf8');
+  const profiles = JSON.parse(data);
+  
+  profiles[userId] = profile;
   fs.writeFileSync(profilesFile, JSON.stringify(profiles, null, 2));
   
   return true;
