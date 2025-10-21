@@ -1,7 +1,9 @@
-import { Events, ModalBuilder, TextInputBuilder, TextInputStyle, ActionRowBuilder, EmbedBuilder, Interaction, MessageFlags, ButtonBuilder, ButtonStyle, StringSelectMenuBuilder, StringSelectMenuOptionBuilder } from 'discord.js';
+import { Events, ModalBuilder, TextInputBuilder, TextInputStyle, ActionRowBuilder, EmbedBuilder, Interaction, MessageFlags, ButtonBuilder, ButtonStyle, StringSelectMenuBuilder, StringSelectMenuOptionBuilder, AttachmentBuilder } from 'discord.js';
 import { setUserBio } from '../utils/profileManager';
 import { getUserBackgrounds, purchaseBackground, setUserBackground as setBgActive, getBackgroundById, getRarityEmoji, getAllBackgrounds, userOwnsBackground, getRarityColor } from '../utils/backgroundManager';
 import { getUserGold } from '../utils/dataManager';
+import path from 'path';
+import fs from 'fs';
 
 export = {
   name: Events.InteractionCreate,
@@ -71,7 +73,7 @@ export = {
         const embed = new EmbedBuilder()
           .setColor('#F1C40F')
           .setTitle('🛒 Background Shop')
-          .setDescription(`**Your Tokens:** 🎫 ${userTokens.toLocaleString()} Saloon Tokens\n\nPurchase backgrounds to customize your profile!`)
+          .setDescription(`**Your Tokens:** 🎫 ${userTokens.toLocaleString()} Saloon Tokens\n\nPreview the backgrounds below and purchase to customize your profile!`)
           .setFooter({ text: 'Click a button below to purchase' })
           .setTimestamp();
         
@@ -123,7 +125,27 @@ export = {
           components.push(row);
         }
         
-        await interaction.reply({ embeds: [embed], components, flags: MessageFlags.Ephemeral });
+        // Attach background images (up to 10 files)
+        const attachments: AttachmentBuilder[] = [];
+        const backgroundsDir = path.join(__dirname, '..', '..', 'assets', 'profile-backgrounds');
+        
+        for (const bg of allBackgrounds.slice(0, 10)) {
+          const bgPath = path.join(backgroundsDir, bg.filename);
+          if (fs.existsSync(bgPath)) {
+            const attachment = new AttachmentBuilder(bgPath, { 
+              name: `${bg.id}.${bg.filename.split('.').pop()}`,
+              description: `${bg.name} - ${bg.rarity}`
+            });
+            attachments.push(attachment);
+          }
+        }
+        
+        await interaction.reply({ 
+          embeds: [embed], 
+          files: attachments,
+          components, 
+          flags: MessageFlags.Ephemeral 
+        });
       }
       
       // Purchase Background Buttons
