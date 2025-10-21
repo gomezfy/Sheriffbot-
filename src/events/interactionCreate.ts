@@ -1,7 +1,7 @@
 import { Events, ModalBuilder, TextInputBuilder, TextInputStyle, ActionRowBuilder, EmbedBuilder, Interaction, MessageFlags, ButtonBuilder, ButtonStyle, StringSelectMenuBuilder, StringSelectMenuOptionBuilder } from 'discord.js';
 import { setUserBio } from '../utils/profileManager';
 import { getUserBackgrounds, purchaseBackground, setUserBackground as setBgActive, getBackgroundById, getRarityEmoji, getAllBackgrounds, userOwnsBackground, getRarityColor } from '../utils/backgroundManager';
-import { getUserSilver } from '../utils/dataManager';
+import { getUserGold } from '../utils/dataManager';
 
 export = {
   name: Events.InteractionCreate,
@@ -66,17 +66,17 @@ export = {
       // Shop Backgrounds Button
       if (interaction.customId === 'shop_backgrounds') {
         const allBackgrounds = getAllBackgrounds();
-        const userSilver = getUserSilver(interaction.user.id);
+        const userTokens = getUserGold(interaction.user.id);
         
         const embed = new EmbedBuilder()
           .setColor('#F1C40F')
           .setTitle('🛒 Background Shop')
-          .setDescription(`**Your Silver:** 🪙 ${userSilver.toLocaleString()} Silver Coins\n\nPurchase backgrounds to customize your profile!`)
+          .setDescription(`**Your Tokens:** 🎫 ${userTokens.toLocaleString()} Saloon Tokens\n\nPurchase backgrounds to customize your profile!`)
           .setFooter({ text: 'Click a button below to purchase' })
           .setTimestamp();
         
         // Group by rarity
-        const rarities = ['common', 'rare', 'epic', 'legendary'];
+        const rarities = ['common', 'rare', 'epic', 'legendary', 'mythic'];
         
         for (const rarity of rarities) {
           const bgsOfRarity = allBackgrounds.filter(bg => bg.rarity === rarity);
@@ -85,7 +85,7 @@ export = {
           const bgList = bgsOfRarity.map(bg => {
             const owned = userOwnsBackground(interaction.user.id, bg.id);
             const emoji = getRarityEmoji(bg.rarity);
-            const priceText = bg.free ? 'FREE' : `🪙 ${bg.price.toLocaleString()}`;
+            const priceText = bg.free ? 'FREE' : `🎫 ${bg.price.toLocaleString()}`;
             const status = owned ? '✅ Owned' : priceText;
             
             return `${emoji} **${bg.name}**\n${bg.description}\n💰 ${status}`;
@@ -109,7 +109,7 @@ export = {
           const row = new ActionRowBuilder<ButtonBuilder>();
           
           for (const bg of purchasableBackgrounds) {
-            const canAfford = userSilver >= bg.price;
+            const canAfford = userTokens >= bg.price;
             row.addComponents(
               new ButtonBuilder()
                 .setCustomId(`buy_bg_${bg.id}`)
@@ -136,7 +136,7 @@ export = {
           return;
         }
         
-        const userSilver = getUserSilver(interaction.user.id);
+        const userTokens = getUserGold(interaction.user.id);
         const result = purchaseBackground(interaction.user.id, bgId);
         
         if (result.success) {
@@ -146,10 +146,10 @@ export = {
             .setDescription(result.message)
             .addFields(
               { name: '🎨 Background', value: background.name, inline: true },
-              { name: '💰 Price', value: `🪙 ${background.price.toLocaleString()}`, inline: true },
-              { name: '💳 Remaining', value: `🪙 ${(userSilver - background.price).toLocaleString()}`, inline: true }
+              { name: '💰 Price', value: `🎫 ${background.price.toLocaleString()}`, inline: true },
+              { name: '💳 Remaining', value: `🎫 ${(userTokens - background.price).toLocaleString()}`, inline: true }
             )
-            .setFooter({ text: 'Use /profile to change your background' })
+            .setFooter({ text: 'Click "Change Background" to activate it' })
             .setTimestamp();
           
           await interaction.reply({ embeds: [embed], flags: MessageFlags.Ephemeral });
@@ -158,7 +158,7 @@ export = {
             .setColor('#ED4245')
             .setTitle('❌ Purchase Failed')
             .setDescription(result.message)
-            .setFooter({ text: 'Earn more silver coins to purchase backgrounds' });
+            .setFooter({ text: 'Earn more Saloon Tokens to purchase backgrounds' });
           
           await interaction.reply({ embeds: [embed], flags: MessageFlags.Ephemeral });
         }

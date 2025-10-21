@@ -1,15 +1,15 @@
 import fs from 'fs';
 import path from 'path';
 import { getUserProfile, setUserProfile } from './profileManager';
-import { getUserSilver, removeUserSilver } from './dataManager';
+import { getUserGold, removeUserGold } from './dataManager';
 
 export interface Background {
   id: string;
   name: string;
   filename: string;
-  price: number; // Price in silver coins
+  price: number; // Price in Saloon Tokens
   description: string;
-  rarity: 'common' | 'rare' | 'epic' | 'legendary';
+  rarity: 'common' | 'rare' | 'epic' | 'legendary' | 'mythic';
   free: boolean;
 }
 
@@ -27,10 +27,19 @@ export const BACKGROUNDS: Background[] = [
     free: true
   },
   {
+    id: 'desert_cabin',
+    name: 'Desert Cabin',
+    filename: 'desert-cabin.png',
+    price: 80,
+    description: 'Peaceful desert homestead with cacti and red canyon views',
+    rarity: 'mythic',
+    free: false
+  },
+  {
     id: 'saloon',
     name: 'Wild West Saloon',
     filename: 'saloon.jpg',
-    price: 1000,
+    price: 50,
     description: 'Inside a rustic western saloon',
     rarity: 'rare',
     free: false
@@ -39,7 +48,7 @@ export const BACKGROUNDS: Background[] = [
     id: 'canyon',
     name: 'Red Canyon',
     filename: 'canyon.jpg',
-    price: 2500,
+    price: 100,
     description: 'Majestic red rock canyon landscape',
     rarity: 'epic',
     free: false
@@ -48,7 +57,7 @@ export const BACKGROUNDS: Background[] = [
     id: 'town',
     name: 'Ghost Town',
     filename: 'town.jpg',
-    price: 5000,
+    price: 150,
     description: 'Abandoned western ghost town',
     rarity: 'legendary',
     free: false
@@ -117,17 +126,17 @@ export function purchaseBackground(userId: string, backgroundId: string): { succ
     return { success: false, message: 'You already own this background!' };
   }
   
-  const userSilver = getUserSilver(userId);
+  const userTokens = getUserGold(userId);
   
-  if (userSilver < background.price) {
+  if (userTokens < background.price) {
     return { 
       success: false, 
-      message: `You need ${background.price.toLocaleString()} 🪙 Silver Coins but only have ${userSilver.toLocaleString()}!` 
+      message: `You need ${background.price.toLocaleString()} 🎫 Saloon Tokens but only have ${userTokens.toLocaleString()}!` 
     };
   }
   
-  // Deduct silver
-  removeUserSilver(userId, background.price);
+  // Deduct tokens
+  removeUserGold(userId, background.price);
   
   // Add background to owned list
   const profile = getUserProfile(userId);
@@ -186,6 +195,7 @@ export function getRarityColor(rarity: string): number {
     case 'rare': return 0x3498DB;
     case 'epic': return 0x9B59B6;
     case 'legendary': return 0xF1C40F;
+    case 'mythic': return 0xFF1493;
     default: return 0x95A5A6;
   }
 }
@@ -199,6 +209,7 @@ export function getRarityEmoji(rarity: string): string {
     case 'rare': return '🔵';
     case 'epic': return '🟣';
     case 'legendary': return '🟡';
+    case 'mythic': return '💎';
     default: return '⚪';
   }
 }
