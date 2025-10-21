@@ -1,4 +1,4 @@
-import { SlashCommandBuilder, EmbedBuilder, ChatInputCommandInteraction } from 'discord.js';
+import { SlashCommandBuilder, EmbedBuilder, ChatInputCommandInteraction ,MessageFlags} from 'discord.js';
 import { t, getLocale } from '../../utils/i18n';
 
 interface LocaleMessages {
@@ -66,6 +66,6 @@ module.exports = {
       .setFooter({ text: msg.footer })
       .setTimestamp();
 
-    await interaction.reply({ embeds: [embed], ephemeral: true });
+    await interaction.reply({ embeds: [embed], flags: MessageFlags.Ephemeral });
   },
 };

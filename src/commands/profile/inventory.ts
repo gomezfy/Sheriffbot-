@@ -1,4 +1,4 @@
-import { SlashCommandBuilder, ChatInputCommandInteraction } from 'discord.js';
+import { SlashCommandBuilder, ChatInputCommandInteraction ,MessageFlags} from 'discord.js';
 import { infoEmbed, warningEmbed, formatCurrency, progressBar } from '../../utils/embeds';
 const { getInventory, calculateWeight, ITEMS, getNextUpgrade } = require('../../utils/inventoryManager');
 const { t } = require('../../utils/i18n');
@@ -24,7 +24,7 @@ module.exports = {
         'Use /inventory without parameters to see yours'
       );
       
-      await interaction.reply({ embeds: [embed], ephemeral: true });
+      await interaction.reply({ embeds: [embed], flags: MessageFlags.Ephemeral });
       return;
     }
     

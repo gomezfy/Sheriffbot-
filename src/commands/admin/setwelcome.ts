@@ -1,4 +1,4 @@
-import { SlashCommandBuilder, EmbedBuilder, PermissionFlagsBits, ChannelType, ChatInputCommandInteraction } from 'discord.js';
+import { SlashCommandBuilder, EmbedBuilder, PermissionFlagsBits, ChannelType, ChatInputCommandInteraction ,MessageFlags} from 'discord.js';
 import { setWelcomeConfig, removeWelcomeConfig, getWelcomeConfig } from '../../utils/dataManager';
 import { buildWelcomeEmbed } from '../../utils/welcomeEmbedBuilder';
 
@@ -51,7 +51,7 @@ module.exports = {
 
   async execute(interaction: ChatInputCommandInteraction): Promise<void> {
     if (!interaction.guild) {
-      await interaction.reply({ content: '❌ This command can only be used in a server!', ephemeral: true });
+      await interaction.reply({ content: '❌ This command can only be used in a server!', flags: MessageFlags.Ephemeral });
       return;
     }
 
@@ -65,7 +65,7 @@ module.exports = {
       if (image && !isValidUrl(image)) {
         await interaction.reply({
           content: '❌ Invalid image URL! Please provide a valid URL starting with http:// or https://',
-          ephemeral: true
+          flags: MessageFlags.Ephemeral
         });
         return;
       }
@@ -102,7 +102,7 @@ module.exports = {
       if (!config || !config.enabled) {
         await interaction.reply({
           content: '❌ Welcome system is not configured! Use `/setwelcome set` first.',
-          ephemeral: true
+          flags: MessageFlags.Ephemeral
         });
         return;
       }
@@ -111,7 +111,7 @@ module.exports = {
       if (!channel || !('send' in channel)) {
         await interaction.reply({
           content: '❌ Welcome channel not found! Please reconfigure with `/setwelcome set`',
-          ephemeral: true
+          flags: MessageFlags.Ephemeral
         });
         return;
       }
@@ -120,7 +120,7 @@ module.exports = {
         if (!interaction.member || !interaction.guild) {
           await interaction.reply({
             content: '❌ Could not retrieve member information!',
-            ephemeral: true
+            flags: MessageFlags.Ephemeral
           });
           return;
         }
@@ -131,13 +131,13 @@ module.exports = {
         await channel.send(messagePayload);
         await interaction.reply({
           content: `✅ Test message sent to <#${channel.id}>!`,
-          ephemeral: true
+          flags: MessageFlags.Ephemeral
         });
       } catch (error) {
         console.error('Error sending test welcome:', error);
         await interaction.reply({
           content: '❌ Failed to send test message. Check bot permissions in that channel!\n\nIf using JSON, verify it\'s valid.',
-          ephemeral: true
+          flags: MessageFlags.Ephemeral
         });
       }
 
@@ -147,7 +147,7 @@ module.exports = {
       if (!config) {
         await interaction.reply({
           content: '❌ Welcome system is not configured yet! Use `/setwelcome set` to set it up.',
-          ephemeral: true
+          flags: MessageFlags.Ephemeral
         });
         return;
       }
@@ -183,7 +183,7 @@ module.exports = {
         embed.setThumbnail(config.image);
       }
 
-      await interaction.reply({ embeds: [embed], ephemeral: true });
+      await interaction.reply({ embeds: [embed], flags: MessageFlags.Ephemeral });
 
     } else if (subcommand === 'disable') {
       const config = getWelcomeConfig(interaction.guild.id);
@@ -191,7 +191,7 @@ module.exports = {
       if (!config) {
         await interaction.reply({
           content: '❌ Welcome system is not configured!',
-          ephemeral: true
+          flags: MessageFlags.Ephemeral
         });
         return;
       }

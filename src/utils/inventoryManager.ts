@@ -229,6 +229,28 @@ export function getNextUpgrade(userId: string): any {
   return null;
 }
 
+export function getTopUsers(itemType: string, limit: number = 10): Array<{ userId: string; amount: number }> {
+  const data = fs.readFileSync(inventoryFile, 'utf8');
+  const inventories = JSON.parse(data);
+  
+  const userAmounts: Array<{ userId: string; amount: number }> = [];
+  
+  for (const userId in inventories) {
+    const inventory = inventories[userId];
+    const amount = inventory.items[itemType] || 0;
+    
+    if (amount > 0) {
+      userAmounts.push({ userId, amount });
+    }
+  }
+  
+  // Sort by amount (descending)
+  userAmounts.sort((a, b) => b.amount - a.amount);
+  
+  // Return top N users
+  return userAmounts.slice(0, limit);
+}
+
 export function upgradeBackpack(userId: string, newCapacity?: number): any {
   const inventory = getInventory(userId);
   const currentLevel = getBackpackLevel(userId);

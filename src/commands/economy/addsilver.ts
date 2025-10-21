@@ -54,6 +54,6 @@ module.exports = {
       .setFooter({ text: 'Manual addition by bot owner' })
       .setTimestamp();
 
-    await interaction.reply({ embeds: [embed], ephemeral: true });
+    await interaction.reply({ embeds: [embed], flags: MessageFlags.Ephemeral });
   },
 };

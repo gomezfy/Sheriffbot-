@@ -1,4 +1,4 @@
-import { SlashCommandBuilder, EmbedBuilder, PermissionFlagsBits, ChannelType, ChatInputCommandInteraction } from 'discord.js';
+import { SlashCommandBuilder, EmbedBuilder, PermissionFlagsBits, ChannelType, ChatInputCommandInteraction ,MessageFlags} from 'discord.js';
 import { setLogConfig, removeLogConfig, getLogConfig } from '../../utils/dataManager';
 
 module.exports = {
@@ -27,7 +27,7 @@ module.exports = {
 
   async execute(interaction: ChatInputCommandInteraction): Promise<void> {
     if (!interaction.guild) {
-      await interaction.reply({ content: '❌ This command can only be used in a server!', ephemeral: true });
+      await interaction.reply({ content: '❌ This command can only be used in a server!', flags: MessageFlags.Ephemeral });
       return;
     }
 
@@ -67,7 +67,7 @@ module.exports = {
       if (!config) {
         await interaction.reply({
           content: '❌ Log system is not configured yet! Use `/setlogs set` to set it up.',
-          ephemeral: true
+          flags: MessageFlags.Ephemeral
         });
         return;
       }
@@ -99,7 +99,7 @@ module.exports = {
         embed.setTimestamp(config.updatedAt);
       }
 
-      await interaction.reply({ embeds: [embed], ephemeral: true });
+      await interaction.reply({ embeds: [embed], flags: MessageFlags.Ephemeral });
 
     } else if (subcommand === 'disable') {
       const config = getLogConfig(interaction.guild.id);
@@ -107,7 +107,7 @@ module.exports = {
       if (!config) {
         await interaction.reply({
           content: '❌ Log system is not configured!',
-          ephemeral: true
+          flags: MessageFlags.Ephemeral
         });
         return;
       }

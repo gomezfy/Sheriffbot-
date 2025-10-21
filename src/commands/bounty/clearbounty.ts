@@ -1,4 +1,4 @@
-import { SlashCommandBuilder, ChatInputCommandInteraction } from 'discord.js';
+import { SlashCommandBuilder, ChatInputCommandInteraction ,MessageFlags} from 'discord.js';
 import { successEmbed, errorEmbed, warningEmbed, formatCurrency } from '../../utils/embeds';
 const { removeBounty, getBountyByTarget } = require('../../utils/dataManager');
 
@@ -15,7 +15,7 @@ module.exports = {
         'This command is being updated with new features.',
         'Use /bounties to view active bounties'
       )],
-      ephemeral: true
+      flags: MessageFlags.Ephemeral
     });
   },
 };

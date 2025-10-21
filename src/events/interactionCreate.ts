@@ -1,4 +1,4 @@
-import { Events, ModalBuilder, TextInputBuilder, TextInputStyle, ActionRowBuilder, EmbedBuilder, Interaction } from 'discord.js';
+import { Events, ModalBuilder, TextInputBuilder, TextInputStyle, ActionRowBuilder, EmbedBuilder, Interaction, MessageFlags } from 'discord.js';
 import { setUserBio } from '../utils/profileManager';
 
 export = {
@@ -41,7 +41,7 @@ export = {
           .setFooter({ text: 'Use /profile to see your updated card' })
           .setTimestamp();
 
-        await interaction.reply({ embeds: [embed], ephemeral: true });
+        await interaction.reply({ embeds: [embed], flags: MessageFlags.Ephemeral });
       }
     }
   },

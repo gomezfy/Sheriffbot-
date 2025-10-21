@@ -1,4 +1,4 @@
-import { SlashCommandBuilder, EmbedBuilder, PermissionFlagsBits, ChatInputCommandInteraction } from 'discord.js';
+import { SlashCommandBuilder, EmbedBuilder, PermissionFlagsBits, ChatInputCommandInteraction ,MessageFlags} from 'discord.js';
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -53,7 +53,7 @@ module.exports = {
       if (!channel || !('send' in channel)) {
         await interaction.reply({
           content: '❌ The channel must be a text channel!',
-          ephemeral: true
+          flags: MessageFlags.Ephemeral
         });
         return;
       }
@@ -66,11 +66,11 @@ module.exports = {
         .setDescription(`Your announcement has been sent to ${channel}`)
         .setTimestamp();
 
-      await interaction.reply({ embeds: [confirmEmbed], ephemeral: true });
+      await interaction.reply({ embeds: [confirmEmbed], flags: MessageFlags.Ephemeral });
     } catch (error) {
       await interaction.reply({
         content: '❌ Failed to send announcement. Make sure I have permissions to send messages in that channel!',
-        ephemeral: true
+        flags: MessageFlags.Ephemeral
       });
     }
   },

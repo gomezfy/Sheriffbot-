@@ -1,4 +1,4 @@
-import { SlashCommandBuilder, EmbedBuilder, PermissionFlagsBits, ChatInputCommandInteraction } from 'discord.js';
+import { SlashCommandBuilder, EmbedBuilder, PermissionFlagsBits, ChatInputCommandInteraction ,MessageFlags} from 'discord.js';
 import { setWantedConfig, getWantedConfig } from '../../utils/dataManager';
 
 module.exports = {
@@ -29,7 +29,7 @@ module.exports = {
     ),
   async execute(interaction: ChatInputCommandInteraction): Promise<void> {
     if (!interaction.guild) {
-      await interaction.reply({ content: '❌ This command can only be used in a server!', ephemeral: true });
+      await interaction.reply({ content: '❌ This command can only be used in a server!', flags: MessageFlags.Ephemeral });
       return;
     }
 
@@ -41,7 +41,7 @@ module.exports = {
       if (!channel || !('send' in channel)) {
         await interaction.reply({
           content: '❌ The channel must be a text channel!',
-          ephemeral: true
+          flags: MessageFlags.Ephemeral
         });
         return;
       }
@@ -77,7 +77,7 @@ module.exports = {
           )
           .setTimestamp();
 
-        await interaction.reply({ embeds: [embed], ephemeral: true });
+        await interaction.reply({ embeds: [embed], flags: MessageFlags.Ephemeral });
         return;
       }
 
@@ -95,7 +95,7 @@ module.exports = {
         .setFooter({ text: 'Use /setwanted disable to turn off' })
         .setTimestamp();
 
-      await interaction.reply({ embeds: [embed], ephemeral: true });
+      await interaction.reply({ embeds: [embed], flags: MessageFlags.Ephemeral });
 
     } else if (subcommand === 'disable') {
       const config = getWantedConfig(interaction.guild.id);
@@ -103,7 +103,7 @@ module.exports = {
       if (!config || !config.enabled) {
         await interaction.reply({
           content: '⚠️ Wanted poster channel is already disabled!',
-          ephemeral: true
+          flags: MessageFlags.Ephemeral
         });
         return;
       }

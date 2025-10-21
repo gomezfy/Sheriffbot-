@@ -1,4 +1,4 @@
-import { SlashCommandBuilder, EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, StringSelectMenuBuilder, StringSelectMenuOptionBuilder, ChatInputCommandInteraction, ComponentType, AttachmentBuilder } from 'discord.js';
+import { SlashCommandBuilder, EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, StringSelectMenuBuilder, StringSelectMenuOptionBuilder, ChatInputCommandInteraction, ComponentType, AttachmentBuilder ,MessageFlags} from 'discord.js';
 import path from 'path';
 const { getInventory, removeItem } = require('../../utils/inventoryManager');
 const { addUserSilver } = require('../../utils/dataManager');
@@ -58,12 +58,12 @@ module.exports = {
           .setURL(shopUrl)
       );
 
-    const response = await interaction.reply({
+    await interaction.reply({
       embeds: [embed],
       components: [buttons],
-      files: [blackMarketImage],
-      fetchReply: true
+      files: [blackMarketImage]
     });
+    const response = await interaction.fetchReply();
 
     const collector = response.createMessageComponentCollector({
       componentType: ComponentType.Button,
@@ -72,7 +72,7 @@ module.exports = {
 
     collector.on('collect', async (i) => {
       if (i.user.id !== userId) {
-        return i.reply({ content: '❌ This exchange is not for you!', ephemeral: true });
+        return i.reply({ content: '❌ This exchange is not for you!', flags: MessageFlags.Ephemeral });
       }
 
       if (i.customId === 'convert_tokens') {
@@ -80,7 +80,7 @@ module.exports = {
         const currentTokens = currentInventory.items['saloon_token'] || 0;
 
         if (currentTokens === 0) {
-          return i.reply({ content: '❌ You don\'t have any Saloon Tokens to convert!', ephemeral: true });
+          return i.reply({ content: '❌ You don\'t have any Saloon Tokens to convert!', flags: MessageFlags.Ephemeral });
         }
 
         const options = [
@@ -134,7 +134,7 @@ module.exports = {
         await i.reply({
           content: `**Select amount to convert:**\nYou have **${currentTokens}** 🎫 Saloon Tokens`,
           components: [selectRow],
-          ephemeral: true
+          flags: MessageFlags.Ephemeral
         });
 
         const selectCollector = i.channel?.createMessageComponentCollector({
@@ -179,7 +179,7 @@ module.exports = {
         const currentGold = currentInventory.items['gold'] || 0;
 
         if (currentGold === 0) {
-          return i.reply({ content: '❌ You don\'t have any Gold Bars to convert!', ephemeral: true });
+          return i.reply({ content: '❌ You don\'t have any Gold Bars to convert!', flags: MessageFlags.Ephemeral });
         }
 
         const goldOptions = [
@@ -224,7 +224,7 @@ module.exports = {
         await i.reply({
           content: `**Select amount to convert:**\nYou have **${currentGold}** 🥇 Gold Bars`,
           components: [selectRow],
-          ephemeral: true
+          flags: MessageFlags.Ephemeral
         });
 
         const selectCollector = i.channel?.createMessageComponentCollector({

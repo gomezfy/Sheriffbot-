@@ -1,5 +1,5 @@
 import 'dotenv/config';
-import { Client, GatewayIntentBits, Collection, Events, ActivityType } from 'discord.js';
+import { Client, GatewayIntentBits, Collection, Events, ActivityType, MessageFlags } from 'discord.js';
 import fs from 'fs';
 import path from 'path';
 import Logger from './utils/logger';
@@ -76,7 +76,7 @@ client.on(Events.InteractionCreate, async interaction => {
       const remaining = getRemainingTime(interaction.user.id);
       return interaction.reply({
         content: `🔒 **You're in jail!**\n\n${punishment.reason}\n\n⏰ Time remaining: **${formatTime(remaining)}**\n\nYou cannot use this command while serving your sentence!\n\n✅ Allowed: /help, /ping, /inventory, /profile, /bounties`,
-        ephemeral: true
+        flags: MessageFlags.Ephemeral
       });
     }
   }
@@ -106,12 +106,16 @@ client.on(Events.InteractionCreate, async interaction => {
       });
     }
     
-    const errorMessage = { content: 'There was an error executing this command!', ephemeral: true };
-    
     if (interaction.replied || interaction.deferred) {
-      await interaction.followUp(errorMessage);
+      await interaction.followUp({ 
+        content: 'There was an error executing this command!', 
+        flags: MessageFlags.Ephemeral 
+      });
     } else {
-      await interaction.reply(errorMessage);
+      await interaction.reply({ 
+        content: 'There was an error executing this command!', 
+        flags: MessageFlags.Ephemeral 
+      });
     }
   }
 });

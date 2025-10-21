@@ -1,4 +1,4 @@
-import { SlashCommandBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, ChatInputCommandInteraction } from 'discord.js';
+import { SlashCommandBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, ChatInputCommandInteraction ,MessageFlags} from 'discord.js';
 import { infoEmbed, field } from '../../utils/embeds';
 
 export = {
@@ -101,6 +101,6 @@ export = {
           .setURL(`https://${process.env.REPLIT_DEV_DOMAIN || 'sheriff-bot.repl.co'}`)
       );
 
-    await interaction.reply({ embeds: [embed], components: [buttons], ephemeral: true });
+    await interaction.reply({ embeds: [embed], components: [buttons], flags: MessageFlags.Ephemeral });
   },
 };

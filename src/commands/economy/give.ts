@@ -1,4 +1,4 @@
-import { SlashCommandBuilder, ChatInputCommandInteraction } from 'discord.js';
+import { SlashCommandBuilder, ChatInputCommandInteraction ,MessageFlags} from 'discord.js';
 import { successEmbed, errorEmbed, warningEmbed, formatCurrency } from '../../utils/embeds';
 const { transferItem, ITEMS } = require('../../utils/inventoryManager');
 
@@ -43,7 +43,7 @@ module.exports = {
         'Choose a real player'
       );
       
-      await interaction.reply({ embeds: [embed], ephemeral: true });
+      await interaction.reply({ embeds: [embed], flags: MessageFlags.Ephemeral });
       return;
     }
 
@@ -55,7 +55,7 @@ module.exports = {
         'That would be mighty strange'
       );
       
-      await interaction.reply({ embeds: [embed], ephemeral: true });
+      await interaction.reply({ embeds: [embed], flags: MessageFlags.Ephemeral });
       return;
     }
 

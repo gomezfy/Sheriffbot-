@@ -72,14 +72,14 @@ module.exports = {
     if (interaction.user.id !== OWNER_ID) {
       await interaction.reply({
         content: '❌ This command is only available to the bot owner!',
-        ephemeral: true
+        flags: MessageFlags.Ephemeral
       });
       return;
     }
 
     const productId = interaction.options.getString('product', true);
 
-    await interaction.deferReply({ ephemeral: true });
+    await interaction.deferReply({ flags: MessageFlags.Ephemeral });
 
     try {
       const PRODUCTS: Record<string, Product> = {

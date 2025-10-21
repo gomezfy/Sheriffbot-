@@ -1,4 +1,4 @@
-import { SlashCommandBuilder, EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, AttachmentBuilder, ChatInputCommandInteraction } from 'discord.js';
+import { SlashCommandBuilder, EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, AttachmentBuilder, ChatInputCommandInteraction ,MessageFlags} from 'discord.js';
 import fs from 'fs';
 const { addItem, getInventory, removeItem, transferItem } = require('../../utils/inventoryManager');
 const { addUserSilver, getUserSilver, removeUserSilver } = require('../../utils/dataManager');
@@ -72,7 +72,7 @@ module.exports = {
           description: `You're too tired to mine right now, partner!\n\n⏰ Come back in: **${timeLeft}**`,
           footer: { text: 'Rest up and try again later!' }
         }],
-        ephemeral: true
+        flags: MessageFlags.Ephemeral
       });
       return;
     }
@@ -132,7 +132,7 @@ module.exports = {
       if (i.customId === 'mine_solo') {
         // Verify user for solo mining
         if (i.user.id !== interaction.user.id) {
-          return i.reply({ content: '❌ This mining operation is not for you!', ephemeral: true });
+          return i.reply({ content: '❌ This mining operation is not for you!', flags: MessageFlags.Ephemeral });
         }
 
         await i.deferUpdate();
@@ -185,7 +185,7 @@ module.exports = {
       } else if (i.customId === 'mine_coop') {
         // Verify user for cooperative mining
         if (i.user.id !== interaction.user.id) {
-          return i.reply({ content: '❌ This mining operation is not for you!', ephemeral: true });
+          return i.reply({ content: '❌ This mining operation is not for you!', flags: MessageFlags.Ephemeral });
         }
         
         // Mineração cooperativa - criar convite
@@ -214,7 +214,7 @@ module.exports = {
           if (coopI.customId !== 'join_mining') return;
           
           if (coopI.user.id === interaction.user.id) {
-            return coopI.reply({ content: '❌ You cannot mine with yourself!', ephemeral: true });
+            return coopI.reply({ content: '❌ You cannot mine with yourself!', flags: MessageFlags.Ephemeral });
           }
 
           const partnerId = coopI.user.id;
@@ -225,7 +225,7 @@ module.exports = {
             const timeLeft = formatTime(partnerCheck.timeLeft ?? 0);
             return coopI.reply({ 
               content: `❌ You're too tired! Come back in ${timeLeft}`, 
-              ephemeral: true 
+              flags: MessageFlags.Ephemeral 
             });
           }
 
@@ -403,8 +403,7 @@ module.exports = {
 
           if (compensationMessage) {
             await coopI.followUp({ 
-              content: compensationMessage,
-              ephemeral: false
+              content: compensationMessage
             });
           }
 

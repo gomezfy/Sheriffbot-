@@ -1,4 +1,4 @@
-import { SlashCommandBuilder, AttachmentBuilder, ChatInputCommandInteraction } from 'discord.js';
+import { SlashCommandBuilder, AttachmentBuilder, ChatInputCommandInteraction ,MessageFlags} from 'discord.js';
 import { successEmbed, errorEmbed, warningEmbed, formatCurrency } from '../../utils/embeds';
 import { generateWantedPoster } from '../../utils/wantedPoster';
 const { addBounty, getBountyByTarget } = require('../../utils/dataManager');
@@ -42,7 +42,7 @@ module.exports = {
         'Choose a real outlaw'
       );
       
-      await interaction.reply({ embeds: [embed], ephemeral: true });
+      await interaction.reply({ embeds: [embed], flags: MessageFlags.Ephemeral });
       return;
     }
 
@@ -54,7 +54,7 @@ module.exports = {
         'That would be mighty strange, partner'
       );
       
-      await interaction.reply({ embeds: [embed], ephemeral: true });
+      await interaction.reply({ embeds: [embed], flags: MessageFlags.Ephemeral });
       return;
     }
 
@@ -67,7 +67,7 @@ module.exports = {
         'Wait until it\'s cleared before placing a new one'
       );
       
-      await interaction.reply({ embeds: [embed], ephemeral: true });
+      await interaction.reply({ embeds: [embed], flags: MessageFlags.Ephemeral });
       return;
     }
 
@@ -80,7 +80,7 @@ module.exports = {
         'Earn more coins with /work or /daily'
       );
       
-      await interaction.reply({ embeds: [embed], ephemeral: true });
+      await interaction.reply({ embeds: [embed], flags: MessageFlags.Ephemeral });
       return;
     }
 

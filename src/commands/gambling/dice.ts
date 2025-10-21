@@ -1,4 +1,4 @@
-import { SlashCommandBuilder, EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, AttachmentBuilder, ChatInputCommandInteraction } from 'discord.js';
+import { SlashCommandBuilder, EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, AttachmentBuilder, ChatInputCommandInteraction, MessageFlags } from 'discord.js';
 const { getUserGold, addUserGold, removeUserGold, setUserGold } = require('../../utils/dataManager');
 import path from 'path';
 
@@ -39,7 +39,7 @@ module.exports = {
     if (!opponent || !bet || !challengerGuess) {
       await interaction.reply({
         content: '❌ Please specify both opponent, bet, and guess!',
-        ephemeral: true
+        flags: MessageFlags.Ephemeral
       });
       return;
     }
@@ -50,7 +50,7 @@ module.exports = {
     if (opponent.bot) {
       await interaction.reply({
         content: '❌ You can\'t challenge a bot to a dice game, partner!',
-        ephemeral: true
+        flags: MessageFlags.Ephemeral
       });
       return;
     }
@@ -58,7 +58,7 @@ module.exports = {
     if (opponent.id === challenger.id) {
       await interaction.reply({
         content: '❌ You can\'t challenge yourself, partner!',
-        ephemeral: true
+        flags: MessageFlags.Ephemeral
       });
       return;
     }
@@ -69,7 +69,7 @@ module.exports = {
         const timeLeft = (expirationTime - now) / 1000;
         await interaction.reply({
           content: `⏰ Hold your horses! Wait ${timeLeft.toFixed(1)} more seconds before challenging again.`,
-          ephemeral: true
+          flags: MessageFlags.Ephemeral
         });
         return;
       }
@@ -81,7 +81,7 @@ module.exports = {
         const timeLeft = (expirationTime - now) / 1000;
         await interaction.reply({
           content: `⏰ ${opponent.tag} is still recovering from their last duel! They need ${timeLeft.toFixed(1)} more seconds.`,
-          ephemeral: true
+          flags: MessageFlags.Ephemeral
         });
         return;
       }
@@ -90,7 +90,7 @@ module.exports = {
     if (activeGames.has(challenger.id) || activeGames.has(opponent.id)) {
       await interaction.reply({
         content: '❌ One of you is already in an active dice game!',
-        ephemeral: true
+        flags: MessageFlags.Ephemeral
       });
       return;
     }
@@ -101,7 +101,7 @@ module.exports = {
     if (challengerGold < bet) {
       await interaction.reply({
         content: `❌ You don't have enough tokens! You have ${challengerGold} Saloon Tokens but tried to bet ${bet} Saloon Tokens.`,
-        ephemeral: true
+        flags: MessageFlags.Ephemeral
       });
       return;
     }
@@ -109,7 +109,7 @@ module.exports = {
     if (opponentGold < bet) {
       await interaction.reply({
         content: `❌ ${opponent.tag} doesn't have enough tokens for this bet! They only have ${opponentGold} Saloon Tokens.`,
-        ephemeral: true
+        flags: MessageFlags.Ephemeral
       });
       return;
     }
@@ -146,13 +146,13 @@ module.exports = {
       .setFooter({ text: 'Choose wisely, partner!' })
       .setTimestamp();
 
-    const message = await interaction.reply({ 
+    await interaction.reply({ 
       content: `${opponent}, you've been challenged to a dice duel!`,
       embeds: [challengeEmbed], 
       components: rows, 
-      files: [diceGameImage],
-      fetchReply: true 
+      files: [diceGameImage]
     });
+    const message = await interaction.fetchReply();
 
     activeGames.set(challenger.id, gameId);
     activeGames.set(opponent.id, gameId);

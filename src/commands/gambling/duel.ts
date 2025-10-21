@@ -1,4 +1,4 @@
-import { SlashCommandBuilder, EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, AttachmentBuilder, ChatInputCommandInteraction } from 'discord.js';
+import { SlashCommandBuilder, EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, AttachmentBuilder, ChatInputCommandInteraction ,MessageFlags} from 'discord.js';
 const { getUserSilver, addUserSilver, removeUserSilver, setUserSilver } = require('../../utils/dataManager');
 import path from 'path';
 
@@ -58,7 +58,7 @@ module.exports = {
     if (!opponent || !bet) {
       await interaction.reply({
         content: '❌ Please specify both opponent and bet!',
-        ephemeral: true
+        flags: MessageFlags.Ephemeral
       });
       return;
     }
@@ -67,7 +67,7 @@ module.exports = {
     if (opponent.bot) {
       await interaction.reply({
         content: '❌ Bots don\'t duel, partner!',
-        ephemeral: true
+        flags: MessageFlags.Ephemeral
       });
       return;
     }
@@ -75,7 +75,7 @@ module.exports = {
     if (opponent.id === challenger.id) {
       await interaction.reply({
         content: '❌ You can\'t duel yourself!',
-        ephemeral: true
+        flags: MessageFlags.Ephemeral
       });
       return;
     }
@@ -90,7 +90,7 @@ module.exports = {
         const timeLeft = Math.ceil((expirationTime - now) / 1000);
         await interaction.reply({
           content: `⏰ You just finished a duel! Wait ${timeLeft} more seconds before challenging again.`,
-          ephemeral: true
+          flags: MessageFlags.Ephemeral
         });
         return;
       }
@@ -101,7 +101,7 @@ module.exports = {
     if (challengerBalance < bet) {
       await interaction.reply({
         content: `❌ You don't have enough Silver Coins! You have 🪙 ${challengerBalance.toLocaleString()} but need 🪙 ${bet.toLocaleString()}.`,
-        ephemeral: true
+        flags: MessageFlags.Ephemeral
       });
       return;
     }
@@ -111,7 +111,7 @@ module.exports = {
     if (opponentBalance < bet) {
       await interaction.reply({
         content: `❌ ${opponent.username} doesn't have enough Silver Coins to accept this bet!`,
-        ephemeral: true
+        flags: MessageFlags.Ephemeral
       });
       return;
     }
@@ -120,7 +120,7 @@ module.exports = {
     if (activeDuels.has(challenger.id) || activeDuels.has(opponent.id)) {
       await interaction.reply({
         content: '❌ One of you is already in a duel!',
-        ephemeral: true
+        flags: MessageFlags.Ephemeral
       });
       return;
     }
@@ -151,7 +151,8 @@ module.exports = {
       .setFooter({ text: `${opponent.username}, click Accept to duel!` })
       .setTimestamp();
 
-    const message = await interaction.reply({ embeds: [embed], components: [row], fetchReply: true });
+    await interaction.reply({ embeds: [embed], components: [row] });
+    const message = await interaction.fetchReply();
 
     const collector = message.createMessageComponentCollector({
       filter: i => i.user.id === opponent.id && i.customId.startsWith('duel_'),
@@ -261,10 +262,10 @@ async function startDuelRound(interaction: any, state: any) {
     
     if (i.user.id === state.challenger.user.id) {
       state.challenger.choice = action;
-      await i.reply({ content: `You chose ${(ACTIONS as any)[action].emoji} ${(ACTIONS as any)[action].name}!`, ephemeral: true });
+      await i.reply({ content: `You chose ${(ACTIONS as any)[action].emoji} ${(ACTIONS as any)[action].name}!`, flags: MessageFlags.Ephemeral });
     } else if (i.user.id === state.opponent.user.id) {
       state.opponent.choice = action;
-      await i.reply({ content: `You chose ${(ACTIONS as any)[action].emoji} ${(ACTIONS as any)[action].name}!`, ephemeral: true });
+      await i.reply({ content: `You chose ${(ACTIONS as any)[action].emoji} ${(ACTIONS as any)[action].name}!`, flags: MessageFlags.Ephemeral });
     }
 
     // Both players chose

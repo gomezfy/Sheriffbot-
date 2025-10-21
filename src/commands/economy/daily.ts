@@ -1,4 +1,4 @@
-import { SlashCommandBuilder, ChatInputCommandInteraction } from 'discord.js';
+import { SlashCommandBuilder, ChatInputCommandInteraction ,MessageFlags} from 'discord.js';
 import { addXP } from '../../utils/xpManager';
 import { economyEmbed, errorEmbed, warningEmbed, formatCurrency, formatDuration, field } from '../../utils/embeds';
 const { addItem } = require('../../utils/inventoryManager');
@@ -63,7 +63,7 @@ module.exports = {
       
       await interaction.reply({
         embeds: [embed],
-        ephemeral: true
+        flags: MessageFlags.Ephemeral
       });
       return;
     }

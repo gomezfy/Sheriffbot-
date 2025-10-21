@@ -1,4 +1,4 @@
-import { SlashCommandBuilder, EmbedBuilder, ChatInputCommandInteraction } from 'discord.js';
+import { SlashCommandBuilder, EmbedBuilder, ChatInputCommandInteraction ,MessageFlags} from 'discord.js';
 const { addItem, getInventory } = require('../../utils/inventoryManager');
 
 const OWNER_ID = '339772388566892546';
@@ -18,7 +18,7 @@ module.exports = {
     if (interaction.user.id !== OWNER_ID) {
       await interaction.reply({
         content: '❌ This command is only available to the bot owner!',
-        ephemeral: true
+        flags: MessageFlags.Ephemeral
       });
     }
 
@@ -31,7 +31,7 @@ module.exports = {
     if (currentTokens >= starterAmount) {
       await interaction.reply({
         content: `⚠️ ${targetUser.tag} already has ${currentTokens.toLocaleString()} 🎫 Saloon Tokens. They don't need starter tokens!`,
-        ephemeral: true
+        flags: MessageFlags.Ephemeral
       });
     }
 
@@ -40,7 +40,7 @@ module.exports = {
     if (!result.success) {
       await interaction.reply({
         content: `❌ Failed to add tokens: ${result.error}`,
-        ephemeral: true
+        flags: MessageFlags.Ephemeral
       });
     }
 
@@ -55,6 +55,6 @@ module.exports = {
       .setFooter({ text: 'Welcome gift for new users!' })
       .setTimestamp();
 
-    await interaction.reply({ embeds: [embed], ephemeral: true });
+    await interaction.reply({ embeds: [embed], flags: MessageFlags.Ephemeral });
   },
 };

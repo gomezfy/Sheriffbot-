@@ -1,4 +1,4 @@
-import { SlashCommandBuilder, EmbedBuilder, ChatInputCommandInteraction } from 'discord.js';
+import { SlashCommandBuilder, EmbedBuilder, ChatInputCommandInteraction ,MessageFlags} from 'discord.js';
 const { getUserGold, addUserGold, removeUserGold } = require('../../utils/dataManager');
 
 const cooldowns = new Map();
@@ -148,7 +148,7 @@ module.exports = {
     if (!bet) {
       await interaction.reply({
         content: '❌ Please specify a bet amount!',
-        ephemeral: true
+        flags: MessageFlags.Ephemeral
       });
       return;
     }
@@ -163,7 +163,7 @@ module.exports = {
         const timeLeft = (expirationTime - now) / 1000;
         await interaction.reply({
           content: `⏰ Hold on there, partner! Wait ${timeLeft.toFixed(1)} more seconds before playing again.`,
-          ephemeral: true
+          flags: MessageFlags.Ephemeral
         });
         return;
       }
@@ -174,7 +174,7 @@ module.exports = {
     if (currentGold < bet) {
       await interaction.reply({
         content: `❌ You don't have enough tokens! You have ${currentGold} 🎫 but tried to bet ${bet} 🎫.`,
-        ephemeral: true
+        flags: MessageFlags.Ephemeral
       });
       return;
     }
@@ -198,7 +198,7 @@ module.exports = {
     if (!removeResult.success) {
       await interaction.reply({
         content: `❌ Error removing bet: ${removeResult.error}`,
-        ephemeral: true
+        flags: MessageFlags.Ephemeral
       });
       return;
     }
@@ -223,7 +223,7 @@ module.exports = {
         
         await interaction.reply({
           content: `🚫 **You won but your inventory is full!**\n\n${addResult.error}\n\nYour bet was returned. Free up space and try again!`,
-          ephemeral: true
+          flags: MessageFlags.Ephemeral
         });
         return;
       }
