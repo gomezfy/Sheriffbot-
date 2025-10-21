@@ -22,12 +22,12 @@ args = "Sheriff Bot"
 name = "Sheriff Bot"
 author = "agent"
 
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "ts-node src/index.ts"
-
 [workflows.workflow.metadata]
 outputType = "console"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "./node_modules/.bin/ts-node src/index.ts"
 
 [[ports]]
 localPort = 5000
