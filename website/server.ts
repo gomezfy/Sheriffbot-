@@ -44,8 +44,26 @@ async function getHotmartAccessToken(): Promise<string | null> {
 
 // Verify Hotmart webhook signature
 function verifyHotmartWebhook(req: Request): boolean {
-  const hottok = req.body.hottok || req.query.hottok;
-  return hottok === HOTMART_CONFIG.hottok;
+  const hottok = req.headers['hottok'] as string || req.headers['x-hotmart-hottok'] as string;
+  
+  if (!hottok) {
+    console.error('⚠️ Webhook verification failed: No hottok in headers', {
+      headers: req.headers,
+      body: req.body
+    });
+    return false;
+  }
+  
+  const isValid = hottok === HOTMART_CONFIG.hottok;
+  
+  if (!isValid) {
+    console.error('⚠️ Webhook verification failed: Invalid hottok', {
+      received: hottok,
+      expected: HOTMART_CONFIG.hottok ? '***configured***' : '***not configured***'
+    });
+  }
+  
+  return isValid;
 }
 
 app.use(session({
@@ -59,6 +77,7 @@ app.use(session({
 }));
 
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname)));
 
 interface Product {
@@ -188,7 +207,7 @@ function saveRedemptionCode(code: string, productData: any): boolean {
             background: productData.background || false,
             backpack: productData.backpack || false,
             createdAt: Date.now(),
-            createdBy: 'paypal_checkout',
+            createdBy: 'hotmart_checkout',
             redeemed: false
         };
         
