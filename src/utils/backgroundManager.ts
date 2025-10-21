@@ -1,7 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import { getUserProfile, setUserProfile } from './profileManager';
-import { getUserSilver, removeSilver } from './dataManager';
+import { getUserSilver, removeUserSilver } from './dataManager';
 
 export interface Background {
   id: string;
@@ -127,7 +127,7 @@ export function purchaseBackground(userId: string, backgroundId: string): { succ
   }
   
   // Deduct silver
-  removeSilver(userId, background.price);
+  removeUserSilver(userId, background.price);
   
   // Add background to owned list
   const profile = getUserProfile(userId);
