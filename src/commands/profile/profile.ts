@@ -45,16 +45,21 @@ module.exports = {
     const isOwnProfile = targetUser.id === interaction.user.id;
 
     if (isOwnProfile) {
-      const editButton = new ActionRowBuilder<ButtonBuilder>()
+      const buttonRow = new ActionRowBuilder<ButtonBuilder>()
         .addComponents(
           new ButtonBuilder()
             .setCustomId('edit_bio')
             .setLabel('Edit Bio')
             .setEmoji('📝')
-            .setStyle(ButtonStyle.Primary)
+            .setStyle(ButtonStyle.Primary),
+          new ButtonBuilder()
+            .setCustomId('change_background')
+            .setLabel('Change Background')
+            .setEmoji('🎨')
+            .setStyle(ButtonStyle.Secondary)
         );
 
-      await interaction.editReply({ files: [card], components: [editButton] });
+      await interaction.editReply({ files: [card], components: [buttonRow] });
     } else {
       await interaction.editReply({ files: [card] });
     }
