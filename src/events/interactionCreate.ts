@@ -5,6 +5,62 @@ import { getUserGold } from '../utils/dataManager';
 import path from 'path';
 import fs from 'fs';
 
+async function showBackgroundCarousel(interaction: any, index: number, isUpdate: boolean = false): Promise<void> {
+  const allBackgrounds = getAllBackgrounds();
+  const bg = allBackgrounds[index];
+  const userTokens = getUserGold(interaction.user.id);
+  const owned = userOwnsBackground(interaction.user.id, bg.id);
+  
+  const embed = new EmbedBuilder()
+    .setColor(getRarityColor(bg.rarity))
+    .setTitle(`🛒 Background Shop`)
+    .setDescription(
+      `**${getRarityEmoji(bg.rarity)} ${bg.name}** - ${bg.rarity.toUpperCase()}\n\n` +
+      `${bg.description}\n\n` +
+      `**Price:** ${bg.free ? '✅ FREE' : `🎫 ${bg.price.toLocaleString()} Saloon Tokens`}\n` +
+      `**Status:** ${owned ? '✅ Already Owned' : bg.free ? '✅ Available' : userTokens >= bg.price ? '💰 Can Purchase' : '❌ Not enough tokens'}\n\n` +
+      `**Your Tokens:** 🎫 ${userTokens.toLocaleString()}`
+    )
+    .setFooter({ text: `Background ${index + 1} of ${allBackgrounds.length} • Use arrows to navigate` })
+    .setTimestamp();
+  
+  // Add background image
+  const backgroundsDir = path.join(__dirname, '..', '..', 'assets', 'profile-backgrounds');
+  const bgPath = path.join(backgroundsDir, bg.filename);
+  
+  const files = [];
+  if (fs.existsSync(bgPath)) {
+    const attachment = new AttachmentBuilder(bgPath, { name: `preview.${bg.filename.split('.').pop()}` });
+    files.push(attachment);
+    embed.setImage(`attachment://preview.${bg.filename.split('.').pop()}`);
+  }
+  
+  // Navigation and purchase buttons
+  const row = new ActionRowBuilder<ButtonBuilder>()
+    .addComponents(
+      new ButtonBuilder()
+        .setCustomId(`carousel_prev_${index}`)
+        .setLabel('◀ Back')
+        .setStyle(ButtonStyle.Secondary),
+      new ButtonBuilder()
+        .setCustomId(`buy_bg_${bg.id}_${index}`)
+        .setLabel(owned ? 'Owned' : bg.free ? 'Free' : `Buy - ${bg.price} 🎫`)
+        .setEmoji('🛒')
+        .setStyle(owned ? ButtonStyle.Secondary : bg.free ? ButtonStyle.Success : userTokens >= bg.price ? ButtonStyle.Success : ButtonStyle.Danger)
+        .setDisabled(owned || (bg.free === false && userTokens < bg.price)),
+      new ButtonBuilder()
+        .setCustomId(`carousel_next_${index}`)
+        .setLabel('Next ▶')
+        .setStyle(ButtonStyle.Secondary)
+    );
+  
+  if (isUpdate) {
+    await interaction.update({ embeds: [embed], files, components: [row] });
+  } else {
+    await interaction.reply({ embeds: [embed], files, components: [row], flags: MessageFlags.Ephemeral });
+  }
+}
+
 export = {
   name: Events.InteractionCreate,
   async execute(interaction: Interaction): Promise<void> {
@@ -65,92 +121,36 @@ export = {
         await interaction.reply({ embeds: [embed], components: [row], flags: MessageFlags.Ephemeral });
       }
       
-      // Shop Backgrounds Button
+      // Shop Backgrounds Button - Show carousel
       if (interaction.customId === 'shop_backgrounds') {
-        const allBackgrounds = getAllBackgrounds();
-        const userTokens = getUserGold(interaction.user.id);
-        
-        const embed = new EmbedBuilder()
-          .setColor('#F1C40F')
-          .setTitle('🛒 Background Shop')
-          .setDescription(`**Your Tokens:** 🎫 ${userTokens.toLocaleString()} Saloon Tokens\n\nPreview the backgrounds below and purchase to customize your profile!`)
-          .setFooter({ text: 'Click a button below to purchase' })
-          .setTimestamp();
-        
-        // Group by rarity
-        const rarities = ['common', 'rare', 'epic', 'legendary', 'mythic'];
-        
-        for (const rarity of rarities) {
-          const bgsOfRarity = allBackgrounds.filter(bg => bg.rarity === rarity);
-          if (bgsOfRarity.length === 0) continue;
-          
-          const bgList = bgsOfRarity.map(bg => {
-            const owned = userOwnsBackground(interaction.user.id, bg.id);
-            const emoji = getRarityEmoji(bg.rarity);
-            const priceText = bg.free ? 'FREE' : `🎫 ${bg.price.toLocaleString()}`;
-            const status = owned ? '✅ Owned' : priceText;
-            
-            return `${emoji} **${bg.name}**\n${bg.description}\n💰 ${status}`;
-          }).join('\n\n');
-          
-          embed.addFields({
-            name: `${getRarityEmoji(rarity)} ${rarity.toUpperCase()} Backgrounds`,
-            value: bgList,
-            inline: false
-          });
-        }
-        
-        // Create buttons for purchasable backgrounds (up to 5)
-        const purchasableBackgrounds = allBackgrounds
-          .filter(bg => !bg.free && !userOwnsBackground(interaction.user.id, bg.id))
-          .slice(0, 5);
-        
-        const components = [];
-        
-        if (purchasableBackgrounds.length > 0) {
-          const row = new ActionRowBuilder<ButtonBuilder>();
-          
-          for (const bg of purchasableBackgrounds) {
-            const canAfford = userTokens >= bg.price;
-            row.addComponents(
-              new ButtonBuilder()
-                .setCustomId(`buy_bg_${bg.id}`)
-                .setLabel(`${bg.name}`)
-                .setEmoji(getRarityEmoji(bg.rarity))
-                .setStyle(canAfford ? ButtonStyle.Success : ButtonStyle.Secondary)
-                .setDisabled(!canAfford)
-            );
-          }
-          
-          components.push(row);
-        }
-        
-        // Attach background images (up to 10 files)
-        const attachments: AttachmentBuilder[] = [];
-        const backgroundsDir = path.join(__dirname, '..', '..', 'assets', 'profile-backgrounds');
-        
-        for (const bg of allBackgrounds.slice(0, 10)) {
-          const bgPath = path.join(backgroundsDir, bg.filename);
-          if (fs.existsSync(bgPath)) {
-            const attachment = new AttachmentBuilder(bgPath, { 
-              name: `${bg.id}.${bg.filename.split('.').pop()}`,
-              description: `${bg.name} - ${bg.rarity}`
-            });
-            attachments.push(attachment);
-          }
-        }
-        
-        await interaction.reply({ 
-          embeds: [embed], 
-          files: attachments,
-          components, 
-          flags: MessageFlags.Ephemeral 
-        });
+        await showBackgroundCarousel(interaction, 0);
       }
       
-      // Purchase Background Buttons
+      // Carousel Navigation
+      if (interaction.customId.startsWith('carousel_')) {
+        const [_, action, indexStr] = interaction.customId.split('_');
+        const currentIndex = parseInt(indexStr);
+        
+        if (action === 'next' || action === 'prev') {
+          const allBackgrounds = getAllBackgrounds();
+          let newIndex = currentIndex;
+          
+          if (action === 'next') {
+            newIndex = (currentIndex + 1) % allBackgrounds.length;
+          } else {
+            newIndex = currentIndex - 1;
+            if (newIndex < 0) newIndex = allBackgrounds.length - 1;
+          }
+          
+          await showBackgroundCarousel(interaction, newIndex, true);
+        }
+      }
+      
+      // Purchase Background Buttons from carousel
       if (interaction.customId.startsWith('buy_bg_')) {
-        const bgId = interaction.customId.replace('buy_bg_', '');
+        const parts = interaction.customId.split('_');
+        const bgId = parts.slice(2, -1).join('_'); // Handle IDs with underscores
+        const currentIndex = parseInt(parts[parts.length - 1]);
         const background = getBackgroundById(bgId);
         
         if (!background) {
@@ -162,7 +162,8 @@ export = {
         const result = purchaseBackground(interaction.user.id, bgId);
         
         if (result.success) {
-          const embed = new EmbedBuilder()
+          // Show success message temporarily
+          const successEmbed = new EmbedBuilder()
             .setColor('#57F287')
             .setTitle('✅ Purchase Successful!')
             .setDescription(result.message)
@@ -171,18 +172,29 @@ export = {
               { name: '💰 Price', value: `🎫 ${background.price.toLocaleString()}`, inline: true },
               { name: '💳 Remaining', value: `🎫 ${(userTokens - background.price).toLocaleString()}`, inline: true }
             )
-            .setFooter({ text: 'Click "Change Background" to activate it' })
+            .setFooter({ text: 'Returning to shop...' })
             .setTimestamp();
           
-          await interaction.reply({ embeds: [embed], flags: MessageFlags.Ephemeral });
+          await interaction.update({ embeds: [successEmbed], files: [], components: [] });
+          
+          // Wait 2 seconds then return to carousel with updated state
+          setTimeout(async () => {
+            await showBackgroundCarousel(interaction, currentIndex, true);
+          }, 2000);
         } else {
-          const embed = new EmbedBuilder()
+          // Show error briefly then return to carousel
+          const errorEmbed = new EmbedBuilder()
             .setColor('#ED4245')
             .setTitle('❌ Purchase Failed')
             .setDescription(result.message)
-            .setFooter({ text: 'Earn more Saloon Tokens to purchase backgrounds' });
+            .setFooter({ text: 'Returning to shop...' });
           
-          await interaction.reply({ embeds: [embed], flags: MessageFlags.Ephemeral });
+          await interaction.update({ embeds: [errorEmbed], files: [], components: [] });
+          
+          // Wait 2 seconds then return to carousel
+          setTimeout(async () => {
+            await showBackgroundCarousel(interaction, currentIndex, true);
+          }, 2000);
         }
       }
     }
