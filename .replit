@@ -18,6 +18,10 @@ author = "agent"
 task = "workflow.run"
 args = "Discord Bot"
 
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "Website Server"
+
 [[workflows.workflow]]
 name = "Discord Bot"
 author = "agent"
@@ -29,17 +33,29 @@ outputType = "console"
 task = "shell.exec"
 args = "npm start"
 
+[[workflows.workflow]]
+name = "Website Server"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "cd website && node server.js"
+waitForPort = 5000
+
+[workflows.workflow.metadata]
+outputType = "webview"
+
 [[ports]]
 localPort = 5000
 externalPort = 80
 
 [[ports]]
-localPort = 33315
-externalPort = 3000
-
-[[ports]]
 localPort = 36747
 externalPort = 3001
+
+[[ports]]
+localPort = 43013
+externalPort = 3000
 
 [deployment]
 deploymentTarget = "vm"
