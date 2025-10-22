@@ -34,6 +34,15 @@ export const BACKGROUNDS: Background[] = [
     description: 'Saddled horse drinking from a western river',
     rarity: 'epic',
     free: false
+  },
+  {
+    id: 'addicted_saloon',
+    name: 'Addicted to the Saloon',
+    filename: 'addicted-saloon.png',
+    price: 800,
+    description: 'Poker table with cards and chips in the saloon',
+    rarity: 'mythic',
+    free: false
   }
 ];
 
