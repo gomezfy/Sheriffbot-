@@ -4,7 +4,9 @@ import { infoEmbed, field } from '../../utils/embeds';
 export = {
   data: new SlashCommandBuilder()
     .setName('help')
-    .setDescription('Shows all available commands and their descriptions'),
+    .setDescription('Shows all available commands and their descriptions')
+    .setContexts([0, 1, 2]) // Guild, BotDM, PrivateChannel
+    .setIntegrationTypes([0, 1]), // Guild Install, User Install
   async execute(interaction: ChatInputCommandInteraction): Promise<void> {
     const embed = infoEmbed(
       '🤠 Sheriff Rex - Command Guide',

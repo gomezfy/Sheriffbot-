@@ -25,7 +25,9 @@ function saveDailyData(data: DailyData): void {
 module.exports = {
   data: new SlashCommandBuilder()
     .setName('daily')
-    .setDescription('🌅 Claim your daily reward and build a streak!'),
+    .setDescription('🌅 Claim your daily reward and build a streak!')
+    .setContexts([0, 1, 2]) // Guild, BotDM, PrivateChannel
+    .setIntegrationTypes([0, 1]), // Guild Install, User Install
   async execute(interaction: ChatInputCommandInteraction): Promise<void> {
     const userId = interaction.user.id;
     const dailyData = getDailyData();

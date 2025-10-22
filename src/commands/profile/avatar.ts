@@ -4,6 +4,8 @@ module.exports = {
   data: new SlashCommandBuilder()
     .setName('avatar')
     .setDescription('Show a user\'s avatar')
+    .setContexts([0, 1, 2]) // Guild, BotDM, PrivateChannel
+    .setIntegrationTypes([0, 1]) // Guild Install, User Install
     .addUserOption(option =>
       option
         .setName('user')

@@ -369,6 +369,8 @@ module.exports = {
   data: new SlashCommandBuilder()
     .setName('leaderboard')
     .setDescription('📊 View the top cowboys in the Wild West!')
+    .setContexts([0, 1, 2]) // Guild, BotDM, PrivateChannel
+    .setIntegrationTypes([0, 1]) // Guild Install, User Install
     .addStringOption(option =>
       option
         .setName('category')

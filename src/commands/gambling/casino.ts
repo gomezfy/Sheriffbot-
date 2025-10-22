@@ -31,6 +31,8 @@ module.exports = {
   data: new SlashCommandBuilder()
     .setName('casino')
     .setDescription('Try your luck at the slot machine!')
+    .setContexts([0, 1, 2]) // Guild, BotDM, PrivateChannel
+    .setIntegrationTypes([0, 1]) // Guild Install, User Install
     .addIntegerOption(option =>
       option
         .setName('bet')

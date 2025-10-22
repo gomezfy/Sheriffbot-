@@ -17,6 +17,8 @@ module.exports = {
   data: new SlashCommandBuilder()
     .setName('profile')
     .setDescription('View your cowboy profile card')
+    .setContexts([0, 1, 2]) // Guild, BotDM, PrivateChannel
+    .setIntegrationTypes([0, 1]) // Guild Install, User Install
     .addUserOption(option =>
       option
         .setName('user')

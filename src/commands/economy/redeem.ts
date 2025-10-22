@@ -42,6 +42,8 @@ module.exports = {
   data: new SlashCommandBuilder()
     .setName('redeem')
     .setDescription('🎁 Redeem a purchase code from the website shop')
+    .setContexts([0, 1, 2]) // Guild, BotDM, PrivateChannel
+    .setIntegrationTypes([0, 1]) // Guild Install, User Install
     .addStringOption(option =>
       option
         .setName('code')
