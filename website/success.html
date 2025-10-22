@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment Successful! 🎉</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
+</head>
+<body>
+    <section class="success-page">
+        <div class="container">
+            <div class="success-content">
+                <div class="success-icon">✅</div>
+                <h1 class="success-title">PAYMENT SUCCESSFUL!</h1>
+                <p class="success-subtitle">Thank you for your purchase, partner! 🤠</p>
+                
+                <div class="redemption-code-box">
+                    <h3>Your Redemption Code:</h3>
+                    <div class="code-display" id="redemptionCode">
+                        Loading...
+                    </div>
+                    <button class="btn btn-secondary copy-button" id="copyButton">
+                        <span>📋</span> Copy Code
+                    </button>
+                </div>
+
+                <div class="instructions">
+                    <h3>🎯 How to Redeem:</h3>
+                    <ol>
+                        <li>Copy the redemption code above</li>
+                        <li>Open Discord and go to any server with Sheriff Bot</li>
+                        <li>Use the command: <code>/redeem code:[paste your code]</code></li>
+                        <li>Your tokens and coins will be added instantly!</li>
+                    </ol>
+                    <p style="text-align: center; margin-top: 1.5rem; color: var(--accent-gold);">
+                        <strong>Example:</strong> <code>/redeem code:SHERIFF-GOLD-ABC123-XYZ789</code>
+                    </p>
+                </div>
+
+                <div class="order-details" id="orderDetails">
+                    <h3>📦 Order Details:</h3>
+                    <p id="orderInfo">Verifying payment...</p>
+                </div>
+
+                <div class="action-buttons">
+                    <a href="shop.html" class="btn btn-primary">
+                        <span>🛒</span> Buy More
+                    </a>
+                    <a href="index.html" class="btn btn-secondary">
+                        <span>🏠</span> Back to Home
+                    </a>
+                </div>
+
+                <div class="support-note">
+                    <p>⚠️ <strong>Important:</strong> Save this code! You won't be able to retrieve it again.</p>
+                    <p>Need help? Contact support in our <a href="https://discord.gg/your-server" target="_blank">Discord server</a></p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        // Get parameters from URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const orderID = urlParams.get('orderID');
+        const code = urlParams.get('code');
+
+        // Display redemption code
+        if (code) {
+            document.getElementById('redemptionCode').textContent = code;
+        }
+
+        // Verify PayPal payment and show details
+        if (orderID) {
+            fetch(`/api/orders/${orderID}`)
+                .then(res => res.json())
+                .then(data => {
+                    const orderInfo = document.getElementById('orderInfo');
+                    if (data.status === 'COMPLETED') {
+                        const customId = data.purchaseUnits?.[0]?.custom_id || code;
+                        orderInfo.innerHTML = `
+                            <p><strong>Status:</strong> <span style="color: #4CAF50;">✅ Paid</span></p>
+                            <p><strong>Order ID:</strong> ${orderID}</p>
+                            <p><strong>Email:</strong> ${data.payer?.email_address || 'N/A'}</p>
+                            <p><strong>Payment Method:</strong> PayPal</p>
+                        `;
+                    } else {
+                        orderInfo.innerHTML = `
+                            <p><strong>Status:</strong> Payment processing...</p>
+                            <p><strong>Order ID:</strong> ${orderID}</p>
+                        `;
+                    }
+                })
+                .catch(error => {
+                    console.error('Verification error:', error);
+                    document.getElementById('orderInfo').innerHTML = `
+                        <p><strong>Order ID:</strong> ${orderID}</p>
+                        <p style="color: #4CAF50;">✅ Payment successful! Use your code above.</p>
+                    `;
+                });
+        } else {
+            document.getElementById('orderInfo').innerHTML = `
+                <p style="color: #4CAF50;">✅ Payment successful! Use your code above.</p>
+            `;
+        }
+
+        // Copy code to clipboard
+        document.getElementById('copyButton').addEventListener('click', () => {
+            const code = document.getElementById('redemptionCode').textContent;
+            navigator.clipboard.writeText(code).then(() => {
+                const button = document.getElementById('copyButton');
+                const originalHTML = button.innerHTML;
+                button.innerHTML = '<span>✅</span> Copied!';
+                setTimeout(() => {
+                    button.innerHTML = originalHTML;
+                }, 2000);
+            }).catch(err => {
+                alert('Failed to copy code. Please copy it manually.');
+            });
+        });
+    </script>
+</body>
+</html>
