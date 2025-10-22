@@ -27,15 +27,6 @@ export const BACKGROUNDS: Background[] = [
     free: true
   },
   {
-    id: 'desert_cabin',
-    name: 'Desert Cabin',
-    filename: 'desert-cabin.png',
-    price: 80,
-    description: 'Peaceful desert homestead with cacti and red canyon views',
-    rarity: 'mythic',
-    free: false
-  },
-  {
     id: 'saloon',
     name: 'Wild West Saloon',
     filename: 'saloon.jpg',

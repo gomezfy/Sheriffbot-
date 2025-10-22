@@ -47,6 +47,16 @@ None specified yet.
 - **Session Management:** `express-session` (for the web dashboard)
 
 ## Recent Changes
+- **October 22, 2025:**
+  - **Profile Background Customization System:** Implemented complete background customization with carousel-based shop
+    - Created `backgroundManager.ts` utility with 4 Western-themed backgrounds (default.jpg, saloon.jpg, canyon.jpg, town.jpg)
+    - Integrated carousel shop into /profile command with "🛒 Shop Backgrounds" button
+    - Carousel navigation with ◀ Back and Next ▶ buttons for browsing backgrounds
+    - Dynamic purchase button adapting to ownership status and token balance
+    - Purchase flow shows success message and returns to carousel for continuous shopping
+    - Backgrounds priced in Saloon Tokens (50-150 tokens) with rarity system (common to legendary)
+    - Background selection menu in /profile with preview and "Change Background" button
+    - Custom backgrounds rendered in profile cards using Canvas
 - **October 21, 2025:** 
   - **Enhanced Leaderboard Design:** Completely redesigned /leaderboard with modern gradients, star-shaped badges for Top 3, Hall of Fame panel with large avatars, glow effects, user position highlighting, and expanded 1400x900px canvas
   - **Payment Migration:** Migrated payment processing from PayPal to Hotmart API
