@@ -1,11 +1,12 @@
 {
   "339772388566892546": {
     "bio": "🤠 Um cowboy solitário vagando pelo Velho Oeste 🌵",
-    "background": "town.jpg",
+    "background": "arabe-ingles.png",
     "ownedBackgrounds": [
       "default",
       "desert_cabin",
-      "town"
+      "town",
+      "arabe_ingles"
     ]
   }
 }
