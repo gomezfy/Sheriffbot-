@@ -48,6 +48,15 @@ None specified yet.
 
 ## Recent Changes
 - **October 22, 2025:**
+  - **Advanced Help System:** Complete redesign of /help command with interactive navigation
+    - 7 category pages: Overview, Economy, Gambling, Mining, Profile, Bounty, Admin, Utility
+    - Interactive button navigation with 2 rows of category buttons
+    - Detailed command descriptions with usage examples
+    - Clear DM support indicators (📱 icon for DM-compatible commands)
+    - Color-coded embeds for each category (green, purple, orange, blue, red, gold, gray)
+    - 5-minute collector with user-specific interactions
+    - Link buttons for Support, Add Bot, and Website
+    - Automatic cleanup after timeout
   - **DM Support Implementation:** Enabled Direct Message functionality for user-focused commands
     - 9 commands now work in DMs: /ping, /help, /avatar, /profile, /inventory, /daily, /redeem, /leaderboard, /casino
     - Added setContexts([0, 1, 2]) and setIntegrationTypes([0, 1]) to DM-compatible commands
