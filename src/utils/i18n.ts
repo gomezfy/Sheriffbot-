@@ -62,6 +62,41 @@ const translations: Record<string, Record<string, string>> = {
     weight: 'Weight',
     time_minutes: '{min} minutes',
     time_hours: '{hours}h {min}m',
+    
+    // Help Command Translations (English)
+    help_title: '🤠 Sheriff Rex - Command Guide',
+    help_overview_desc: '**Welcome to the Wild West!** Sheriff Rex is a complete bot with economy system, games, mining and much more.\n\n📱 **DM Support:** Some commands work in direct messages!\n🎮 **34 Commands Available**\n\n**Select a category below to see the commands:**',
+    help_footer: '🌵 Use the buttons to navigate between categories',
+    help_btn_economy: '💰 Economy',
+    help_btn_gambling: '🎲 Gambling',
+    help_btn_mining: '⛏️ Mining',
+    help_btn_profile: '👤 Profile',
+    help_btn_bounty: '🔫 Bounty',
+    help_btn_admin: '⚙️ Admin',
+    help_btn_utility: '🔧 Utility',
+    help_btn_home: '🏠 Home Menu',
+    help_btn_support: '🆘 Support',
+    help_btn_invite: '➕ Add Bot',
+    help_btn_website: '🌐 Website',
+    help_only_user: '❌ Only the command user can navigate!',
+    
+    // Category Titles (English)
+    help_economy_title: '💰 Economy & Trading',
+    help_gambling_title: '🎲 Gambling & Games',
+    help_mining_title: '⛏️ Mining System',
+    help_profile_title: '👤 Profile & Customization',
+    help_bounty_title: '🔫 Bounty System',
+    help_admin_title: '⚙️ Server Administration',
+    help_utility_title: '🔧 Utility Commands',
+    
+    // Category Descriptions (English)
+    help_economy_desc: '**Complete economic system with coins, items and transfers.**\n\n🪙 **Silver Coins** - Main server currency\n🥇 **Gold Bars** - Valuable items (1 bar = 700 Silver)\n🎟️ **Saloon Tokens** - Premium currency for customizations\n💼 **Backpack System** - Backpack system with upgrades',
+    help_gambling_desc: '**Wild West gambling and games!**\n\n💰 Bet your Silver Coins\n🎰 Multiple games available\n🤝 Solo and cooperative games\n⚠️ Gamble responsibly!',
+    help_mining_desc: '**Mine in the Wild West mountains!**\n\n🥇 Find valuable Gold Bars\n💎 Discover rare ores\n🤝 Mine alone or in pairs\n⏰ Strategic cooldowns',
+    help_profile_desc: '**Personalize your Wild West profile!**\n\n🎨 Customizable backgrounds\n📊 XP and Level System\n🖼️ Visual profile cards\n✨ Glassmorphism effect',
+    help_bounty_desc: '**Bounty hunting in the Wild West!**\n\n💀 Place bounties on players\n🎯 Capture wanted criminals\n💰 Earn Silver rewards\n⚖️ Western justice system',
+    help_admin_desc: '**Exclusive commands for administrators!**\n\n🛡️ Requires admin permissions\n🎛️ Server settings\n💸 Economy management\n📢 Advanced announcement system',
+    help_utility_desc: '**Useful tools and bot information!**\n\n📊 Status and information\n🌐 General settings\n❓ Help and support\n⚡ Performance',
   },
   'es-ES': {
     cooldown: '¡Tranquilo, vaquero! Hasta los caballos necesitan siesta. ¡Vuelve en {time}! 🐴',
@@ -93,6 +128,107 @@ const translations: Record<string, Record<string, string>> = {
     weight: 'Peso',
     time_minutes: '{min} minutos',
     time_hours: '{hours}h {min}m',
+    
+    // Help Command Translations (Spanish)
+    help_title: '🤠 Sheriff Rex - Guía de Comandos',
+    help_overview_desc: '**¡Bienvenido al Viejo Oeste!** Sheriff Rex es un bot completo con sistema de economía, juegos, minería y mucho más.\n\n📱 **Soporte MP:** ¡Algunos comandos funcionan en mensajes privados!\n🎮 **34 Comandos Disponibles**\n\n**Selecciona una categoría abajo para ver los comandos:**',
+    help_footer: '🌵 Usa los botones para navegar entre categorías',
+    help_btn_economy: '💰 Economía',
+    help_btn_gambling: '🎲 Apuestas',
+    help_btn_mining: '⛏️ Minería',
+    help_btn_profile: '👤 Perfil',
+    help_btn_bounty: '🔫 Recompensas',
+    help_btn_admin: '⚙️ Admin',
+    help_btn_utility: '🔧 Utilidad',
+    help_btn_home: '🏠 Menú Inicial',
+    help_btn_support: '🆘 Soporte',
+    help_btn_invite: '➕ Agregar Bot',
+    help_btn_website: '🌐 Sitio Web',
+    help_only_user: '❌ ¡Solo quien usó el comando puede navegar!',
+    
+    // Category Titles (Spanish)
+    help_economy_title: '💰 Economía & Trading',
+    help_gambling_title: '🎲 Apuestas & Juegos',
+    help_mining_title: '⛏️ Sistema de Minería',
+    help_profile_title: '👤 Perfil & Personalización',
+    help_bounty_title: '🔫 Sistema de Recompensas',
+    help_admin_title: '⚙️ Administración del Servidor',
+    help_utility_title: '🔧 Comandos de Utilidad',
+    
+    // Category Descriptions (Spanish)
+    help_economy_desc: '**Sistema económico completo con monedas, objetos y transferencias.**\n\n🪙 **Monedas de Plata** - Moneda principal del servidor\n🥇 **Barras de Oro** - Objetos valiosos (1 barra = 700 Plata)\n🎟️ **Fichas Saloon** - Moneda premium para personalizaciones\n💼 **Sistema de Mochila** - Sistema de mochila con mejoras',
+    help_gambling_desc: '**¡Juegos de azar y apuestas del Viejo Oeste!**\n\n💰 Apuesta tus Monedas de Plata\n🎰 Múltiples juegos disponibles\n🤝 Juegos solo y cooperativos\n⚠️ ¡Juega responsablemente!',
+    help_mining_desc: '**¡Mina en las montañas del Viejo Oeste!**\n\n🥇 Encuentra valiosas Barras de Oro\n💎 Descubre minerales raros\n🤝 Mina solo o en pareja\n⏰ Tiempos de espera estratégicos',
+    help_profile_desc: '**¡Personaliza tu perfil del Viejo Oeste!**\n\n🎨 Fondos personalizables\n📊 Sistema de XP y Niveles\n🖼️ Tarjetas de perfil visuales\n✨ Efecto glassmorphism',
+    help_bounty_desc: '**¡Caza de recompensas en el Viejo Oeste!**\n\n💀 Coloca recompensas en jugadores\n🎯 Captura criminales buscados\n💰 Gana recompensas en Plata\n⚖️ Sistema de justicia western',
+    help_admin_desc: '**¡Comandos exclusivos para administradores!**\n\n🛡️ Requiere permisos de admin\n🎛️ Configuraciones del servidor\n💸 Gestión de economía\n📢 Sistema de anuncios avanzado',
+    help_utility_desc: '**¡Herramientas útiles e información del bot!**\n\n📊 Estado e información\n🌐 Configuraciones generales\n❓ Ayuda y soporte\n⚡ Rendimiento',
+  },
+  'fr': {
+    cooldown: 'Doucement, cowboy ! Même les chevaux ont besoin de repos. Reviens dans {time} ! 🐴',
+    error: 'Sacrebleu, partenaire ! Mon cheval a trébuché... 🤠',
+    inventory_full: 'Hé cowboy ! Tu portes tout le ranch sur ton dos ? Libère de l\'espace ! 🎒',
+    daily_claimed: 'Hé, pistolero avide ! Tu es déjà passé aujourd\'hui. Reviens dans {time} ! 💰',
+    daily_success: 'Regardez qui est arrivé au saloon ! Voici vos {amount} Pièces d\'Argent, partenaire ! 🍻',
+    daily_title: '🎁 TRÉSOR QUOTIDIEN DU FAR WEST',
+    daily_description: 'Reviens demain quand le shérif remplit le coffre ! 🤠',
+    daily_footer: 'Ne dépense pas tout en whisky, d\'accord ? 🥃',
+    daily_cooldown_title: '⏰ LE COQ N\'A PAS ENCORE CHANTÉ !',
+    daily_cooldown_desc: 'Calme-toi, cowboy ! Tu as déjà pris tes pièces aujourd\'hui !\n\n**Reviens quand le soleil se lèvera à nouveau :** {time}',
+    daily_cooldown_footer: 'Va te reposer, même les hors-la-loi dorment ! 😴',
+    mine_cooldown: 'Tu es trop fatigué pour miner ! Reviens dans : **{time}**',
+    mine_title: 'MINE D\'OR',
+    mine_choose: 'Choisis ta méthode de minage :',
+    mine_solo: 'Minage Solo',
+    mine_solo_desc: 'Durée : 50 minutes\nRécompense : 1-3 Lingots d\'Or\nRisque : Faible',
+    mine_coop: 'Minage Coopératif',
+    mine_coop_desc: 'Durée : 2 heures\nRécompense : 4-6 Lingots d\'Or (partagés)\nRisque : Élevé',
+    mine_gold_value: '1 Lingot d\'Or = {value} Pièces d\'Argent',
+    mine_progress: 'Extraction d\'or en cours...',
+    mine_success: 'Vous avez miné {amount} Lingot(s) d\'Or !',
+    mine_value: 'Valeur',
+    mine_next: 'Prochain Minage',
+    mine_good_work: 'Bon travail, partenaire !',
+    silver_coins: 'Pièces d\'Argent',
+    gold_bars: 'Lingots d\'Or',
+    weight: 'Poids',
+    time_minutes: '{min} minutes',
+    time_hours: '{hours}h {min}m',
+    
+    // Help Command Translations (French)
+    help_title: '🤠 Sheriff Rex - Guide des Commandes',
+    help_overview_desc: '**Bienvenue dans le Far West !** Sheriff Rex est un bot complet avec système d\'économie, jeux, minage et bien plus.\n\n📱 **Support MP :** Certaines commandes fonctionnent en messages privés !\n🎮 **34 Commandes Disponibles**\n\n**Sélectionnez une catégorie ci-dessous pour voir les commandes:**',
+    help_footer: '🌵 Utilisez les boutons pour naviguer entre les catégories',
+    help_btn_economy: '💰 Économie',
+    help_btn_gambling: '🎲 Jeux',
+    help_btn_mining: '⛏️ Minage',
+    help_btn_profile: '👤 Profil',
+    help_btn_bounty: '🔫 Primes',
+    help_btn_admin: '⚙️ Admin',
+    help_btn_utility: '🔧 Utilitaire',
+    help_btn_home: '🏠 Menu Principal',
+    help_btn_support: '🆘 Support',
+    help_btn_invite: '➕ Ajouter le Bot',
+    help_btn_website: '🌐 Site Web',
+    help_only_user: '❌ Seul celui qui a utilisé la commande peut naviguer !',
+    
+    // Category Titles (French)
+    help_economy_title: '💰 Économie & Trading',
+    help_gambling_title: '🎲 Jeux & Paris',
+    help_mining_title: '⛏️ Système de Minage',
+    help_profile_title: '👤 Profil & Personnalisation',
+    help_bounty_title: '🔫 Système de Primes',
+    help_admin_title: '⚙️ Administration du Serveur',
+    help_utility_title: '🔧 Commandes Utilitaires',
+    
+    // Category Descriptions (French)
+    help_economy_desc: '**Système économique complet avec monnaies, objets et transferts.**\n\n🪙 **Pièces d\'Argent** - Monnaie principale du serveur\n🥇 **Lingots d\'Or** - Objets précieux (1 lingot = 700 Argent)\n🎟️ **Jetons Saloon** - Monnaie premium pour personnalisations\n💼 **Système de Sac** - Système de sac avec améliorations',
+    help_gambling_desc: '**Jeux de hasard et paris du Far West !**\n\n💰 Pariez vos Pièces d\'Argent\n🎰 Plusieurs jeux disponibles\n🤝 Jeux solo et coopératifs\n⚠️ Jouez de manière responsable !',
+    help_mining_desc: '**Exploitez les montagnes du Far West !**\n\n🥇 Trouvez de précieux Lingots d\'Or\n💎 Découvrez des minerais rares\n🤝 Minez seul ou en duo\n⏰ Temps de récupération stratégiques',
+    help_profile_desc: '**Personnalisez votre profil du Far West !**\n\n🎨 Arrière-plans personnalisables\n📊 Système d\'XP et de Niveaux\n🖼️ Cartes de profil visuelles\n✨ Effet glassmorphism',
+    help_bounty_desc: '**Chasse aux primes dans le Far West !**\n\n💀 Placez des primes sur les joueurs\n🎯 Capturez les criminels recherchés\n💰 Gagnez des récompenses en Argent\n⚖️ Système de justice western',
+    help_admin_desc: '**Commandes exclusives pour les administrateurs !**\n\n🛡️ Nécessite des permissions admin\n🎛️ Paramètres du serveur\n💸 Gestion de l\'économie\n📢 Système d\'annonces avancé',
+    help_utility_desc: '**Outils utiles et informations sur le bot !**\n\n📊 Statut et informations\n🌐 Paramètres généraux\n❓ Aide et support\n⚡ Performance',
   }
 };
 
@@ -101,6 +237,7 @@ export function getLocale(interaction: ChatInputCommandInteraction): string {
   
   if (locale.startsWith('pt')) return 'pt-BR';
   if (locale.startsWith('es')) return 'es-ES';
+  if (locale.startsWith('fr')) return 'fr';
   
   return 'en-US';
 }
