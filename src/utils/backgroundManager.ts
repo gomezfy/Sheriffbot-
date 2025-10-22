@@ -25,6 +25,15 @@ export const BACKGROUNDS: Background[] = [
     description: 'Majestic Arabian horse in the desert',
     rarity: 'legendary',
     free: false
+  },
+  {
+    id: 'horse_alone',
+    name: 'Horse Alone',
+    filename: 'horse-alone.png',
+    price: 283,
+    description: 'Saddled horse drinking from a western river',
+    rarity: 'epic',
+    free: false
   }
 ];
 
