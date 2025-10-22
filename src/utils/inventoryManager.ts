@@ -1,6 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import { EMOJI_TEXT } from './customEmojis';
+import { cacheManager } from './cacheManager';
 
 const inventoryFile = path.join(__dirname, '..', 'data', 'inventory.json');
 
@@ -51,37 +52,51 @@ interface Inventory {
 }
 
 export function getInventory(userId: string): Inventory {
-  const data = fs.readFileSync(inventoryFile, 'utf8');
-  const inventories = JSON.parse(data);
-  
-  if (!inventories[userId]) {
-    inventories[userId] = {
-      items: {},
-      weight: 0,
-      maxWeight: MAX_WEIGHT
-    };
-    fs.writeFileSync(inventoryFile, JSON.stringify(inventories, null, 2));
+  const defaultInventory: Inventory = {
+    items: {},
+    weight: 0,
+    maxWeight: MAX_WEIGHT
+  };
+
+  const cached = cacheManager.get<Inventory>('inventory', userId);
+  if (cached !== null) {
+    if (!cached.maxWeight) cached.maxWeight = MAX_WEIGHT;
+    return cached;
   }
-  
-  if (!inventories[userId].maxWeight) {
-    inventories[userId].maxWeight = MAX_WEIGHT;
-    fs.writeFileSync(inventoryFile, JSON.stringify(inventories, null, 2));
+
+  try {
+    const data = fs.readFileSync(inventoryFile, 'utf8');
+    const inventories = JSON.parse(data);
+    
+    if (!inventories[userId]) {
+      cacheManager.set('inventory', userId, defaultInventory, true);
+      return defaultInventory;
+    }
+    
+    if (!inventories[userId].maxWeight) {
+      inventories[userId].maxWeight = MAX_WEIGHT;
+    }
+    
+    cacheManager.set('inventory', userId, inventories[userId], false);
+    return inventories[userId];
+  } catch (error) {
+    console.error('Error reading inventory:', error);
+    cacheManager.set('inventory', userId, defaultInventory, true);
+    return defaultInventory;
   }
-  
-  return inventories[userId];
 }
 
 export function saveInventory(userId: string, inventory: Inventory): void {
-  const data = fs.readFileSync(inventoryFile, 'utf8');
-  const inventories = JSON.parse(data);
-  
-  if (inventories[userId] && inventories[userId].maxWeight > MAX_WEIGHT) {
-    inventory.maxWeight = inventories[userId].maxWeight;
+  if (!inventory.maxWeight || inventory.maxWeight < MAX_WEIGHT) {
+    const existing = cacheManager.get<Inventory>('inventory', userId);
+    if (existing && existing.maxWeight > MAX_WEIGHT) {
+      inventory.maxWeight = existing.maxWeight;
+    } else {
+      inventory.maxWeight = MAX_WEIGHT;
+    }
   }
   
-  inventories[userId] = inventory;
-  
-  fs.writeFileSync(inventoryFile, JSON.stringify(inventories, null, 2));
+  cacheManager.set('inventory', userId, inventory, true);
 }
 
 export function calculateWeight(inventory: Inventory): number {
@@ -184,7 +199,6 @@ export function transferItem(fromUserId: string, toUserId: string, itemId: strin
   return { success: true, item: ITEMS[itemId], quantity: quantity };
 }
 
-// Upgrade tiers with costs
 export const UPGRADE_TIERS = [
   { level: 1, capacity: 100, cost: 0, currency: null },
   { level: 2, capacity: 200, cost: 5000, currency: 'silver' },
@@ -210,7 +224,6 @@ export function getNextUpgrade(userId: string): any {
   const inventory = getInventory(userId);
   const currentCapacity = inventory.maxWeight;
   
-  // Website upgrade tiers with prices
   const websiteUpgrades = [
     { capacity: 200, price: '2.99' },
     { capacity: 300, price: '4.99' },
@@ -218,14 +231,12 @@ export function getNextUpgrade(userId: string): any {
     { capacity: 500, price: '9.99' }
   ];
   
-  // Find next upgrade
   for (const upgrade of websiteUpgrades) {
     if (currentCapacity < upgrade.capacity) {
       return { capacity: upgrade.capacity, price: upgrade.price };
     }
   }
   
-  // Already at max
   return null;
 }
 
@@ -244,10 +255,8 @@ export function getTopUsers(itemType: string, limit: number = 10): Array<{ userI
     }
   }
   
-  // Sort by amount (descending)
   userAmounts.sort((a, b) => b.amount - a.amount);
   
-  // Return top N users
   return userAmounts.slice(0, limit);
 }
 
@@ -255,14 +264,11 @@ export function upgradeBackpack(userId: string, newCapacity?: number): any {
   const inventory = getInventory(userId);
   const currentLevel = getBackpackLevel(userId);
   
-  // DIRECT UPGRADE (for redemption codes / admin)
   if (newCapacity !== undefined) {
-    // Check if new capacity is valid
     if (newCapacity <= inventory.maxWeight) {
       return { success: false, error: 'New capacity must be greater than current!' };
     }
     
-    // Check if new capacity is valid tier (200, 300, 400, or 500)
     const validCapacities = [200, 300, 400, 500];
     if (!validCapacities.includes(newCapacity)) {
       return { success: false, error: 'Invalid capacity tier!' };
@@ -280,17 +286,13 @@ export function upgradeBackpack(userId: string, newCapacity?: number): any {
     };
   }
   
-  // LEGACY UPGRADE PATH (for in-game currency purchases)
-  // Auto-upgrade to next tier using silver coins
   if (currentLevel >= UPGRADE_TIERS.length) {
     return { success: false, error: 'Already at maximum capacity!' };
   }
   
   const nextTier = UPGRADE_TIERS[currentLevel];
   
-  // Check if currency is required
   if (nextTier.currency && nextTier.cost > 0) {
-    // Check if user has enough currency
     const userCurrency = getItem(userId, nextTier.currency);
     
     if (userCurrency < nextTier.cost) {
@@ -303,7 +305,6 @@ export function upgradeBackpack(userId: string, newCapacity?: number): any {
       };
     }
     
-    // Deduct cost
     const removeResult = removeItem(userId, nextTier.currency, nextTier.cost);
     
     if (!removeResult.success) {
@@ -311,7 +312,6 @@ export function upgradeBackpack(userId: string, newCapacity?: number): any {
     }
   }
   
-  // Apply upgrade
   const oldCapacity = inventory.maxWeight;
   inventory.maxWeight = nextTier.capacity;
   saveInventory(userId, inventory);

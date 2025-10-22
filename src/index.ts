@@ -1,5 +1,5 @@
 import 'dotenv/config';
-import { Client, GatewayIntentBits, Collection, Events, ActivityType, MessageFlags } from 'discord.js';
+import { Client, GatewayIntentBits, Partials, Collection, Events, ActivityType, MessageFlags, Options, Sweepers } from 'discord.js';
 import fs from 'fs';
 import path from 'path';
 import Logger from './utils/logger';
@@ -19,6 +19,43 @@ const client = new Client({
     GatewayIntentBits.MessageContent,
     GatewayIntentBits.GuildMembers,
   ],
+  partials: [
+    Partials.User,
+    Partials.Channel,
+    Partials.GuildMember,
+    Partials.Message
+  ],
+  makeCache: Options.cacheWithLimits({
+    MessageManager: 100,
+    GuildMemberManager: {
+      maxSize: 200,
+      keepOverLimit: (member) => member.id === client.user?.id
+    },
+    UserManager: {
+      maxSize: 200,
+      keepOverLimit: (user) => user.id === client.user?.id
+    },
+    GuildBanManager: 0,
+    GuildInviteManager: 0,
+    GuildScheduledEventManager: 0,
+    StageInstanceManager: 0,
+    ThreadManager: 0,
+    ThreadMemberManager: 0,
+    PresenceManager: 0,
+    VoiceStateManager: 0,
+    ReactionManager: 0,
+    ReactionUserManager: 0
+  }),
+  sweepers: {
+    messages: {
+      interval: 300,
+      lifetime: 180
+    },
+    users: {
+      interval: 600,
+      filter: () => (user) => user.id !== client.user?.id
+    }
+  }
 }) as ExtendedClient;
 
 client.commands = new Collection();
@@ -29,6 +66,7 @@ const commandCategories = fs.readdirSync(commandsPath).filter(item => {
   return fs.statSync(itemPath).isDirectory();
 });
 
+let commandCount = 0;
 for (const category of commandCategories) {
   const categoryPath = path.join(commandsPath, category);
   const commandFiles = fs.readdirSync(categoryPath).filter(file => file.endsWith('.js') || file.endsWith('.ts'));
@@ -38,14 +76,16 @@ for (const category of commandCategories) {
     const command = require(filePath);
     if ('data' in command && 'execute' in command) {
       client.commands.set(command.data.name, command);
-      console.log(`[COMMAND] Loaded: ${command.data.name} (${category})`);
+      commandCount++;
     }
   }
 }
+console.log(`[COMMANDS] Loaded ${commandCount} commands`);
 
 const eventsPath = path.join(__dirname, 'events');
 const eventFiles = fs.readdirSync(eventsPath).filter(file => file.endsWith('.js') || file.endsWith('.ts'));
 
+let eventCount = 0;
 for (const file of eventFiles) {
   const filePath = path.join(eventsPath, file);
   const event = require(filePath);
@@ -54,8 +94,12 @@ for (const file of eventFiles) {
   } else {
     client.on(event.name, (...args: any[]) => event.execute(...args));
   }
-  console.log(`[EVENT] Loaded: ${event.name}`);
+  eventCount++;
 }
+console.log(`[EVENTS] Loaded ${eventCount} events`);
+
+const commandCooldowns = new Map<string, Map<string, number>>();
+const GLOBAL_COOLDOWN = 1000;
 
 client.on(Events.InteractionCreate, async interaction => {
   if (!interaction.isChatInputCommand()) return;
@@ -66,6 +110,31 @@ client.on(Events.InteractionCreate, async interaction => {
     console.error(`Command ${interaction.commandName} not found.`);
     return;
   }
+
+  const cooldownKey = `${interaction.user.id}:${interaction.commandName}`;
+  const now = Date.now();
+  
+  if (!commandCooldowns.has(interaction.commandName)) {
+    commandCooldowns.set(interaction.commandName, new Map());
+  }
+  
+  const timestamps = commandCooldowns.get(interaction.commandName)!;
+  const cooldownAmount = (command.cooldown || 0) * 1000 || GLOBAL_COOLDOWN;
+  
+  if (timestamps.has(interaction.user.id)) {
+    const expirationTime = timestamps.get(interaction.user.id)! + cooldownAmount;
+    
+    if (now < expirationTime) {
+      const timeLeft = (expirationTime - now) / 1000;
+      return interaction.reply({
+        content: `⏰ Please wait ${timeLeft.toFixed(1)}s before using \`/${interaction.commandName}\` again.`,
+        flags: MessageFlags.Ephemeral
+      });
+    }
+  }
+  
+  timestamps.set(interaction.user.id, now);
+  setTimeout(() => timestamps.delete(interaction.user.id), cooldownAmount);
 
   const allowedWhenPunished = ['help', 'ping', 'inventory', 'profile', 'avatar', 'bounties'];
   if (!allowedWhenPunished.includes(interaction.commandName)) {
