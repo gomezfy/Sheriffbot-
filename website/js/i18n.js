@@ -1,301 +1,142 @@
 const translations = {
     en: {
-        // Navigation
-        nav_features: "Features",
-        nav_commands: "Commands",
-        nav_shop: "🛒 Shop",
-        nav_dashboard: "⚙️ Dashboard",
-        nav_add_bot: "Add Bot",
-        
-        // Hero
+        nav_features: "Features", nav_commands: "Commands", nav_shop: "🛒 Shop", nav_dashboard: "⚙️ Dashboard", nav_add_bot: "Add Bot", nav_stats: "Stats", nav_about: "About",
         hero_subtitle: "🚀 Enterprise-Grade Western Discord Bot",
         hero_description: "Professional performance optimization with 4x faster response times! Complete economy system, custom emoji support, multilingual (4 languages), advanced caching, and 35 slash commands. The most advanced Western-themed bot available!",
-        hero_btn_add: "Add to Discord",
-        hero_btn_dashboard: "Control Panel",
-        hero_btn_features: "View Features",
-        hero_badge_commands: "35 Commands",
-        hero_badge_emojis: "47 Emojis",
-        hero_badge_languages: "4 Languages",
-        
+        hero_btn_add: "Add to Discord", hero_btn_dashboard: "Control Panel", hero_btn_features: "View Features",
+        hero_badge_commands: "35 Commands", hero_badge_languages: "4 Languages",
         scroll_down: "Scroll Down",
-        
-        // Features
-        features_title: "✨ Main Features",
-        features_subtitle: "Everything you need for a complete Western experience",
-        
-        feature_economy_title: "Economy System",
-        feature_economy_desc: "Dual currency: Saloon Tokens (premium) and Silver Coins (standard)",
-        feature_economy_1: "Weight-based inventory (100kg)",
-        feature_economy_2: "🛠️ 5 Western Jobs (/work)",
-        feature_economy_3: "🏆 Leaderboard System",
-        feature_economy_4: "Convertible Gold Bars",
-        
-        feature_mining_title: "Gold Mining",
-        feature_mining_desc: "Mine solo or in pairs to get gold bars",
-        feature_mining_1: "Solo: 1-3 bars (50min cooldown)",
-        feature_mining_2: "Co-op: 4-6 bars (2h cooldown)",
-        feature_mining_3: "Animated progress bars",
-        
-        feature_gambling_title: "Gambling Games",
-        feature_gambling_desc: "5 different games to test your luck at the saloon",
-        feature_gambling_1: "Casino (slot machine)",
-        feature_gambling_2: "Poker vs dealer",
-        feature_gambling_3: "Dice duels PvP",
-        feature_gambling_4: "Bank robbery (3 min!)",
-        feature_gambling_5: "🔫 Western Duels (1v1 PvP)",
-        
-        feature_bounties_title: "Bounty System",
-        feature_bounties_desc: "Place bounties on outlaws' heads",
-        feature_bounties_1: "Wanted posters with Canvas",
-        feature_bounties_2: "Authentic Western style",
-        feature_bounties_3: "Claim system",
-        
-        feature_profiles_title: "Visual Profiles",
-        feature_profiles_desc: "800x550px profile cards generated with Canvas",
-        feature_profiles_1: "47 custom emojis",
-        feature_profiles_2: "Custom backgrounds",
-        feature_profiles_3: "XP and level system",
-        
-        feature_images_title: "Image Detection",
-        feature_images_desc: "Bot automatically responds to Western images",
-        feature_images_1: "30+ keywords detected",
-        feature_images_2: "Tenor/Giphy GIFs",
-        feature_images_3: "35% response chance",
-        
-        feature_welcome_title: "Custom Welcome",
-        feature_welcome_desc: "Fully customizable JSON system",
-        feature_welcome_1: "Full embeds",
-        feature_welcome_2: "Dynamic placeholders",
-        feature_welcome_3: "GIF banners supported",
-        
-        feature_logs_title: "Complete Logs",
-        feature_logs_desc: "9 configurable log types per server",
-        feature_logs_1: "Command, error, welcome",
-        feature_logs_2: "Economy, bounty, mining",
-        feature_logs_3: "Gambling, admin logs",
-        
-        feature_autoreply_title: "Western Auto-Reply",
-        feature_autoreply_desc: "100+ themed phrases in 3 languages",
-        feature_autoreply_1: "PT-BR, EN-US, ES-ES",
-        feature_autoreply_2: "30+ keywords",
-        feature_autoreply_3: "Anti-spam cooldown",
-        
-        // Commands
-        commands_title: "📋 Available Commands",
-        commands_subtitle: "35 slash commands organized by category",
-        
-        cmd_economy: "💰 Economy (7)",
-        cmd_economy_daily: "Daily reward",
-        cmd_economy_work: "Work a job to earn coins",
-        cmd_economy_leaderboard: "Top 10 richest players",
-        cmd_economy_inventory: "View inventory",
-        cmd_economy_give: "Give coins",
-        cmd_economy_middleman: "Exchange currencies",
-        cmd_economy_migrate: "Migrate data",
-        
-        cmd_mining: "⛏️ Mining (1)",
-        cmd_mining_mine: "Mine gold",
-        
-        cmd_gambling: "🎰 Gambling (5)",
-        cmd_gambling_casino: "Slot machine",
-        cmd_gambling_poker: "Poker vs dealer",
-        cmd_gambling_dice: "Dice duel",
-        cmd_gambling_duel: "Western duel 1v1 PvP",
-        cmd_gambling_bankrob: "Rob bank",
-        
-        cmd_bounties: "🔫 Bounties (4)",
-        cmd_bounties_wanted: "Create bounty",
-        cmd_bounties_list: "View bounties",
-        cmd_bounties_claim: "Claim bounty",
-        cmd_bounties_clear: "Clear (admin)"
+        features_title: "✨ Main Features", features_subtitle: "Everything you need for a complete Western experience",
+        feature_economy_title: "Economy System", feature_economy_desc: "Dual currency: Saloon Tokens (premium) and Silver Coins (standard)",
+        feature_economy_1: "Weight-based inventory (100kg)", feature_economy_2: "🛠️ 5 Western Jobs (/work)", feature_economy_3: "🏆 Leaderboard System", feature_economy_4: "Convertible Gold Bars",
+        feature_mining_title: "Gold Mining", feature_mining_desc: "Mine solo or in pairs to get gold bars",
+        feature_mining_1: "Solo: 1-3 bars (50min cooldown)", feature_mining_2: "Co-op: 4-6 bars (2h cooldown)", feature_mining_3: "Animated progress bars",
+        feature_gambling_title: "Gambling Games", feature_gambling_desc: "5 different games to test your luck at the saloon",
+        feature_gambling_1: "Casino (slot machine)", feature_gambling_2: "Poker vs dealer", feature_gambling_3: "Dice duels PvP", feature_gambling_4: "Bank robbery (3 min!)", feature_gambling_5: "🔫 Western Duels (1v1 PvP)",
+        feature_bounties_title: "Bounty System", feature_bounties_desc: "Place bounties on outlaws' heads",
+        feature_bounties_1: "Wanted posters with Canvas", feature_bounties_2: "Authentic Western style", feature_bounties_3: "Claim system",
+        feature_profiles_title: "Visual Profiles", feature_profiles_desc: "800x550px profile cards generated with Canvas",
+        feature_profiles_1: "47 custom emojis", feature_profiles_2: "Custom backgrounds", feature_profiles_3: "XP and level system",
+        feature_images_title: "Image Detection", feature_images_desc: "Bot automatically responds to Western images",
+        feature_images_1: "30+ keywords detected", feature_images_2: "Tenor/Giphy GIFs", feature_images_3: "35% response chance",
+        feature_welcome_title: "Custom Welcome", feature_welcome_desc: "Fully customizable JSON system",
+        feature_welcome_1: "Full embeds", feature_welcome_2: "Dynamic placeholders", feature_welcome_3: "GIF banners supported",
+        feature_logs_title: "Complete Logs", feature_logs_desc: "9 configurable log types per server",
+        feature_logs_1: "Command, error, welcome", feature_logs_2: "Economy, bounty, mining", feature_logs_3: "Gambling, admin logs",
+        feature_autoreply_title: "Western Auto-Reply", feature_autoreply_desc: "100+ themed phrases in 3 languages",
+        feature_autoreply_1: "PT-BR, EN-US, ES-ES", feature_autoreply_2: "30+ keywords", feature_autoreply_3: "Anti-spam cooldown",
+        commands_title: "📋 Available Commands", commands_subtitle: "35 slash commands organized by category",
+        cmd_economy: "💰 Economy (7)", cmd_economy_daily: "Daily reward", cmd_economy_work: "Work a job to earn coins", cmd_economy_leaderboard: "Top 10 richest players", cmd_economy_inventory: "View inventory", cmd_economy_give: "Give coins", cmd_economy_middleman: "Exchange currencies", cmd_economy_migrate: "Migrate data",
+        cmd_mining: "⛏️ Mining (1)", cmd_mining_mine: "Mine gold",
+        cmd_gambling: "🎰 Gambling (5)", cmd_gambling_casino: "Slot machine", cmd_gambling_poker: "Poker vs dealer", cmd_gambling_dice: "Dice duel", cmd_gambling_duel: "Western duel 1v1 PvP", cmd_gambling_bankrob: "Rob bank",
+        cmd_bounties: "🔫 Bounties (4)", cmd_bounties_wanted: "Create bounty", cmd_bounties_list: "View bounties", cmd_bounties_claim: "Claim bounty", cmd_bounties_clear: "Clear (admin)",
+        cmd_profile: "👤 Profile (2)", cmd_profile_profile: "View visual profile", cmd_profile_avatar: "View avatar",
+        cmd_config: "🎉 Configuration (3)", cmd_config_welcome: "Setup welcome", cmd_config_logs: "Setup logs", cmd_config_wanted: "Setup wanted channel",
+        cmd_utilities: "🛠️ Utilities (4)", cmd_utilities_help: "View help", cmd_utilities_ping: "View latency", cmd_utilities_server: "Server info", cmd_utilities_language: "Test i18n",
+        cmd_admin: "👮 Admin (7)", cmd_admin_addgold: "Add gold", cmd_admin_addsilver: "Add silver", cmd_admin_addtokens: "Add tokens", cmd_admin_announcement: "Announcement system", cmd_admin_addbackpack: "Add backpack", cmd_admin_removegold: "Remove gold", cmd_admin_setuptoken: "Setup redemption codes",
+        stats_title: "📊 Bot Statistics", stats_commands: "35 Slash Commands", stats_emojis: "47 Custom Emojis", stats_languages: "4 Languages (EN/PT/ES/FR)", stats_logs: "9 Log Types", stats_events: "5 Event Handlers", stats_phrases: "100+ Auto-Reply Phrases",
+        about_title: "About Sheriff Bot", about_p1: "Sheriff Bot is the most complete Western-themed Discord bot, built to provide an immersive Wild West experience with advanced features and visual polish.", about_p2: "Built with Discord.js v14, the bot uses Canvas to generate custom images (profile cards, wanted posters) and supports 3 languages (PT-BR, EN-US, ES-ES).", about_tech: "🔧 Technologies:", about_highlights: "✨ Highlights:",
+        about_h1: "✅ Dual currency system (Tokens + Coins)", about_h2: "✅ Weight-based anti-exploit inventory", about_h3: "✅ 47 custom emojis for profiles", about_h4: "✅ Automatic Western image detection", about_h5: "✅ Animated progress bars", about_h6: "✅ Complete JSON welcome system", about_h7: "✅ 9 configurable log types",
+        cta_title: "Ready to start your Wild West journey?", cta_subtitle: "Add Sheriff Bot to your Discord server now!", cta_button: "Add to Discord", cta_note: "Free • No signup required • Ready to use",
+        footer_brand: "🤠 SHERIFF BOT", footer_brand_desc: "Western-themed Discord Bot", footer_links: "Quick Links", footer_resources: "Resources", footer_commands_count: "35 Commands", footer_emojis_count: "47 Emojis", footer_languages_count: "4 Languages", footer_logs_count: "9 Log Types", footer_copyright: "&copy; 2025 Sheriff Bot. All rights reserved.", footer_made: "Made with ❤️ for the Discord community",
+        shop_title: "🛒 Item Shop", shop_subtitle: "Purchase premium items", shop_starter_badge: "Starter", shop_popular_badge: "Popular", shop_best_value_badge: "Best Value", shop_ultimate_badge: "Ultimate", shop_buy_now: "Buy Now", shop_bonus_50: "+50 Bonus Tokens", shop_bonus_150: "+150 Bonus Tokens", shop_bonus_500: "+500 Bonus Tokens", shop_vip_badge: "VIP Badge", shop_exclusive_bg: "Exclusive Background", shop_save_60: "Save 60%", shop_save_65: "Save 65%", shop_save_70: "Save 70%", shop_instant_activation: "Instant activation", shop_security: "100% Secure payment", shop_permanent_upgrade: "Permanent upgrade", shop_inventory_upgrade: "Inventory capacity", shop_view_all: "View All Packs"
     },
-    
     pt: {
-        // Navigation
-        nav_features: "Recursos",
-        nav_commands: "Comandos",
-        nav_shop: "🛒 Loja",
-        nav_dashboard: "⚙️ Painel",
-        nav_add_bot: "Adicionar Bot",
-        
-        // Hero
-        hero_subtitle: "🚀 Bot Discord Western de Nível Empresarial",
-        hero_description: "Otimização profissional de performance com 4x mais velocidade! Sistema de economia completo, suporte a emojis personalizados, multilíngue (4 idiomas), cache avançado e 35 comandos slash. O bot Western mais avançado disponível!",
-        hero_btn_add: "Adicionar ao Discord",
-        hero_btn_dashboard: "Painel de Controle",
-        hero_btn_features: "Ver Recursos",
-        hero_badge_commands: "35 Comandos",
-        hero_badge_emojis: "47 Emojis",
-        hero_badge_languages: "4 Idiomas",
-        
-        scroll_down: "Role para Baixo",
-        
-        // Features
-        features_title: "✨ Recursos Principais",
-        features_subtitle: "Tudo que você precisa para uma experiência Western completa",
-        
-        feature_economy_title: "Sistema de Economia",
-        feature_economy_desc: "Moeda dupla: Fichas de Saloon (premium) e Moedas de Prata (padrão)",
-        feature_economy_1: "Inventário baseado em peso (100kg)",
-        feature_economy_2: "🛠️ 5 Trabalhos Western (/work)",
-        feature_economy_3: "🏆 Sistema de Ranking",
-        feature_economy_4: "Barras de Ouro conversíveis",
-        
-        feature_mining_title: "Mineração de Ouro",
-        feature_mining_desc: "Minere sozinho ou em dupla para conseguir barras de ouro",
-        feature_mining_1: "Solo: 1-3 barras (50min cooldown)",
-        feature_mining_2: "Co-op: 4-6 barras (2h cooldown)",
-        feature_mining_3: "Barras de progresso animadas",
-        
-        feature_gambling_title: "Jogos de Azar",
-        feature_gambling_desc: "5 jogos diferentes para testar sua sorte no saloon",
-        feature_gambling_1: "Cassino (caça-níqueis)",
-        feature_gambling_2: "Poker vs dealer",
-        feature_gambling_3: "Duelos de dados PvP",
-        feature_gambling_4: "Assalto ao banco (3 min!)",
-        feature_gambling_5: "🔫 Duelos Western (PvP 1v1)",
-        
-        feature_bounties_title: "Sistema de Recompensas",
-        feature_bounties_desc: "Coloque recompensas na cabeça dos bandidos",
-        feature_bounties_1: "Cartazes de procurado com Canvas",
-        feature_bounties_2: "Estilo Western autêntico",
-        feature_bounties_3: "Sistema de captura",
-        
-        feature_profiles_title: "Perfis Visuais",
-        feature_profiles_desc: "Cards de perfil 800x550px gerados com Canvas",
-        feature_profiles_1: "47 emojis customizados",
-        feature_profiles_2: "Fundos personalizados",
-        feature_profiles_3: "Sistema de XP e níveis",
-        
-        feature_images_title: "Detecção de Imagens",
-        feature_images_desc: "Bot responde automaticamente a imagens Western",
-        feature_images_1: "30+ palavras-chave detectadas",
-        feature_images_2: "GIFs Tenor/Giphy",
-        feature_images_3: "35% de chance de resposta",
-        
-        feature_welcome_title: "Boas-vindas Customizadas",
-        feature_welcome_desc: "Sistema JSON totalmente personalizável",
-        feature_welcome_1: "Embeds completos",
-        feature_welcome_2: "Placeholders dinâmicos",
-        feature_welcome_3: "Banners GIF suportados",
-        
-        feature_logs_title: "Logs Completos",
-        feature_logs_desc: "9 tipos de logs configuráveis por servidor",
-        feature_logs_1: "Comando, erro, boas-vindas",
-        feature_logs_2: "Economia, recompensas, mineração",
-        feature_logs_3: "Jogos, logs admin",
-        
-        feature_autoreply_title: "Resposta Automática Western",
-        feature_autoreply_desc: "100+ frases temáticas em 3 idiomas",
-        feature_autoreply_1: "PT-BR, EN-US, ES-ES",
-        feature_autoreply_2: "30+ palavras-chave",
-        feature_autoreply_3: "Cooldown anti-spam",
-        
-        // Commands
-        commands_title: "📋 Comandos Disponíveis",
-        commands_subtitle: "35 comandos slash organizados por categoria",
-        
-        cmd_economy: "💰 Economia (7)",
-        cmd_economy_daily: "Recompensa diária",
-        cmd_economy_work: "Trabalhe para ganhar moedas",
-        cmd_economy_leaderboard: "Top 10 mais ricos",
-        cmd_economy_inventory: "Ver inventário",
-        cmd_economy_give: "Dar moedas",
-        cmd_economy_middleman: "Trocar moedas",
-        cmd_economy_migrate: "Migrar dados",
-        
-        cmd_mining: "⛏️ Mineração (1)",
-        cmd_mining_mine: "Minerar ouro",
-        
-        cmd_gambling: "🎰 Jogos (5)",
-        cmd_gambling_casino: "Caça-níqueis",
-        cmd_gambling_poker: "Poker vs dealer",
-        cmd_gambling_dice: "Duelo de dados",
-        cmd_gambling_duel: "Duelo Western 1v1 PvP",
-        cmd_gambling_bankrob: "Assaltar banco",
-        
-        cmd_bounties: "🔫 Recompensas (4)",
-        cmd_bounties_wanted: "Criar recompensa",
-        cmd_bounties_list: "Ver recompensas",
-        cmd_bounties_claim: "Capturar",
-        cmd_bounties_clear: "Limpar (admin)"
+        nav_features: "Recursos", nav_commands: "Comandos", nav_shop: "🛒 Loja", nav_dashboard: "⚙️ Painel", nav_add_bot: "Adicionar Bot", nav_stats: "Estatísticas", nav_about: "Sobre",
+        hero_subtitle: "🚀 Bot Discord Western de Nível Empresarial", hero_description: "Otimização profissional de performance com 4x mais velocidade! Sistema de economia completo, suporte a emojis personalizados, multilíngue (4 idiomas), cache avançado e 35 comandos slash. O bot Western mais avançado disponível!", hero_btn_add: "Adicionar ao Discord", hero_btn_dashboard: "Painel de Controle", hero_btn_features: "Ver Recursos", hero_badge_commands: "35 Comandos", hero_badge_languages: "4 Idiomas", scroll_down: "Role para Baixo",
+        features_title: "✨ Recursos Principais", features_subtitle: "Tudo que você precisa para uma experiência Western completa",
+        feature_economy_title: "Sistema de Economia", feature_economy_desc: "Moeda dupla: Fichas de Saloon (premium) e Moedas de Prata (padrão)", feature_economy_1: "Inventário baseado em peso (100kg)", feature_economy_2: "🛠️ 5 Trabalhos Western (/work)", feature_economy_3: "🏆 Sistema de Ranking", feature_economy_4: "Barras de Ouro conversíveis",
+        feature_mining_title: "Mineração de Ouro", feature_mining_desc: "Minere sozinho ou em dupla para conseguir barras de ouro", feature_mining_1: "Solo: 1-3 barras (50min cooldown)", feature_mining_2: "Co-op: 4-6 barras (2h cooldown)", feature_mining_3: "Barras de progresso animadas",
+        feature_gambling_title: "Jogos de Azar", feature_gambling_desc: "5 jogos diferentes para testar sua sorte no saloon", feature_gambling_1: "Cassino (caça-níqueis)", feature_gambling_2: "Poker vs dealer", feature_gambling_3: "Duelos de dados PvP", feature_gambling_4: "Assalto ao banco (3 min!)", feature_gambling_5: "🔫 Duelos Western (PvP 1v1)",
+        feature_bounties_title: "Sistema de Recompensas", feature_bounties_desc: "Coloque recompensas na cabeça dos bandidos", feature_bounties_1: "Cartazes de procurado com Canvas", feature_bounties_2: "Estilo Western autêntico", feature_bounties_3: "Sistema de captura",
+        feature_profiles_title: "Perfis Visuais", feature_profiles_desc: "Cards de perfil 800x550px gerados com Canvas", feature_profiles_1: "47 emojis customizados", feature_profiles_2: "Fundos personalizados", feature_profiles_3: "Sistema de XP e níveis",
+        feature_images_title: "Detecção de Imagens", feature_images_desc: "Bot responde automaticamente a imagens Western", feature_images_1: "30+ palavras-chave detectadas", feature_images_2: "GIFs Tenor/Giphy", feature_images_3: "35% de chance de resposta",
+        feature_welcome_title: "Boas-vindas Customizadas", feature_welcome_desc: "Sistema JSON totalmente personalizável", feature_welcome_1: "Embeds completos", feature_welcome_2: "Placeholders dinâmicos", feature_welcome_3: "Banners GIF suportados",
+        feature_logs_title: "Logs Completos", feature_logs_desc: "9 tipos de logs configuráveis por servidor", feature_logs_1: "Comando, erro, boas-vindas", feature_logs_2: "Economia, recompensas, mineração", feature_logs_3: "Jogos, logs admin",
+        feature_autoreply_title: "Resposta Automática Western", feature_autoreply_desc: "100+ frases temáticas em 3 idiomas", feature_autoreply_1: "PT-BR, EN-US, ES-ES", feature_autoreply_2: "30+ palavras-chave", feature_autoreply_3: "Cooldown anti-spam",
+        commands_title: "📋 Comandos Disponíveis", commands_subtitle: "35 comandos slash organizados por categoria",
+        cmd_economy: "💰 Economia (7)", cmd_economy_daily: "Recompensa diária", cmd_economy_work: "Trabalhe para ganhar moedas", cmd_economy_leaderboard: "Top 10 mais ricos", cmd_economy_inventory: "Ver inventário", cmd_economy_give: "Dar moedas", cmd_economy_middleman: "Trocar moedas", cmd_economy_migrate: "Migrar dados",
+        cmd_mining: "⛏️ Mineração (1)", cmd_mining_mine: "Minerar ouro",
+        cmd_gambling: "🎰 Jogos (5)", cmd_gambling_casino: "Caça-níqueis", cmd_gambling_poker: "Poker vs dealer", cmd_gambling_dice: "Duelo de dados", cmd_gambling_duel: "Duelo Western 1v1 PvP", cmd_gambling_bankrob: "Assaltar banco",
+        cmd_bounties: "🔫 Recompensas (4)", cmd_bounties_wanted: "Criar recompensa", cmd_bounties_list: "Ver recompensas", cmd_bounties_claim: "Capturar", cmd_bounties_clear: "Limpar (admin)",
+        cmd_profile: "👤 Perfil (2)", cmd_profile_profile: "Ver perfil visual", cmd_profile_avatar: "Ver avatar",
+        cmd_config: "🎉 Configuração (3)", cmd_config_welcome: "Configurar boas-vindas", cmd_config_logs: "Configurar logs", cmd_config_wanted: "Configurar canal procurados",
+        cmd_utilities: "🛠️ Utilidades (4)", cmd_utilities_help: "Ver ajuda", cmd_utilities_ping: "Ver latência", cmd_utilities_server: "Info servidor", cmd_utilities_language: "Testar i18n",
+        cmd_admin: "👮 Admin (7)", cmd_admin_addgold: "Adicionar ouro", cmd_admin_addsilver: "Adicionar prata", cmd_admin_addtokens: "Adicionar tokens", cmd_admin_announcement: "Sistema de anúncios", cmd_admin_addbackpack: "Adicionar mochila", cmd_admin_removegold: "Remover ouro", cmd_admin_setuptoken: "Configurar códigos de resgate",
+        stats_title: "📊 Estatísticas do Bot", stats_commands: "35 Comandos Slash", stats_emojis: "47 Emojis Customizados", stats_languages: "4 Idiomas (EN/PT/ES/FR)", stats_logs: "9 Tipos de Logs", stats_events: "5 Handlers de Eventos", stats_phrases: "100+ Frases Auto-Resposta",
+        about_title: "Sobre o Sheriff Bot", about_p1: "Sheriff Bot é o bot Discord temático Western mais completo, construído para proporcionar uma experiência imersiva do Velho Oeste com recursos avançados e visual polido.", about_p2: "Construído com Discord.js v14, o bot usa Canvas para gerar imagens customizadas (cards de perfil, cartazes de procurado) e suporta 3 idiomas (PT-BR, EN-US, ES-ES).", about_tech: "🔧 Tecnologias:", about_highlights: "✨ Destaques:",
+        about_h1: "✅ Sistema de moeda dupla (Tokens + Moedas)", about_h2: "✅ Inventário anti-exploit baseado em peso", about_h3: "✅ 47 emojis customizados para perfis", about_h4: "✅ Detecção automática de imagens Western", about_h5: "✅ Barras de progresso animadas", about_h6: "✅ Sistema completo de boas-vindas JSON", about_h7: "✅ 9 tipos de logs configuráveis",
+        cta_title: "Pronto para começar sua jornada no Velho Oeste?", cta_subtitle: "Adicione o Sheriff Bot ao seu servidor Discord agora!", cta_button: "Adicionar ao Discord", cta_note: "Grátis • Sem cadastro necessário • Pronto para usar",
+        footer_brand: "🤠 SHERIFF BOT", footer_brand_desc: "Bot Discord Temático Western", footer_links: "Links Rápidos", footer_resources: "Recursos", footer_commands_count: "35 Comandos", footer_emojis_count: "47 Emojis", footer_languages_count: "4 Idiomas", footer_logs_count: "9 Tipos de Logs", footer_copyright: "&copy; 2025 Sheriff Bot. Todos os direitos reservados.", footer_made: "Feito com ❤️ para a comunidade Discord",
+        shop_title: "🛒 Loja de Itens", shop_subtitle: "Compre itens premium", shop_starter_badge: "Iniciante", shop_popular_badge: "Popular", shop_best_value_badge: "Melhor Valor", shop_ultimate_badge: "Ultimate", shop_buy_now: "Comprar Agora", shop_bonus_50: "+50 Tokens Bônus", shop_bonus_150: "+150 Tokens Bônus", shop_bonus_500: "+500 Tokens Bônus", shop_vip_badge: "Badge VIP", shop_exclusive_bg: "Fundo Exclusivo", shop_save_60: "Economize 60%", shop_save_65: "Economize 65%", shop_save_70: "Economize 70%", shop_instant_activation: "Ativação instantânea", shop_security: "Pagamento 100% Seguro", shop_permanent_upgrade: "Upgrade permanente", shop_inventory_upgrade: "Capacidade de inventário", shop_view_all: "Ver Todos os Pacotes"
     },
-    
     es: {
-        // Navigation
-        nav_features: "Características",
-        nav_commands: "Comandos",
-        nav_shop: "🛒 Tienda",
-        nav_dashboard: "⚙️ Panel",
-        nav_add_bot: "Añadir Bot",
-        
-        // Hero
-        hero_subtitle: "🚀 Bot Discord Western de Nivel Empresarial",
-        hero_description: "¡Optimización profesional de rendimiento con 4x más velocidad! Sistema de economía completo, soporte de emojis personalizados, multilingüe (4 idiomas), caché avanzado y 35 comandos slash. ¡El bot Western más avanzado disponible!",
-        hero_btn_add: "Añadir a Discord",
-        hero_btn_dashboard: "Panel de Control",
-        hero_btn_features: "Ver Características",
-        hero_badge_commands: "35 Comandos",
-        hero_badge_emojis: "47 Emojis",
-        hero_badge_languages: "4 Idiomas",
-        
-        scroll_down: "Desplazar hacia abajo",
-        
-        // Features
-        features_title: "✨ Características Principales",
-        features_subtitle: "Todo lo que necesitas para una experiencia Western completa",
-        
-        feature_economy_title: "Sistema de Economía",
-        feature_economy_desc: "Doble moneda: Fichas de Saloon (premium) y Monedas de Plata (estándar)",
-        feature_economy_1: "Inventario basado en peso (100kg)",
-        feature_economy_2: "🛠️ 5 Trabajos Western (/work)",
-        feature_economy_3: "🏆 Sistema de Clasificación",
-        feature_economy_4: "Barras de Oro convertibles",
-        
-        commands_title: "📋 Comandos Disponibles",
-        commands_subtitle: "35 comandos slash organizados por categoría"
+        nav_features: "Características", nav_commands: "Comandos", nav_shop: "🛒 Tienda", nav_dashboard: "⚙️ Panel", nav_add_bot: "Añadir Bot", nav_stats: "Estadísticas", nav_about: "Acerca de",
+        hero_subtitle: "🚀 Bot Discord Western de Nivel Empresarial", hero_description: "¡Optimización profesional de rendimiento con 4x más velocidad! Sistema de economía completo, soporte de emojis personalizados, multilingüe (4 idiomas), caché avanzado y 35 comandos slash. ¡El bot Western más avanzado disponible!", hero_btn_add: "Añadir a Discord", hero_btn_dashboard: "Panel de Control", hero_btn_features: "Ver Características", hero_badge_commands: "35 Comandos", hero_badge_languages: "4 Idiomas", scroll_down: "Desplazar hacia abajo",
+        features_title: "✨ Características Principales", features_subtitle: "Todo lo que necesitas para una experiencia Western completa",
+        feature_economy_title: "Sistema de Economía", feature_economy_desc: "Doble moneda: Fichas de Saloon (premium) y Monedas de Plata (estándar)", feature_economy_1: "Inventario basado en peso (100kg)", feature_economy_2: "🛠️ 5 Trabajos Western (/work)", feature_economy_3: "🏆 Sistema de Clasificación", feature_economy_4: "Barras de Oro convertibles",
+        feature_mining_title: "Minería de Oro", feature_mining_desc: "Mina solo o en pareja para conseguir barras de oro", feature_mining_1: "Solo: 1-3 barras (50min enfriamiento)", feature_mining_2: "Co-op: 4-6 barras (2h enfriamiento)", feature_mining_3: "Barras de progreso animadas",
+        feature_gambling_title: "Juegos de Azar", feature_gambling_desc: "5 juegos diferentes para probar tu suerte en el saloon", feature_gambling_1: "Casino (tragamonedas)", feature_gambling_2: "Póker vs crupier", feature_gambling_3: "Duelos de dados PvP", feature_gambling_4: "¡Atraco al banco (3 min!)", feature_gambling_5: "🔫 Duelos Western (PvP 1v1)",
+        feature_bounties_title: "Sistema de Recompensas", feature_bounties_desc: "Pon recompensas en cabezas de forajidos", feature_bounties_1: "Carteles de se busca con Canvas", feature_bounties_2: "Estilo Western auténtico", feature_bounties_3: "Sistema de captura",
+        feature_profiles_title: "Perfiles Visuales", feature_profiles_desc: "Tarjetas de perfil 800x550px generadas con Canvas", feature_profiles_1: "47 emojis personalizados", feature_profiles_2: "Fondos personalizados", feature_profiles_3: "Sistema de XP y niveles",
+        feature_images_title: "Detección de Imágenes", feature_images_desc: "El bot responde automáticamente a imágenes Western", feature_images_1: "30+ palabras clave detectadas", feature_images_2: "GIFs Tenor/Giphy", feature_images_3: "35% de probabilidad de respuesta",
+        feature_welcome_title: "Bienvenida Personalizada", feature_welcome_desc: "Sistema JSON totalmente personalizable", feature_welcome_1: "Embeds completos", feature_welcome_2: "Marcadores dinámicos", feature_welcome_3: "Banners GIF compatibles",
+        feature_logs_title: "Registros Completos", feature_logs_desc: "9 tipos de registros configurables por servidor", feature_logs_1: "Comando, error, bienvenida", feature_logs_2: "Economía, recompensas, minería", feature_logs_3: "Juegos, registros admin",
+        feature_autoreply_title: "Auto-Respuesta Western", feature_autoreply_desc: "100+ frases temáticas en 3 idiomas", feature_autoreply_1: "PT-BR, EN-US, ES-ES", feature_autoreply_2: "30+ palabras clave", feature_autoreply_3: "Enfriamiento anti-spam",
+        commands_title: "📋 Comandos Disponibles", commands_subtitle: "35 comandos slash organizados por categoría",
+        cmd_economy: "💰 Economía (7)", cmd_economy_daily: "Recompensa diaria", cmd_economy_work: "Trabajar para ganar monedas", cmd_economy_leaderboard: "Top 10 más ricos", cmd_economy_inventory: "Ver inventario", cmd_economy_give: "Dar monedas", cmd_economy_middleman: "Intercambiar monedas", cmd_economy_migrate: "Migrar datos",
+        cmd_mining: "⛏️ Minería (1)", cmd_mining_mine: "Minar oro",
+        cmd_gambling: "🎰 Juegos (5)", cmd_gambling_casino: "Tragamonedas", cmd_gambling_poker: "Póker vs crupier", cmd_gambling_dice: "Duelo de dados", cmd_gambling_duel: "Duelo Western 1v1 PvP", cmd_gambling_bankrob: "Atracar banco",
+        cmd_bounties: "🔫 Recompensas (4)", cmd_bounties_wanted: "Crear recompensa", cmd_bounties_list: "Ver recompensas", cmd_bounties_claim: "Capturar", cmd_bounties_clear: "Limpiar (admin)",
+        cmd_profile: "👤 Perfil (2)", cmd_profile_profile: "Ver perfil visual", cmd_profile_avatar: "Ver avatar",
+        cmd_config: "🎉 Configuración (3)", cmd_config_welcome: "Configurar bienvenida", cmd_config_logs: "Configurar registros", cmd_config_wanted: "Configurar canal se busca",
+        cmd_utilities: "🛠️ Utilidades (4)", cmd_utilities_help: "Ver ayuda", cmd_utilities_ping: "Ver latencia", cmd_utilities_server: "Info servidor", cmd_utilities_language: "Probar i18n",
+        cmd_admin: "👮 Admin (7)", cmd_admin_addgold: "Añadir oro", cmd_admin_addsilver: "Añadir plata", cmd_admin_addtokens: "Añadir fichas", cmd_admin_announcement: "Sistema de anuncios", cmd_admin_addbackpack: "Añadir mochila", cmd_admin_removegold: "Quitar oro", cmd_admin_setuptoken: "Configurar códigos de canje",
+        stats_title: "📊 Estadísticas del Bot", stats_commands: "35 Comandos Slash", stats_emojis: "47 Emojis Personalizados", stats_languages: "4 Idiomas (EN/PT/ES/FR)", stats_logs: "9 Tipos de Registros", stats_events: "5 Manejadores de Eventos", stats_phrases: "100+ Frases de Auto-Respuesta",
+        about_title: "Acerca de Sheriff Bot", about_p1: "Sheriff Bot es el bot de Discord temático Western más completo, construido para proporcionar una experiencia inmersiva del Viejo Oeste con características avanzadas y acabado visual.", about_p2: "Construido con Discord.js v14, el bot usa Canvas para generar imágenes personalizadas (tarjetas de perfil, carteles de se busca) y soporta 3 idiomas (PT-BR, EN-US, ES-ES).", about_tech: "🔧 Tecnologías:", about_highlights: "✨ Destacados:",
+        about_h1: "✅ Sistema de doble moneda (Fichas + Monedas)", about_h2: "✅ Inventario anti-exploit basado en peso", about_h3: "✅ 47 emojis personalizados para perfiles", about_h4: "✅ Detección automática de imágenes Western", about_h5: "✅ Barras de progreso animadas", about_h6: "✅ Sistema completo de bienvenida JSON", about_h7: "✅ 9 tipos de registros configurables",
+        cta_title: "¿Listo para comenzar tu aventura en el Viejo Oeste?", cta_subtitle: "¡Añade Sheriff Bot a tu servidor Discord ahora!", cta_button: "Añadir a Discord", cta_note: "Gratis • Sin registro necesario • Listo para usar",
+        footer_brand: "🤠 SHERIFF BOT", footer_brand_desc: "Bot Discord Temático Western", footer_links: "Enlaces Rápidos", footer_resources: "Recursos", footer_commands_count: "35 Comandos", footer_emojis_count: "47 Emojis", footer_languages_count: "4 Idiomas", footer_logs_count: "9 Tipos de Registros", footer_copyright: "&copy; 2025 Sheriff Bot. Todos los derechos reservados.", footer_made: "Hecho con ❤️ para la comunidad Discord",
+        shop_title: "🛒 Tienda de Artículos", shop_subtitle: "Compra artículos premium", shop_starter_badge: "Inicial", shop_popular_badge: "Popular", shop_best_value_badge: "Mejor Valor", shop_ultimate_badge: "Ultimate", shop_buy_now: "Comprar Ahora", shop_bonus_50: "+50 Fichas Bonificación", shop_bonus_150: "+150 Fichas Bonificación", shop_bonus_500: "+500 Fichas Bonificación", shop_vip_badge: "Insignia VIP", shop_exclusive_bg: "Fondo Exclusivo", shop_save_60: "Ahorra 60%", shop_save_65: "Ahorra 65%", shop_save_70: "Ahorra 70%", shop_instant_activation: "Activación instantánea", shop_security: "Pago 100% Seguro", shop_permanent_upgrade: "Mejora permanente", shop_inventory_upgrade: "Capacidad de inventario", shop_view_all: "Ver Todos los Paquetes"
     },
-    
     fr: {
-        // Navigation
-        nav_features: "Fonctionnalités",
-        nav_commands: "Commandes",
-        nav_shop: "🛒 Boutique",
-        nav_dashboard: "⚙️ Tableau de bord",
-        nav_add_bot: "Ajouter le Bot",
-        
-        // Hero
-        hero_subtitle: "🚀 Bot Discord Western de Niveau Professionnel",
-        hero_description: "Optimisation professionnelle des performances avec 4x plus de vitesse! Système économique complet, support d'émojis personnalisés, multilingue (4 langues), mise en cache avancée et 35 commandes slash. Le bot Western le plus avancé disponible!",
-        hero_btn_add: "Ajouter à Discord",
-        hero_btn_dashboard: "Panneau de Contrôle",
-        hero_btn_features: "Voir les Fonctionnalités",
-        hero_badge_commands: "35 Commandes",
-        hero_badge_emojis: "47 Émojis",
-        hero_badge_languages: "4 Langues",
-        
-        scroll_down: "Faire défiler vers le bas",
-        
-        // Features
-        features_title: "✨ Fonctionnalités Principales",
-        features_subtitle: "Tout ce dont vous avez besoin pour une expérience Western complète",
-        
-        commands_title: "📋 Commandes Disponibles",
-        commands_subtitle: "35 commandes slash organisées par catégorie"
+        nav_features: "Fonctionnalités", nav_commands: "Commandes", nav_shop: "🛒 Boutique", nav_dashboard: "⚙️ Tableau de bord", nav_add_bot: "Ajouter le Bot", nav_stats: "Statistiques", nav_about: "À propos",
+        hero_subtitle: "🚀 Bot Discord Western de Niveau Professionnel", hero_description: "Optimisation professionnelle des performances avec 4x plus de vitesse ! Système économique complet, support d'émojis personnalisés, multilingue (4 langues), mise en cache avancée et 35 commandes slash. Le bot Western le plus avancé disponible !", hero_btn_add: "Ajouter à Discord", hero_btn_dashboard: "Panneau de Contrôle", hero_btn_features: "Voir les Fonctionnalités", hero_badge_commands: "35 Commandes", hero_badge_languages: "4 Langues", scroll_down: "Faire défiler vers le bas",
+        features_title: "✨ Fonctionnalités Principales", features_subtitle: "Tout ce dont vous avez besoin pour une expérience Western complète",
+        feature_economy_title: "Système Économique", feature_economy_desc: "Double monnaie : Jetons de Saloon (premium) et Pièces d'Argent (standard)", feature_economy_1: "Inventaire basé sur le poids (100kg)", feature_economy_2: "🛠️ 5 Métiers Western (/work)", feature_economy_3: "🏆 Système de Classement", feature_economy_4: "Lingots d'Or convertibles",
+        feature_mining_title: "Extraction d'Or", feature_mining_desc: "Minez seul ou en duo pour obtenir des lingots d'or", feature_mining_1: "Solo : 1-3 lingots (50min refroidissement)", feature_mining_2: "Co-op : 4-6 lingots (2h refroidissement)", feature_mining_3: "Barres de progression animées",
+        feature_gambling_title: "Jeux de Hasard", feature_gambling_desc: "5 jeux différents pour tester votre chance au saloon", feature_gambling_1: "Casino (machine à sous)", feature_gambling_2: "Poker vs croupier", feature_gambling_3: "Duels de dés PvP", feature_gambling_4: "Braquage de banque (3 min !)", feature_gambling_5: "🔫 Duels Western (PvP 1v1)",
+        feature_bounties_title: "Système de Primes", feature_bounties_desc: "Placez des primes sur la tête des hors-la-loi", feature_bounties_1: "Affiches recherché avec Canvas", feature_bounties_2: "Style Western authentique", feature_bounties_3: "Système de capture",
+        feature_profiles_title: "Profils Visuels", feature_profiles_desc: "Cartes de profil 800x550px générées avec Canvas", feature_profiles_1: "47 émojis personnalisés", feature_profiles_2: "Arrière-plans personnalisés", feature_profiles_3: "Système d'XP et de niveaux",
+        feature_images_title: "Détection d'Images", feature_images_desc: "Le bot répond automatiquement aux images Western", feature_images_1: "30+ mots-clés détectés", feature_images_2: "GIFs Tenor/Giphy", feature_images_3: "35% de chance de réponse",
+        feature_welcome_title: "Bienvenue Personnalisée", feature_welcome_desc: "Système JSON entièrement personnalisable", feature_welcome_1: "Embeds complets", feature_welcome_2: "Espaces réservés dynamiques", feature_welcome_3: "Bannières GIF prises en charge",
+        feature_logs_title: "Journaux Complets", feature_logs_desc: "9 types de journaux configurables par serveur", feature_logs_1: "Commande, erreur, bienvenue", feature_logs_2: "Économie, primes, extraction", feature_logs_3: "Jeux, journaux admin",
+        feature_autoreply_title: "Réponse Automatique Western", feature_autoreply_desc: "100+ phrases thématiques en 3 langues", feature_autoreply_1: "PT-BR, EN-US, ES-ES", feature_autoreply_2: "30+ mots-clés", feature_autoreply_3: "Refroidissement anti-spam",
+        commands_title: "📋 Commandes Disponibles", commands_subtitle: "35 commandes slash organisées par catégorie",
+        cmd_economy: "💰 Économie (7)", cmd_economy_daily: "Récompense quotidienne", cmd_economy_work: "Travailler pour gagner des pièces", cmd_economy_leaderboard: "Top 10 des plus riches", cmd_economy_inventory: "Voir l'inventaire", cmd_economy_give: "Donner des pièces", cmd_economy_middleman: "Échanger des monnaies", cmd_economy_migrate: "Migrer les données",
+        cmd_mining: "⛏️ Extraction (1)", cmd_mining_mine: "Extraire de l'or",
+        cmd_gambling: "🎰 Jeux (5)", cmd_gambling_casino: "Machine à sous", cmd_gambling_poker: "Poker vs croupier", cmd_gambling_dice: "Duel de dés", cmd_gambling_duel: "Duel Western 1v1 PvP", cmd_gambling_bankrob: "Braquer une banque",
+        cmd_bounties: "🔫 Primes (4)", cmd_bounties_wanted: "Créer une prime", cmd_bounties_list: "Voir les primes", cmd_bounties_claim: "Capturer", cmd_bounties_clear: "Effacer (admin)",
+        cmd_profile: "👤 Profil (2)", cmd_profile_profile: "Voir le profil visuel", cmd_profile_avatar: "Voir l'avatar",
+        cmd_config: "🎉 Configuration (3)", cmd_config_welcome: "Configurer la bienvenue", cmd_config_logs: "Configurer les journaux", cmd_config_wanted: "Configurer le canal recherché",
+        cmd_utilities: "🛠️ Utilitaires (4)", cmd_utilities_help: "Voir l'aide", cmd_utilities_ping: "Voir la latence", cmd_utilities_server: "Info serveur", cmd_utilities_language: "Tester i18n",
+        cmd_admin: "👮 Admin (7)", cmd_admin_addgold: "Ajouter de l'or", cmd_admin_addsilver: "Ajouter de l'argent", cmd_admin_addtokens: "Ajouter des jetons", cmd_admin_announcement: "Système d'annonces", cmd_admin_addbackpack: "Ajouter un sac à dos", cmd_admin_removegold: "Retirer de l'or", cmd_admin_setuptoken: "Configurer les codes d'échange",
+        stats_title: "📊 Statistiques du Bot", stats_commands: "35 Commandes Slash", stats_emojis: "47 Émojis Personnalisés", stats_languages: "4 Langues (EN/PT/ES/FR)", stats_logs: "9 Types de Journaux", stats_events: "5 Gestionnaires d'Événements", stats_phrases: "100+ Phrases de Réponse Auto",
+        about_title: "À propos de Sheriff Bot", about_p1: "Sheriff Bot est le bot Discord thématique Western le plus complet, conçu pour offrir une expérience immersive du Far West avec des fonctionnalités avancées et un rendu visuel soigné.", about_p2: "Construit avec Discord.js v14, le bot utilise Canvas pour générer des images personnalisées (cartes de profil, affiches recherché) et prend en charge 3 langues (PT-BR, EN-US, ES-ES).", about_tech: "🔧 Technologies :", about_highlights: "✨ Points forts :",
+        about_h1: "✅ Système de double monnaie (Jetons + Pièces)", about_h2: "✅ Inventaire anti-exploit basé sur le poids", about_h3: "✅ 47 émojis personnalisés pour les profils", about_h4: "✅ Détection automatique d'images Western", about_h5: "✅ Barres de progression animées", about_h6: "✅ Système de bienvenue JSON complet", about_h7: "✅ 9 types de journaux configurables",
+        cta_title: "Prêt à commencer votre aventure dans le Far West ?", cta_subtitle: "Ajoutez Sheriff Bot à votre serveur Discord maintenant !", cta_button: "Ajouter à Discord", cta_note: "Gratuit • Aucune inscription requise • Prêt à l'emploi",
+        footer_brand: "🤠 SHERIFF BOT", footer_brand_desc: "Bot Discord Thématique Western", footer_links: "Liens Rapides", footer_resources: "Ressources", footer_commands_count: "35 Commandes", footer_emojis_count: "47 Émojis", footer_languages_count: "4 Langues", footer_logs_count: "9 Types de Journaux", footer_copyright: "&copy; 2025 Sheriff Bot. Tous droits réservés.", footer_made: "Fait avec ❤️ pour la communauté Discord",
+        shop_title: "🛒 Boutique d'Articles", shop_subtitle: "Acheter des articles premium", shop_starter_badge: "Débutant", shop_popular_badge: "Populaire", shop_best_value_badge: "Meilleure Valeur", shop_ultimate_badge: "Ultimate", shop_buy_now: "Acheter Maintenant", shop_bonus_50: "+50 Jetons Bonus", shop_bonus_150: "+150 Jetons Bonus", shop_bonus_500: "+500 Jetons Bonus", shop_vip_badge: "Badge VIP", shop_exclusive_bg: "Fond Exclusif", shop_save_60: "Économisez 60%", shop_save_65: "Économisez 65%", shop_save_70: "Économisez 70%", shop_instant_activation: "Activation instantanée", shop_security: "Paiement 100% Sécurisé", shop_permanent_upgrade: "Amélioration permanente", shop_inventory_upgrade: "Capacité d'inventaire", shop_view_all: "Voir Tous les Packs"
     }
 };
 
 let currentLang = 'en';
-
 function changeLanguage(lang) {
     currentLang = lang;
     localStorage.setItem('preferred-language', lang);
-    
-    document.querySelectorAll('.lang-option').forEach(btn => {
-        btn.classList.remove('active');
-    });
-    document.querySelector(`[data-lang="${lang}"]`).classList.add('active');
-    
+    document.querySelectorAll('.lang-option').forEach(btn => btn.classList.remove('active'));
+    const activeBtn = document.querySelector('[data-lang="' + lang + '"]');
+    if (activeBtn) activeBtn.classList.add('active');
     document.querySelectorAll('[data-i18n]').forEach(element => {
         const key = element.getAttribute('data-i18n');
         if (translations[lang] && translations[lang][key]) {
@@ -303,15 +144,13 @@ function changeLanguage(lang) {
         }
     });
 }
-
 document.addEventListener('DOMContentLoaded', () => {
     const savedLang = localStorage.getItem('preferred-language') || 'en';
     changeLanguage(savedLang);
-    
     const mobileMenuBtn = document.getElementById('mobileMenuBtn');
     if (mobileMenuBtn) {
         mobileMenuBtn.addEventListener('click', () => {
-            document.querySelector('.nav-links').classList.toggle('active');
+            document.querySelector('.nav-links').classList.toggle('mobile-active');
         });
     }
 });
