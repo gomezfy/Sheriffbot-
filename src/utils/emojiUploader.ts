@@ -82,7 +82,8 @@ export async function uploadCustomEmojis(guild: Guild): Promise<{ success: numbe
       
       if (existingEmoji) {
         // Atualiza o mapeamento com o emoji existente
-        mapping[emojiName] = `<:${existingEmoji.name}:${existingEmoji.id}>`;
+        const prefix = existingEmoji.animated ? 'a:' : ':';
+        mapping[emojiName] = `<${prefix}${existingEmoji.name}:${existingEmoji.id}>`;
         results.success++;
         continue;
       }
@@ -94,8 +95,9 @@ export async function uploadCustomEmojis(guild: Guild): Promise<{ success: numbe
         reason: 'Custom emoji upload via Sheriff Rex Bot'
       });
 
-      // Salva o mapeamento
-      mapping[emojiName] = `<:${emoji.name}:${emoji.id}>`;
+      // Salva o mapeamento (usa sintaxe correta para animated)
+      const prefix = emoji.animated ? 'a:' : ':';
+      mapping[emojiName] = `<${prefix}${emoji.name}:${emoji.id}>`;
       results.success++;
       
     } catch (error: any) {

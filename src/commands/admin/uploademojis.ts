@@ -6,7 +6,7 @@ import {
 } from 'discord.js';
 import { uploadCustomEmojis, listCustomEmojis } from '../../utils/emojiUploader';
 
-export default {
+module.exports = {
   data: new SlashCommandBuilder()
     .setName('uploademojis')
     .setDescription('Upload custom emojis from assets/custom-emojis folder to the server')

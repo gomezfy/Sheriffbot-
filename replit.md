@@ -48,6 +48,15 @@ None specified yet.
 
 ## Recent Changes
 - **October 22, 2025:**
+  - **Custom Emoji System:** Implemented automatic custom emoji upload and management
+    - **Upload System:** Created `/uploademojis` admin command to upload PNG/GIF emojis from `assets/custom-emojis/` folder
+    - **Automatic Mapping:** Bot automatically creates emoji mapping file (`emoji-mapping.json`) linking emoji names to Discord IDs
+    - **Smart Fallback:** Falls back to text emojis (🥇🪙🎫) if custom emojis aren't available
+    - **Helper Functions:** `getSilverCoinEmoji()`, `getGoldBarEmoji()`, `getSaloonTokenEmoji()` for easy integration
+    - **Current Custom Emojis:** 3 emojis ready (gold_bar, silver_coin, saloon_token)
+    - **Scalable:** Supports up to 50 static + 50 animated emojis per server
+    - **Validation:** Automatic file size validation (max 256KB), duplicate detection, error reporting
+    - **Easy Addition:** Just drop new PNG/GIF files in `assets/custom-emojis/` and run `/uploademojis`
   - **Multilingual Help System:** Complete i18n implementation for /help command
     - **Automatic Language Detection:** Detects user's Discord language setting via `interaction.locale`
     - **4 Languages Supported:** PT-BR (Portuguese), EN-US (English), ES-ES (Spanish), FR (French)
