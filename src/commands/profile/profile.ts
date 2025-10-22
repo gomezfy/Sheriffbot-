@@ -100,8 +100,8 @@ async function createProfileCard(user: User, stats: any): Promise<AttachmentBuil
     ctx.fillRect(0, 0, 800, 550);
   }
 
-  // Dark overlay for text readability
-  ctx.fillStyle = 'rgba(0, 0, 0, 0.6)';
+  // Light overlay for text readability (mais transparente para destacar o fundo)
+  ctx.fillStyle = 'rgba(0, 0, 0, 0.25)';
   ctx.fillRect(0, 0, 800, 550);
 
   // Top accent bar (level color)
@@ -117,40 +117,68 @@ async function createProfileCard(user: User, stats: any): Promise<AttachmentBuil
     const avatarURL = user.displayAvatarURL({ extension: 'png', size: 256 });
     const avatar = await loadImage(avatarURL);
     
-    // Avatar background
-    ctx.fillStyle = 'rgba(0, 0, 0, 0.8)';
+    // Avatar background com efeito de brilho
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.6)';
     ctx.beginPath();
-    ctx.arc(120, 120, 85, 0, Math.PI * 2);
+    ctx.arc(120, 120, 88, 0, Math.PI * 2);
     ctx.fill();
 
-    // Avatar border
+    // Avatar border dupla para efeito elegante
     ctx.strokeStyle = levelColor;
-    ctx.lineWidth = 6;
+    ctx.lineWidth = 4;
     ctx.beginPath();
-    ctx.arc(120, 120, 80, 0, Math.PI * 2);
+    ctx.arc(120, 120, 82, 0, Math.PI * 2);
+    ctx.stroke();
+    
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.3)';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.arc(120, 120, 76, 0, Math.PI * 2);
     ctx.stroke();
 
     // Draw avatar (circular)
     ctx.save();
     ctx.beginPath();
-    ctx.arc(120, 120, 74, 0, Math.PI * 2);
+    ctx.arc(120, 120, 72, 0, Math.PI * 2);
     ctx.closePath();
     ctx.clip();
-    ctx.drawImage(avatar, 46, 46, 148, 148);
+    ctx.drawImage(avatar, 48, 48, 144, 144);
     ctx.restore();
   } catch (error) {
     console.error('Error loading avatar:', error);
   }
 
-  // Username (top right of avatar)
+  // Username box com fundo elegante
+  ctx.font = 'bold 48px Nunito';
+  const nameWidth = ctx.measureText(user.username).width;
+  ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
+  roundRect(ctx, 240, 50, nameWidth + 120, 90, 15);
+  ctx.fill();
+  
+  ctx.strokeStyle = levelColor;
+  ctx.lineWidth = 2;
+  roundRect(ctx, 240, 50, nameWidth + 120, 90, 15);
+  ctx.stroke();
+  
+  // Borda interna
+  ctx.strokeStyle = 'rgba(255, 255, 255, 0.15)';
+  ctx.lineWidth = 1;
+  roundRect(ctx, 242, 52, nameWidth + 116, 86, 14);
+  ctx.stroke();
+  
+  // Username com sombra
+  ctx.shadowColor = 'rgba(0, 0, 0, 0.8)';
+  ctx.shadowBlur = 10;
   ctx.fillStyle = '#FFFFFF';
   ctx.font = 'bold 48px Nunito';
-  ctx.fillText(user.username, 250, 90);
+  ctx.fillText(user.username, 260, 95);
+  
+  ctx.shadowBlur = 0;
 
   // Tag
-  ctx.fillStyle = '#B0B0B0';
-  ctx.font = '24px Nunito Regular';
-  ctx.fillText(`#${user.discriminator}`, 250, 125);
+  ctx.fillStyle = '#D0D0D0';
+  ctx.font = '22px Nunito Regular';
+  ctx.fillText(`#${user.discriminator}`, 260, 125);
 
   // Currency section (below avatar)
   const currencyY = 280;
@@ -166,14 +194,20 @@ async function createProfileCard(user: User, stats: any): Promise<AttachmentBuil
   const xpPanelX = 400;
   const xpPanelY = 250;
 
-  // Level display
-  ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
-  roundRect(ctx, xpPanelX, xpPanelY, 350, 100, 12);
+  // Level display com efeito de vidro
+  ctx.fillStyle = 'rgba(0, 0, 0, 0.45)';
+  roundRect(ctx, xpPanelX, xpPanelY, 350, 100, 15);
   ctx.fill();
 
   ctx.strokeStyle = levelColor;
   ctx.lineWidth = 3;
-  roundRect(ctx, xpPanelX, xpPanelY, 350, 100, 12);
+  roundRect(ctx, xpPanelX, xpPanelY, 350, 100, 15);
+  ctx.stroke();
+  
+  // Borda interna para efeito de profundidade
+  ctx.strokeStyle = 'rgba(255, 255, 255, 0.15)';
+  ctx.lineWidth = 1;
+  roundRect(ctx, xpPanelX + 2, xpPanelY + 2, 346, 96, 14);
   ctx.stroke();
 
   // Level icon and number
@@ -200,16 +234,22 @@ async function createProfileCard(user: User, stats: any): Promise<AttachmentBuil
   const xpPercent = xpInCurrentLevel / xpNeededForLevel;
   drawProgressBar(ctx, xpPanelX + 20, xpPanelY + 85, 310, 8, xpPercent * 100, 100, levelColor, '#2C2F33');
 
-  // "About Me" section
+  // "About Me" section com efeito glassmorphism
   const bioY = 370;
   
-  ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
-  roundRect(ctx, 400, bioY, 350, 150, 12);
+  ctx.fillStyle = 'rgba(0, 0, 0, 0.45)';
+  roundRect(ctx, 400, bioY, 350, 150, 15);
   ctx.fill();
 
-  ctx.strokeStyle = 'rgba(255, 255, 255, 0.2)';
+  ctx.strokeStyle = levelColor;
   ctx.lineWidth = 2;
-  roundRect(ctx, 400, bioY, 350, 150, 12);
+  roundRect(ctx, 400, bioY, 350, 150, 15);
+  ctx.stroke();
+  
+  // Borda interna
+  ctx.strokeStyle = 'rgba(255, 255, 255, 0.15)';
+  ctx.lineWidth = 1;
+  roundRect(ctx, 402, bioY + 2, 346, 146, 14);
   ctx.stroke();
 
   // Title
@@ -239,15 +279,21 @@ async function createProfileCard(user: User, stats: any): Promise<AttachmentBuil
 }
 
 async function drawCurrencyBoxWithImage(ctx: any, x: number, y: number, width: number, height: number, iconImage: any, label: string, value: string, color: string): Promise<void> {
-  // Background
-  ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
-  roundRect(ctx, x, y, width, height, 12);
+  // Background com efeito de vidro
+  ctx.fillStyle = 'rgba(0, 0, 0, 0.45)';
+  roundRect(ctx, x, y, width, height, 15);
   ctx.fill();
 
   // Border
   ctx.strokeStyle = color;
   ctx.lineWidth = 3;
-  roundRect(ctx, x, y, width, height, 12);
+  roundRect(ctx, x, y, width, height, 15);
+  ctx.stroke();
+  
+  // Borda interna para profundidade
+  ctx.strokeStyle = 'rgba(255, 255, 255, 0.15)';
+  ctx.lineWidth = 1;
+  roundRect(ctx, x + 2, y + 2, width - 4, height - 4, 14);
   ctx.stroke();
 
   // Icon (custom image)
@@ -266,15 +312,21 @@ async function drawCurrencyBoxWithImage(ctx: any, x: number, y: number, width: n
 }
 
 async function drawCurrencyBox(ctx: any, x: number, y: number, width: number, height: number, icon: string, label: string, value: string, color: string): Promise<void> {
-  // Background
-  ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
-  roundRect(ctx, x, y, width, height, 12);
+  // Background com efeito de vidro
+  ctx.fillStyle = 'rgba(0, 0, 0, 0.45)';
+  roundRect(ctx, x, y, width, height, 15);
   ctx.fill();
 
   // Border
   ctx.strokeStyle = color;
   ctx.lineWidth = 3;
-  roundRect(ctx, x, y, width, height, 12);
+  roundRect(ctx, x, y, width, height, 15);
+  ctx.stroke();
+  
+  // Borda interna para profundidade
+  ctx.strokeStyle = 'rgba(255, 255, 255, 0.15)';
+  ctx.lineWidth = 1;
+  roundRect(ctx, x + 2, y + 2, width - 4, height - 4, 14);
   ctx.stroke();
 
   // Icon
