@@ -3,9 +3,9 @@
     "items": {
       "silver": 95622,
       "gold": 2,
-      "saloon_token": 9470
+      "saloon_token": 8570
     },
-    "weight": 11.657,
+    "weight": 11.648,
     "maxWeight": 100
   },
   "1426344797421047838": {
@@ -20,6 +20,11 @@
       "silver": 2000
     },
     "weight": 3.2,
+    "maxWeight": 100
+  },
+  "1426734768111747284": {
+    "items": {},
+    "weight": 0,
     "maxWeight": 100
   }
 }
