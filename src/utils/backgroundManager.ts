@@ -18,38 +18,11 @@ export interface Background {
  */
 export const BACKGROUNDS: Background[] = [
   {
-    id: 'default',
-    name: 'Desert Sunset',
-    filename: 'default.jpg',
-    price: 0,
-    description: 'Classic western desert sunset (Default)',
-    rarity: 'common',
-    free: true
-  },
-  {
-    id: 'saloon',
-    name: 'Wild West Saloon',
-    filename: 'saloon.jpg',
-    price: 50,
-    description: 'Inside a rustic western saloon',
-    rarity: 'rare',
-    free: false
-  },
-  {
-    id: 'canyon',
-    name: 'Red Canyon',
-    filename: 'canyon.jpg',
-    price: 100,
-    description: 'Majestic red rock canyon landscape',
-    rarity: 'epic',
-    free: false
-  },
-  {
-    id: 'town',
-    name: 'Ghost Town',
-    filename: 'town.jpg',
-    price: 150,
-    description: 'Abandoned western ghost town',
+    id: 'arabe_ingles',
+    name: 'Árabe Inglês',
+    filename: 'arabe-ingles.png',
+    price: 300,
+    description: 'Majestic Arabian horse in the desert',
     rarity: 'legendary',
     free: false
   }
@@ -94,87 +67,96 @@ export function userOwnsBackground(userId: string, backgroundId: string): boolea
  */
 export function getUserBackgrounds(userId: string): Background[] {
   const profile = getUserProfile(userId);
-  const ownedIds = profile.ownedBackgrounds || ['default'];
-  
-  return BACKGROUNDS.filter(bg => ownedIds.includes(bg.id));
+  const owned = profile.ownedBackgrounds || [];
+  return BACKGROUNDS.filter(bg => bg.free || owned.includes(bg.id));
 }
 
 /**
- * Purchase a background
+ * Purchase a background for a user
  */
 export function purchaseBackground(userId: string, backgroundId: string): { success: boolean; message: string } {
   const background = getBackgroundById(backgroundId);
   
   if (!background) {
-    return { success: false, message: 'Background not found!' };
+    return { success: false, message: '❌ Background not found!' };
   }
   
-  if (background.free || background.id === 'default') {
-    return { success: false, message: 'This background is already free!' };
-  }
-  
+  // Check if already owned
   if (userOwnsBackground(userId, backgroundId)) {
-    return { success: false, message: 'You already own this background!' };
+    return { success: false, message: '❌ You already own this background!' };
   }
   
-  const userTokens = getUserGold(userId);
+  // Check if free
+  if (background.free) {
+    const profile = getUserProfile(userId);
+    if (!profile.ownedBackgrounds) {
+      profile.ownedBackgrounds = [];
+    }
+    profile.ownedBackgrounds.push(backgroundId);
+    setUserProfile(userId, profile);
+    return { success: true, message: `✅ You claimed the **${background.name}** background!` };
+  }
   
+  // Check if user has enough tokens
+  const userTokens = getUserGold(userId);
   if (userTokens < background.price) {
     return { 
       success: false, 
-      message: `You need ${background.price.toLocaleString()} 🎫 Saloon Tokens but only have ${userTokens.toLocaleString()}!` 
+      message: `❌ Not enough Saloon Tokens! You need 🎫 ${background.price.toLocaleString()} but only have 🎫 ${userTokens.toLocaleString()}.` 
     };
   }
   
   // Deduct tokens
   removeUserGold(userId, background.price);
   
-  // Add background to owned list
+  // Add background to user's collection
   const profile = getUserProfile(userId);
   if (!profile.ownedBackgrounds) {
-    profile.ownedBackgrounds = ['default'];
+    profile.ownedBackgrounds = [];
   }
   profile.ownedBackgrounds.push(backgroundId);
-  
   setUserProfile(userId, profile);
   
   return { 
     success: true, 
-    message: `Successfully purchased **${background.name}** for ${background.price.toLocaleString()} 🪙!` 
+    message: `✅ Successfully purchased **${background.name}**!\n💰 Spent 🎫 ${background.price.toLocaleString()} Saloon Tokens.` 
   };
 }
 
 /**
- * Set user's active background
+ * Set active background for user
  */
 export function setUserBackground(userId: string, backgroundId: string): { success: boolean; message: string } {
-  if (!userOwnsBackground(userId, backgroundId)) {
-    return { success: false, message: 'You don\'t own this background!' };
-  }
-  
   const background = getBackgroundById(backgroundId);
+  
   if (!background) {
-    return { success: false, message: 'Background not found!' };
+    return { success: false, message: '❌ Background not found!' };
   }
   
+  // Check if user owns this background
+  if (!userOwnsBackground(userId, backgroundId)) {
+    return { success: false, message: '❌ You don\'t own this background!' };
+  }
+  
+  // Set as active background
   const profile = getUserProfile(userId);
   profile.background = background.filename;
   setUserProfile(userId, profile);
   
   return { 
     success: true, 
-    message: `Successfully changed background to **${background.name}**!` 
+    message: `✅ Background changed to **${background.name}**!` 
   };
 }
 
 /**
- * Get current user background
+ * Get user's current active background
  */
 export function getUserCurrentBackground(userId: string): Background | null {
   const profile = getUserProfile(userId);
-  const currentFilename = profile.background || 'default.jpg';
+  if (!profile.background) return null;
   
-  return BACKGROUNDS.find(bg => bg.filename === currentFilename) || BACKGROUNDS[0];
+  return BACKGROUNDS.find(bg => bg.filename === profile.background) || null;
 }
 
 /**
@@ -186,7 +168,7 @@ export function getRarityColor(rarity: string): number {
     case 'rare': return 0x3498DB;
     case 'epic': return 0x9B59B6;
     case 'legendary': return 0xF1C40F;
-    case 'mythic': return 0xFF1493;
+    case 'mythic': return 0xE74C3C;
     default: return 0x95A5A6;
   }
 }
@@ -200,7 +182,7 @@ export function getRarityEmoji(rarity: string): string {
     case 'rare': return '🔵';
     case 'epic': return '🟣';
     case 'legendary': return '🟡';
-    case 'mythic': return '💎';
+    case 'mythic': return '🔴';
     default: return '⚪';
   }
 }
