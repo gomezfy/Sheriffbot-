@@ -48,13 +48,21 @@ None specified yet.
 
 ## Recent Changes
 - **October 22, 2025:**
+  - **Profile Visual Enhancement:** Completely redesigned profile cards with glassmorphism effects
+    - Reduced background overlay from 60% to 25% opacity to showcase custom backgrounds
+    - Added double-border avatar with levelColor accent and white semi-transparent inner ring
+    - Created elegant username box with semi-transparent background and colored border
+    - Applied glassmorphism effect (45% opacity) to all info panels (currency, XP, bio)
+    - Added inner white borders (15% opacity) to all panels for depth effect
+    - Modernized corner radius from 12px to 15px across all UI elements
+    - Maintained text legibility with shadow effects and proper contrast
   - **Profile Background Customization System:** Implemented complete background customization with carousel-based shop
-    - Created `backgroundManager.ts` utility with 4 Western-themed backgrounds (default.jpg, saloon.jpg, canyon.jpg, town.jpg)
+    - Created `backgroundManager.ts` utility managing custom backgrounds
     - Integrated carousel shop into /profile command with "🛒 Shop Backgrounds" button
     - Carousel navigation with ◀ Back and Next ▶ buttons for browsing backgrounds
     - Dynamic purchase button adapting to ownership status and token balance
     - Purchase flow shows success message and returns to carousel for continuous shopping
-    - Backgrounds priced in Saloon Tokens (50-150 tokens) with rarity system (common to legendary)
+    - Current backgrounds: Árabe Inglês (300 tokens, legendary), Horse Alone (283 tokens, epic), Addicted to the Saloon (800 tokens, mythic)
     - Background selection menu in /profile with preview and "Change Background" button
     - Custom backgrounds rendered in profile cards using Canvas
 - **October 21, 2025:** 
