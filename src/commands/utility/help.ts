@@ -1,5 +1,5 @@
 import { SlashCommandBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, ChatInputCommandInteraction, MessageFlags, ButtonInteraction, EmbedBuilder, ComponentType } from 'discord.js';
-import { infoEmbed, successEmbed } from '../../utils/embeds';
+import { t, getLocale } from '../../utils/i18n';
 
 const CATEGORIES = {
   OVERVIEW: 'overview',
@@ -12,555 +12,214 @@ const CATEGORIES = {
   UTILITY: 'utility'
 };
 
-function getOverviewEmbed(): EmbedBuilder {
-  return infoEmbed(
-    '🤠 Sheriff Rex - Guia de Comandos',
-    '**Bem-vindo ao Velho Oeste!** Sheriff Rex é um bot completo com sistema de economia, jogos, mineração e muito mais.\n\n' +
-    '📱 **Suporte a DM:** Alguns comandos funcionam em mensagens diretas!\n' +
-    '🎮 **34 Comandos Disponíveis**\n\n' +
-    '**Selecione uma categoria abaixo para ver os comandos:**',
-    '🌵 Use os botões para navegar entre as categorias'
-  )
-    .setThumbnail('https://cdn.discordapp.com/avatars/1426734768111747284/77c49c0e33e64e32cc5bc42f9e6cfe82.png')
-    .addFields(
-      {
-        name: '💰 Economia & Trading',
-        value: '`/daily` • `/give` • `/inventory` • `/redeem` • `/leaderboard`\n8 comandos de economia e moedas',
-        inline: false
-      },
-      {
-        name: '🎲 Gambling & Jogos',
-        value: '`/casino` • `/dice` • `/poker` • `/bankrob` • `/duel`\n5 comandos de apostas e jogos',
-        inline: false
-      },
-      {
-        name: '⛏️ Mineração',
-        value: '`/mine` - Sistema de mineração solo e cooperativa\n1 comando com múltiplos modos',
-        inline: false
-      },
-      {
-        name: '👤 Perfil & Customização',
-        value: '`/profile` • `/avatar` • `/inventory`\n3 comandos de perfil e visual',
-        inline: false
-      },
-      {
-        name: '🔫 Sistema de Bounty',
-        value: '`/wanted` • `/bounties` • `/capture` • `/clearbounty`\n4 comandos de recompensas',
-        inline: false
-      },
-      {
-        name: '⚙️ Administração',
-        value: '`/announcement` • `/servidor` • `/setwelcome` • `/setlogs`\n10 comandos administrativos',
-        inline: false
-      },
-      {
-        name: '🔧 Utilidades',
-        value: '`/help` • `/ping` • `/idioma`\n3 comandos de utilidade',
-        inline: false
-      }
-    );
-}
-
-function getEconomyEmbed(): EmbedBuilder {
-  return successEmbed(
-    '💰 Economia & Trading',
-    '**Sistema econômico completo com moedas, itens e transferências.**\n\n' +
-    '🪙 **Silver Coins** - Moeda principal do servidor\n' +
-    '🥇 **Gold Bars** - Itens valiosos (1 barra = 700 Silver)\n' +
-    '🎟️ **Saloon Tokens** - Moeda premium para customizações\n' +
-    '💼 **Backpack System** - Sistema de mochila com upgrades',
-    'Comandos de Economia'
-  )
-    .addFields(
-      {
-        name: '📱 `/daily` (Funciona em DM)',
-        value: '**Recompensa Diária**\n' +
-               '• Reivindique suas moedas diárias\n' +
-               '• Sistema de streak (dias seguidos)\n' +
-               '• Bônus progressivo por consistência\n' +
-               '• Cooldown: 24 horas',
-        inline: false
-      },
-      {
-        name: '📱 `/redeem` (Funciona em DM)',
-        value: '**Resgatar Códigos**\n' +
-               '• Resgate códigos de compra da loja\n' +
-               '• Códigos de eventos especiais\n' +
-               '• Recompensas exclusivas\n' +
-               '• Uso único por código',
-        inline: false
-      },
-      {
-        name: '📱 `/leaderboard` (Funciona em DM)',
-        value: '**Ranking de Riqueza**\n' +
-               '• Top 10 jogadores mais ricos\n' +
-               '• Visual profissional com Canvas\n' +
-               '• Hall da Fama com Top 3\n' +
-               '• Mostra sua posição no ranking',
-        inline: false
-      },
-      {
-        name: '📱 `/inventory` (Funciona em DM)',
-        value: '**Visualizar Inventário**\n' +
-               '• Veja todos os seus itens\n' +
-               '• Peso atual/máximo da mochila\n' +
-               '• Barras de ouro, minérios, etc\n' +
-               '• Organizado por categoria',
-        inline: false
-      },
-      {
-        name: '🏦 `/give` (Apenas em Servidores)',
-        value: '**Transferir Itens/Moedas**\n' +
-               '• Transfira coins ou itens para outros\n' +
-               '• Sistema de confirmação\n' +
-               '• Previne transferências inválidas\n' +
-               '• Logs de transações',
-        inline: false
-      },
-      {
-        name: '⚙️ Comandos Admin',
-        value: '`/addsilver` • `/addgold` • `/addtokens` • `/addbackpack`\n' +
-               '`/removegold` • `/setuptoken` • `/generatecode` • `/middleman`',
-        inline: false
-      }
-    );
-}
-
-function getGamblingEmbed(): EmbedBuilder {
-  return new EmbedBuilder()
-    .setColor(0x9B59B6)
-    .setTitle('🎲 Gambling & Jogos')
-    .setDescription(
-      '**Jogos de apostas e azar do Velho Oeste!**\n\n' +
-      '💰 Aposte suas Silver Coins\n' +
-      '🎰 Múltiplos jogos disponíveis\n' +
-      '🤝 Jogos solo e cooperativos\n' +
-      '⚠️ Aposte com responsabilidade!'
-    )
-    .setFooter({ text: 'Comandos de Gambling' })
-    .addFields(
-      {
-        name: '📱 `/casino` (Funciona em DM)',
-        value: '**Slot Machine do Saloon**\n' +
-               '• Jogo de slots clássico\n' +
-               '• Múltiplas linhas de pagamento\n' +
-               '• Jackpots progressivos\n' +
-               '• Apostas flexíveis',
-        inline: false
-      },
-      {
-        name: '🎲 `/dice` (Apenas em Servidores)',
-        value: '**Duelo de Dados**\n' +
-               '• Desafie outro jogador\n' +
-               '• Aposte qualquer quantia\n' +
-               '• Maior número vence\n' +
-               '• Sistema de aceitação',
-        inline: false
-      },
-      {
-        name: '🃏 `/poker` (Apenas em Servidores)',
-        value: '**Texas Hold\'em Poker**\n' +
-               '• Poker completo com regras oficiais\n' +
-               '• Apostas progressivas\n' +
-               '• Rankings de mãos tradicionais\n' +
-               '• Multiplayer',
-        inline: false
-      },
-      {
-        name: '🏦 `/bankrob` (Apenas em Servidores)',
-        value: '**Assalto ao Banco**\n' +
-               '• Jogo cooperativo (2 jogadores)\n' +
-               '• Recompensas altas\n' +
-               '• Taxa de sucesso variável\n' +
-               '• Cooldown de 2 horas',
-        inline: false
-      },
-      {
-        name: '🔫 `/duel` (Apenas em Servidores)',
-        value: '**Duelo Western PvP**\n' +
-               '• Duelo ao estilo Velho Oeste\n' +
-               '• Combate baseado em turnos\n' +
-               '• Apostas opcionais\n' +
-               '• Sistema de XP',
-        inline: false
-      }
-    );
-}
-
-function getMiningEmbed(): EmbedBuilder {
-  return new EmbedBuilder()
-    .setColor(0xE67E22)
-    .setTitle('⛏️ Sistema de Mineração')
-    .setDescription(
-      '**Mine nas montanhas do Velho Oeste!**\n\n' +
-      '🥇 Encontre Gold Bars valiosas\n' +
-      '💎 Descubra minérios raros\n' +
-      '🤝 Mine sozinho ou em dupla\n' +
-      '⏰ Cooldowns estratégicos'
-    )
-    .setFooter({ text: 'Comandos de Mineração' })
-    .addFields(
-      {
-        name: '⛏️ `/mine` (Apenas em Servidores)',
-        value: '**Comando de Mineração Principal**\n\n' +
-               '**🚶 Modo Solo:**\n' +
-               '• Cooldown: 50 minutos\n' +
-               '• Recompensa: 1-3 Gold Bars\n' +
-               '• Itens adicionais possíveis\n' +
-               '• XP ao minerar\n\n' +
-               '**👥 Modo Co-op:**\n' +
-               '• Cooldown: 2 horas\n' +
-               '• Recompensa: 4-6 Gold Bars (divididas)\n' +
-               '• Bônus de cooperação\n' +
-               '• XP compartilhado\n' +
-               '• Requer parceiro',
-        inline: false
-      },
-      {
-        name: '💼 Sistema de Mochila',
-        value: '**Capacidade de Peso:**\n' +
-               '• Básica: 100kg\n' +
-               '• Upgrades disponíveis até 500kg\n' +
-               '• Compre upgrades na loja web\n' +
-               '• Gold Bars pesam 5kg cada',
-        inline: false
-      },
-      {
-        name: '💰 Vendendo Ouro',
-        value: '**Venda suas Gold Bars:**\n' +
-               '• Use `/give` para vender para o mercador\n' +
-               '• 1 Gold Bar = 700 Silver Coins\n' +
-               '• Ou troque com outros jogadores\n' +
-               '• Sistema de middleman disponível',
-        inline: false
-      }
-    );
-}
-
-function getProfileEmbed(): EmbedBuilder {
+function getOverviewEmbed(interaction: ChatInputCommandInteraction): EmbedBuilder {
+  const locale = getLocale(interaction);
+  
+  const categoryMap: Record<string, string> = {
+    'pt-BR': '💰 **Economia & Trading:** `/daily` • `/give` • `/inventory` • `/redeem` • `/leaderboard`\n8 comandos de economia e moedas\n\n🎲 **Gambling & Jogos:** `/casino` • `/dice` • `/poker` • `/bankrob` • `/duel`\n5 comandos de apostas e jogos\n\n⛏️ **Mineração:** `/mine` - Sistema de mineração solo e cooperativa\n1 comando com múltiplos modos\n\n👤 **Perfil & Customização:** `/profile` • `/avatar` • `/inventory`\n3 comandos de perfil e visual\n\n🔫 **Sistema de Bounty:** `/wanted` • `/bounties` • `/capture` • `/clearbounty`\n4 comandos de recompensas\n\n⚙️ **Administração:** `/announcement` • `/servidor` • `/setwelcome` • `/setlogs`\n10 comandos administrativos\n\n🔧 **Utilidades:** `/help` • `/ping` • `/idioma`\n3 comandos de utilidade',
+    'en-US': '💰 **Economy & Trading:** `/daily` • `/give` • `/inventory` • `/redeem` • `/leaderboard`\n8 economy and coins commands\n\n🎲 **Gambling & Games:** `/casino` • `/dice` • `/poker` • `/bankrob` • `/duel`\n5 gambling and games commands\n\n⛏️ **Mining:** `/mine` - Solo and cooperative mining system\n1 command with multiple modes\n\n👤 **Profile & Customization:** `/profile` • `/avatar` • `/inventory`\n3 profile and visual commands\n\n🔫 **Bounty System:** `/wanted` • `/bounties` • `/capture` • `/clearbounty`\n4 bounty commands\n\n⚙️ **Administration:** `/announcement` • `/servidor` • `/setwelcome` • `/setlogs`\n10 administrative commands\n\n🔧 **Utilities:** `/help` • `/ping` • `/idioma`\n3 utility commands',
+    'es-ES': '💰 **Economía & Trading:** `/daily` • `/give` • `/inventory` • `/redeem` • `/leaderboard`\n8 comandos de economía y monedas\n\n🎲 **Apuestas & Juegos:** `/casino` • `/dice` • `/poker` • `/bankrob` • `/duel`\n5 comandos de apuestas y juegos\n\n⛏️ **Minería:** `/mine` - Sistema de minería solo y cooperativa\n1 comando con múltiples modos\n\n👤 **Perfil & Personalización:** `/profile` • `/avatar` • `/inventory`\n3 comandos de perfil y visual\n\n🔫 **Sistema de Recompensas:** `/wanted` • `/bounties` • `/capture` • `/clearbounty`\n4 comandos de recompensas\n\n⚙️ **Administración:** `/announcement` • `/servidor` • `/setwelcome` • `/setlogs`\n10 comandos administrativos\n\n🔧 **Utilidades:** `/help` • `/ping` • `/idioma`\n3 comandos de utilidad',
+    'fr': '💰 **Économie & Trading:** `/daily` • `/give` • `/inventory` • `/redeem` • `/leaderboard`\n8 commandes d\'économie et monnaie\n\n🎲 **Jeux & Paris:** `/casino` • `/dice` • `/poker` • `/bankrob` • `/duel`\n5 commandes de jeux et paris\n\n⛏️ **Minage:** `/mine` - Système de minage solo et coopératif\n1 commande avec plusieurs modes\n\n👤 **Profil & Personnalisation:** `/profile` • `/avatar` • `/inventory`\n3 commandes de profil et visuel\n\n🔫 **Système de Primes:** `/wanted` • `/bounties` • `/capture` • `/clearbounty`\n4 commandes de primes\n\n⚙️ **Administration:** `/announcement` • `/servidor` • `/setwelcome` • `/setlogs`\n10 commandes administratives\n\n🔧 **Utilitaires:** `/help` • `/ping` • `/idioma`\n3 commandes utilitaires'
+  };
+  
   return new EmbedBuilder()
     .setColor(0x3498DB)
-    .setTitle('👤 Perfil & Customização')
-    .setDescription(
-      '**Personalize seu perfil do Velho Oeste!**\n\n' +
-      '🎨 Backgrounds customizáveis\n' +
-      '📊 Sistema de XP e Níveis\n' +
-      '🖼️ Profile cards visuais\n' +
-      '✨ Efeito glassmorphism'
-    )
-    .setFooter({ text: 'Comandos de Perfil' })
+    .setTitle(t(interaction, 'help_title'))
+    .setDescription(t(interaction, 'help_overview_desc') + '\n\n' + (categoryMap[locale] || categoryMap['en-US']))
+    .setFooter({ text: t(interaction, 'help_footer') })
+    .setThumbnail('https://cdn.discordapp.com/avatars/1426734768111747284/77c49c0e33e64e32cc5bc42f9e6cfe82.png');
+}
+
+function getEconomyEmbed(interaction: ChatInputCommandInteraction): EmbedBuilder {
+  const locale = getLocale(interaction);
+  
+  const dmText: Record<string, string> = {
+    'pt-BR': '(Funciona em DM)',
+    'en-US': '(Works in DM)',
+    'es-ES': '(Funciona en MP)',
+    'fr': '(Fonctionne en MP)'
+  };
+  
+  const serverText: Record<string, string> = {
+    'pt-BR': '(Apenas em Servidores)',
+    'en-US': '(Servers Only)',
+    'es-ES': '(Solo en Servidores)',
+    'fr': '(Serveurs Uniquement)'
+  };
+  
+  return new EmbedBuilder()
+    .setColor(0x2ECC71)
+    .setTitle(t(interaction, 'help_economy_title'))
+    .setDescription(t(interaction, 'help_economy_desc'))
+    .setFooter({ text: t(interaction, 'help_footer') })
     .addFields(
-      {
-        name: '📱 `/profile` (Funciona em DM)',
-        value: '**Cartão de Perfil Visual**\n' +
-               '• Profile card com Canvas\n' +
-               '• Mostra XP, nível e bio\n' +
-               '• Backgrounds customizáveis\n' +
-               '• Loja de backgrounds integrada\n' +
-               '• Efeito glassmorphism moderno\n' +
-               '• Bordas coloridas por nível',
-        inline: false
-      },
-      {
-        name: '🛒 Sistema de Backgrounds',
-        value: '**Customização Premium:**\n' +
-               '• Compre com Saloon Tokens\n' +
-               '• Navegação em carrossel\n' +
-               '• Raridades: Epic, Legendary, Mythic\n' +
-               '• Preview antes de comprar\n' +
-               '• Troca instantânea após compra',
-        inline: false
-      },
-      {
-        name: '📱 `/avatar` (Funciona em DM)',
-        value: '**Visualizar Avatar**\n' +
-               '• Mostra avatar em alta resolução\n' +
-               '• Seu avatar ou de outros usuários\n' +
-               '• Link para download\n' +
-               '• Formatos PNG e WebP',
-        inline: false
-      },
-      {
-        name: '📱 `/inventory` (Funciona em DM)',
-        value: '**Inventário Detalhado**\n' +
-               '• Todos os seus itens\n' +
-               '• Peso e capacidade\n' +
-               '• Gold Bars, minérios, etc\n' +
-               '• Organização visual',
-        inline: false
-      }
+      { name: `📱 /daily ${dmText[locale]}`, value: locale === 'pt-BR' ? '• Recompensa diária de moedas\n• Sistema de streak\n• Bônus progressivo' : locale === 'fr' ? '• Récompense quotidienne\n• Système de série\n• Bonus progressif' : locale === 'es-ES' ? '• Recompensa diaria\n• Sistema de racha\n• Bonificación progresiva' : '• Daily coin reward\n• Streak system\n• Progressive bonus', inline: false },
+      { name: `📱 /redeem ${dmText[locale]}`, value: locale === 'pt-BR' ? '• Resgate códigos da loja\n• Eventos especiais\n• Uso único' : locale === 'fr' ? '• Codes de la boutique\n• Événements spéciaux\n• Usage unique' : locale === 'es-ES' ? '• Códigos de la tienda\n• Eventos especiales\n• Uso único' : '• Shop codes\n• Special events\n• Single use', inline: false },
+      { name: `📱 /leaderboard ${dmText[locale]}`, value: locale === 'pt-BR' ? '• Top 10 jogadores\n• Visual profissional\n• Sua posição' : locale === 'fr' ? '• Top 10 joueurs\n• Visuel professionnel\n• Votre position' : locale === 'es-ES' ? '• Top 10 jugadores\n• Visual profesional\n• Tu posición' : '• Top 10 players\n• Professional visual\n• Your position', inline: false },
+      { name: `📱 /inventory ${dmText[locale]}`, value: locale === 'pt-BR' ? '• Veja seus itens\n• Peso/capacidade\n• Organizado' : locale === 'fr' ? '• Voir vos objets\n• Poids/capacité\n• Organisé' : locale === 'es-ES' ? '• Ver tus objetos\n• Peso/capacidad\n• Organizado' : '• View your items\n• Weight/capacity\n• Organized', inline: false },
+      { name: `🏦 /give ${serverText[locale]}`, value: locale === 'pt-BR' ? '• Transferir moedas/itens\n• Sistema de confirmação\n• Logs' : locale === 'fr' ? '• Transférer monnaie/objets\n• Système de confirmation\n• Journaux' : locale === 'es-ES' ? '• Transferir monedas/objetos\n• Sistema de confirmación\n• Registros' : '• Transfer coins/items\n• Confirmation system\n• Logs', inline: false }
     );
 }
 
-function getBountyEmbed(): EmbedBuilder {
+function getGamblingEmbed(interaction: ChatInputCommandInteraction): EmbedBuilder {
+  const locale = getLocale(interaction);
+  
+  const dmText: Record<string, string> = {
+    'pt-BR': '(Funciona em DM)',
+    'en-US': '(Works in DM)',
+    'es-ES': '(Funciona en MP)',
+    'fr': '(Fonctionne en MP)'
+  };
+  
+  const serverText: Record<string, string> = {
+    'pt-BR': '(Apenas em Servidores)',
+    'en-US': '(Servers Only)',
+    'es-ES': '(Solo en Servidores)',
+    'fr': '(Serveurs Uniquement)'
+  };
+  
+  return new EmbedBuilder()
+    .setColor(0x9B59B6)
+    .setTitle(t(interaction, 'help_gambling_title'))
+    .setDescription(t(interaction, 'help_gambling_desc'))
+    .setFooter({ text: t(interaction, 'help_footer') })
+    .addFields(
+      { name: `📱 /casino ${dmText[locale]}`, value: locale === 'pt-BR' ? '• Slot machine\n• Jackpots\n• Apostas flexíveis' : locale === 'fr' ? '• Machine à sous\n• Jackpots\n• Paris flexibles' : locale === 'es-ES' ? '• Tragamonedas\n• Jackpots\n• Apuestas flexibles' : '• Slot machine\n• Jackpots\n• Flexible bets', inline: false },
+      { name: `🎲 /dice ${serverText[locale]}`, value: locale === 'pt-BR' ? '• Duelo de dados\n• Desafie jogadores\n• Maior número vence' : locale === 'fr' ? '• Duel de dés\n• Défiez les joueurs\n• Plus grand gagne' : locale === 'es-ES' ? '• Duelo de dados\n• Desafía jugadores\n• Mayor gana' : '• Dice duel\n• Challenge players\n• Highest wins', inline: false },
+      { name: `🃏 /poker ${serverText[locale]}`, value: locale === 'pt-BR' ? '• Texas Hold\'em\n• Regras oficiais\n• Multiplayer' : locale === 'fr' ? '• Texas Hold\'em\n• Règles officielles\n• Multijoueur' : locale === 'es-ES' ? '• Texas Hold\'em\n• Reglas oficiales\n• Multijugador' : '• Texas Hold\'em\n• Official rules\n• Multiplayer', inline: false },
+      { name: `🏦 /bankrob ${serverText[locale]}`, value: locale === 'pt-BR' ? '• Assalto cooperativo\n• 2 jogadores\n• Cooldown 2h' : locale === 'fr' ? '• Braquage coopératif\n• 2 joueurs\n• Temps de récupération 2h' : locale === 'es-ES' ? '• Asalto cooperativo\n• 2 jugadores\n• Cooldown 2h' : '• Cooperative heist\n• 2 players\n• 2h cooldown', inline: false },
+      { name: `🔫 /duel ${serverText[locale]}`, value: locale === 'pt-BR' ? '• Duelo PvP\n• Combate por turnos\n• Sistema de XP' : locale === 'fr' ? '• Duel PvP\n• Combat par tours\n• Système d\'XP' : locale === 'es-ES' ? '• Duelo PvP\n• Combate por turnos\n• Sistema de XP' : '• PvP duel\n• Turn-based combat\n• XP system', inline: false }
+    );
+}
+
+function getMiningEmbed(interaction: ChatInputCommandInteraction): EmbedBuilder {
+  return new EmbedBuilder()
+    .setColor(0xE67E22)
+    .setTitle(t(interaction, 'help_mining_title'))
+    .setDescription(t(interaction, 'help_mining_desc'))
+    .setFooter({ text: t(interaction, 'help_footer') });
+}
+
+function getProfileEmbed(interaction: ChatInputCommandInteraction): EmbedBuilder {
+  return new EmbedBuilder()
+    .setColor(0x3498DB)
+    .setTitle(t(interaction, 'help_profile_title'))
+    .setDescription(t(interaction, 'help_profile_desc'))
+    .setFooter({ text: t(interaction, 'help_footer') });
+}
+
+function getBountyEmbed(interaction: ChatInputCommandInteraction): EmbedBuilder {
   return new EmbedBuilder()
     .setColor(0xE74C3C)
-    .setTitle('🔫 Sistema de Bounty')
-    .setDescription(
-      '**Caçada de recompensas no Velho Oeste!**\n\n' +
-      '💀 Coloque recompensas em jogadores\n' +
-      '🎯 Capture criminosos procurados\n' +
-      '💰 Ganhe recompensas em Silver\n' +
-      '⚖️ Sistema de justiça western'
-    )
-    .setFooter({ text: 'Comandos de Bounty' })
-    .addFields(
-      {
-        name: '🔍 `/wanted` (Apenas em Servidores)',
-        value: '**Cartaz de Procurado**\n' +
-               '• Define recompensa em um jogador\n' +
-               '• Cria poster visual wanted\n' +
-               '• Define valor da recompensa\n' +
-               '• Apenas admins podem usar',
-        inline: false
-      },
-      {
-        name: '📜 `/bounties` (Apenas em Servidores)',
-        value: '**Lista de Recompensas**\n' +
-               '• Veja todas as recompensas ativas\n' +
-               '• Valores das bounties\n' +
-               '• Quem está procurado\n' +
-               '• Rankings de criminosos',
-        inline: false
-      },
-      {
-        name: '🎯 `/capture` (Apenas em Servidores)',
-        value: '**Capturar Procurado**\n' +
-               '• Tente capturar um criminoso\n' +
-               '• 50% de chance de sucesso\n' +
-               '• Ganhe a recompensa se sucesso\n' +
-               '• Cooldown após tentativa',
-        inline: false
-      },
-      {
-        name: '❌ `/clearbounty` (Apenas em Servidores)',
-        value: '**Limpar Recompensa**\n' +
-               '• Remove bounty de um jogador\n' +
-               '• Apenas admins\n' +
-               '• Limpa o cartaz de procurado\n' +
-               '• Restaura status normal',
-        inline: false
-      },
-      {
-        name: '⚙️ `/setwanted` (Admin)',
-        value: '**Configurar Sistema**\n' +
-               '• Define canal de wanted posters\n' +
-               '• Configurações do sistema\n' +
-               '• Apenas administradores',
-        inline: false
-      }
-    );
+    .setTitle(t(interaction, 'help_bounty_title'))
+    .setDescription(t(interaction, 'help_bounty_desc'))
+    .setFooter({ text: t(interaction, 'help_footer') });
 }
 
-function getAdminEmbed(): EmbedBuilder {
+function getAdminEmbed(interaction: ChatInputCommandInteraction): EmbedBuilder {
   return new EmbedBuilder()
     .setColor(0xF39C12)
-    .setTitle('⚙️ Administração do Servidor')
-    .setDescription(
-      '**Comandos exclusivos para administradores!**\n\n' +
-      '🛡️ Requer permissões de admin\n' +
-      '🎛️ Configurações do servidor\n' +
-      '💸 Gerenciamento de economia\n' +
-      '📢 Sistema de anúncios avançado'
-    )
-    .setFooter({ text: 'Comandos Administrativos' })
-    .addFields(
-      {
-        name: '📢 `/announcement` (Apenas em Servidores)',
-        value: '**Sistema de Anúncios Avançado**\n' +
-               '• Preview com confirmação (✅/❌)\n' +
-               '• 8 presets de cores western\n' +
-               '• Thumbnails e imagens customizadas\n' +
-               '• Targeting: @everyone, @here, roles\n' +
-               '• Sistema de templates salvos\n' +
-               '• Histórico de 100 anúncios\n' +
-               '• Botões interativos opcionais',
-        inline: false
-      },
-      {
-        name: '💰 Comandos de Economia',
-        value: '**Gerenciamento de Moedas:**\n' +
-               '`/addsilver` - Adiciona Silver Coins\n' +
-               '`/addgold` - Adiciona Gold Bars\n' +
-               '`/addtokens` - Adiciona Saloon Tokens\n' +
-               '`/removegold` - Remove Gold Bars\n' +
-               '`/addbackpack` - Aumenta capacidade de mochila',
-        inline: false
-      },
-      {
-        name: '🎟️ `/generatecode` (Owner Only)',
-        value: '**Gerar Códigos de Resgate**\n' +
-               '• Cria códigos únicos\n' +
-               '• Define recompensas\n' +
-               '• Para promoções e eventos\n' +
-               '• Apenas donos do bot',
-        inline: false
-      },
-      {
-        name: '🏦 `/middleman` (Apenas em Servidores)',
-        value: '**Sistema de Intermediação**\n' +
-               '• Facilita trocas seguras\n' +
-               '• Previne scams\n' +
-               '• Trocas entre jogadores\n' +
-               '• Log de transações',
-        inline: false
-      },
-      {
-        name: '⚙️ Configurações do Servidor',
-        value: '**Setup Commands:**\n' +
-               '`/servidor` - Info do servidor\n' +
-               '`/setwelcome` - Mensagens de boas-vindas\n' +
-               '`/setlogs` - Canal de logs\n' +
-               '`/setwanted` - Sistema de bounty\n' +
-               '`/setuptoken` - Configurar tokens\n' +
-               '`/idioma` - Mudar idioma\n' +
-               '`/migrate` - Migração de dados',
-        inline: false
-      }
-    );
+    .setTitle(t(interaction, 'help_admin_title'))
+    .setDescription(t(interaction, 'help_admin_desc'))
+    .setFooter({ text: t(interaction, 'help_footer') });
 }
 
-function getUtilityEmbed(): EmbedBuilder {
+function getUtilityEmbed(interaction: ChatInputCommandInteraction): EmbedBuilder {
   return new EmbedBuilder()
     .setColor(0x95A5A6)
-    .setTitle('🔧 Comandos de Utilidade')
-    .setDescription(
-      '**Ferramentas úteis e informações do bot!**\n\n' +
-      '📊 Status e informações\n' +
-      '🌐 Configurações gerais\n' +
-      '❓ Ajuda e suporte\n' +
-      '⚡ Performance'
-    )
-    .setFooter({ text: 'Comandos de Utilidade' })
-    .addFields(
-      {
-        name: '📱 `/help` (Funciona em DM)',
-        value: '**Guia de Comandos**\n' +
-               '• Este menu interativo!\n' +
-               '• Navegação por categorias\n' +
-               '• Descrições detalhadas\n' +
-               '• Indica comandos com suporte DM\n' +
-               '• Links úteis (suporte, convite, site)',
-        inline: false
-      },
-      {
-        name: '📱 `/ping` (Funciona em DM)',
-        value: '**Latência do Bot**\n' +
-               '• Verifica tempo de resposta\n' +
-               '• Latency da API do Discord\n' +
-               '• Status de conexão\n' +
-               '• Útil para diagnósticos',
-        inline: false
-      },
-      {
-        name: '🌐 `/idioma` (Apenas em Servidores)',
-        value: '**Mudar Idioma**\n' +
-               '• PT-BR (Português Brasil)\n' +
-               '• EN-US (English)\n' +
-               '• ES-ES (Español)\n' +
-               '• Configuração por servidor',
-        inline: false
-      },
-      {
-        name: '📊 `/servidor` (Apenas em Servidores)',
-        value: '**Informações do Servidor**\n' +
-               '• Estatísticas do servidor\n' +
-               '• Contagem de membros\n' +
-               '• Data de criação\n' +
-               '• Configurações ativas',
-        inline: false
-      }
-    );
+    .setTitle(t(interaction, 'help_utility_title'))
+    .setDescription(t(interaction, 'help_utility_desc'))
+    .setFooter({ text: t(interaction, 'help_footer') });
 }
 
-function getCategoryButtons(currentCategory: string): ActionRowBuilder<ButtonBuilder> {
+function getCategoryButtons(interaction: ChatInputCommandInteraction, currentCategory: string): ActionRowBuilder<ButtonBuilder> {
   return new ActionRowBuilder<ButtonBuilder>()
     .addComponents(
       new ButtonBuilder()
         .setCustomId('help_economy')
-        .setLabel('💰 Economia')
+        .setLabel(t(interaction, 'help_btn_economy'))
         .setStyle(currentCategory === CATEGORIES.ECONOMY ? ButtonStyle.Primary : ButtonStyle.Secondary)
         .setDisabled(currentCategory === CATEGORIES.ECONOMY),
       new ButtonBuilder()
         .setCustomId('help_gambling')
-        .setLabel('🎲 Gambling')
+        .setLabel(t(interaction, 'help_btn_gambling'))
         .setStyle(currentCategory === CATEGORIES.GAMBLING ? ButtonStyle.Primary : ButtonStyle.Secondary)
         .setDisabled(currentCategory === CATEGORIES.GAMBLING),
       new ButtonBuilder()
         .setCustomId('help_mining')
-        .setLabel('⛏️ Mineração')
+        .setLabel(t(interaction, 'help_btn_mining'))
         .setStyle(currentCategory === CATEGORIES.MINING ? ButtonStyle.Primary : ButtonStyle.Secondary)
         .setDisabled(currentCategory === CATEGORIES.MINING),
       new ButtonBuilder()
         .setCustomId('help_profile')
-        .setLabel('👤 Perfil')
+        .setLabel(t(interaction, 'help_btn_profile'))
         .setStyle(currentCategory === CATEGORIES.PROFILE ? ButtonStyle.Primary : ButtonStyle.Secondary)
         .setDisabled(currentCategory === CATEGORIES.PROFILE)
     );
 }
 
-function getSecondaryButtons(currentCategory: string): ActionRowBuilder<ButtonBuilder> {
+function getSecondaryButtons(interaction: ChatInputCommandInteraction, currentCategory: string): ActionRowBuilder<ButtonBuilder> {
   return new ActionRowBuilder<ButtonBuilder>()
     .addComponents(
       new ButtonBuilder()
         .setCustomId('help_bounty')
-        .setLabel('🔫 Bounty')
+        .setLabel(t(interaction, 'help_btn_bounty'))
         .setStyle(currentCategory === CATEGORIES.BOUNTY ? ButtonStyle.Primary : ButtonStyle.Secondary)
         .setDisabled(currentCategory === CATEGORIES.BOUNTY),
       new ButtonBuilder()
         .setCustomId('help_admin')
-        .setLabel('⚙️ Admin')
+        .setLabel(t(interaction, 'help_btn_admin'))
         .setStyle(currentCategory === CATEGORIES.ADMIN ? ButtonStyle.Primary : ButtonStyle.Secondary)
         .setDisabled(currentCategory === CATEGORIES.ADMIN),
       new ButtonBuilder()
         .setCustomId('help_utility')
-        .setLabel('🔧 Utilidade')
+        .setLabel(t(interaction, 'help_btn_utility'))
         .setStyle(currentCategory === CATEGORIES.UTILITY ? ButtonStyle.Primary : ButtonStyle.Secondary)
         .setDisabled(currentCategory === CATEGORIES.UTILITY),
       new ButtonBuilder()
         .setCustomId('help_overview')
-        .setLabel('🏠 Menu Inicial')
+        .setLabel(t(interaction, 'help_btn_home'))
         .setStyle(currentCategory === CATEGORIES.OVERVIEW ? ButtonStyle.Success : ButtonStyle.Secondary)
         .setDisabled(currentCategory === CATEGORIES.OVERVIEW)
     );
 }
 
-function getLinkButtons(): ActionRowBuilder<ButtonBuilder> {
+function getLinkButtons(interaction: ChatInputCommandInteraction): ActionRowBuilder<ButtonBuilder> {
   return new ActionRowBuilder<ButtonBuilder>()
     .addComponents(
       new ButtonBuilder()
-        .setLabel('🆘 Suporte')
+        .setLabel(t(interaction, 'help_btn_support'))
         .setStyle(ButtonStyle.Link)
         .setURL('https://discord.gg/gXwaYFNhfp'),
       new ButtonBuilder()
-        .setLabel('➕ Adicionar Bot')
+        .setLabel(t(interaction, 'help_btn_invite'))
         .setStyle(ButtonStyle.Link)
         .setURL('https://discord.com/api/oauth2/authorize?client_id=1426734768111747284&permissions=277025770496&scope=bot%20applications.commands'),
       new ButtonBuilder()
-        .setLabel('🌐 Website')
+        .setLabel(t(interaction, 'help_btn_website'))
         .setStyle(ButtonStyle.Link)
         .setURL(`https://${process.env.REPLIT_DEV_DOMAIN || 'sheriff-bot.repl.co'}`)
     );
 }
 
-function getEmbedForCategory(category: string): EmbedBuilder {
+function getEmbedForCategory(category: string, interaction: ChatInputCommandInteraction): EmbedBuilder {
   switch (category) {
     case CATEGORIES.ECONOMY:
-      return getEconomyEmbed();
+      return getEconomyEmbed(interaction);
     case CATEGORIES.GAMBLING:
-      return getGamblingEmbed();
+      return getGamblingEmbed(interaction);
     case CATEGORIES.MINING:
-      return getMiningEmbed();
+      return getMiningEmbed(interaction);
     case CATEGORIES.PROFILE:
-      return getProfileEmbed();
+      return getProfileEmbed(interaction);
     case CATEGORIES.BOUNTY:
-      return getBountyEmbed();
+      return getBountyEmbed(interaction);
     case CATEGORIES.ADMIN:
-      return getAdminEmbed();
+      return getAdminEmbed(interaction);
     case CATEGORIES.UTILITY:
-      return getUtilityEmbed();
+      return getUtilityEmbed(interaction);
     default:
-      return getOverviewEmbed();
+      return getOverviewEmbed(interaction);
   }
 }
 
@@ -571,10 +230,10 @@ export = {
     .setContexts([0, 1, 2])
     .setIntegrationTypes([0, 1]),
   async execute(interaction: ChatInputCommandInteraction): Promise<void> {
-    const embed = getOverviewEmbed();
-    const buttons = getCategoryButtons(CATEGORIES.OVERVIEW);
-    const secondaryButtons = getSecondaryButtons(CATEGORIES.OVERVIEW);
-    const linkButtons = getLinkButtons();
+    const embed = getOverviewEmbed(interaction);
+    const buttons = getCategoryButtons(interaction, CATEGORIES.OVERVIEW);
+    const secondaryButtons = getSecondaryButtons(interaction, CATEGORIES.OVERVIEW);
+    const linkButtons = getLinkButtons(interaction);
 
     const reply = await interaction.reply({
       embeds: [embed],
@@ -591,16 +250,16 @@ export = {
     collector.on('collect', async (buttonInteraction: ButtonInteraction) => {
       if (buttonInteraction.user.id !== interaction.user.id) {
         await buttonInteraction.reply({
-          content: '❌ Apenas quem usou o comando pode navegar!',
+          content: t(interaction, 'help_only_user'),
           flags: MessageFlags.Ephemeral
         });
         return;
       }
 
       const category = buttonInteraction.customId.replace('help_', '');
-      const newEmbed = getEmbedForCategory(category);
-      const newButtons = getCategoryButtons(category);
-      const newSecondaryButtons = getSecondaryButtons(category);
+      const newEmbed = getEmbedForCategory(category, interaction);
+      const newButtons = getCategoryButtons(interaction, category);
+      const newSecondaryButtons = getSecondaryButtons(interaction, category);
 
       await buttonInteraction.update({
         embeds: [newEmbed],

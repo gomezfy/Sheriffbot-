@@ -48,6 +48,14 @@ None specified yet.
 
 ## Recent Changes
 - **October 22, 2025:**
+  - **Multilingual Help System:** Complete i18n implementation for /help command
+    - **Automatic Language Detection:** Detects user's Discord language setting via `interaction.locale`
+    - **4 Languages Supported:** PT-BR (Portuguese), EN-US (English), ES-ES (Spanish), FR (French)
+    - **Fully Translated:** All titles, descriptions, buttons, and messages adapt to user's language
+    - **Interactive Navigation:** 7 category pages with language-appropriate content
+    - **i18n System:** Leverages existing translation system (`src/utils/i18n.ts`) with 30+ new translation keys
+    - **Smart Fallback:** Defaults to English if user's language isn't supported
+    - **Example:** French user sees "Guide des Commandes" instead of "Guia de Comandos"
   - **Advanced Help System:** Complete redesign of /help command with interactive navigation
     - 7 category pages: Overview, Economy, Gambling, Mining, Profile, Bounty, Admin, Utility
     - Interactive button navigation with 2 rows of category buttons

@@ -31,6 +31,41 @@ const translations: Record<string, Record<string, string>> = {
     weight: 'Peso',
     time_minutes: '{min} minutos',
     time_hours: '{hours}h {min}m',
+    
+    // Help Command Translations (Portuguese)
+    help_title: '🤠 Sheriff Rex - Guia de Comandos',
+    help_overview_desc: '**Bem-vindo ao Velho Oeste!** Sheriff Rex é um bot completo com sistema de economia, jogos, mineração e muito mais.\n\n📱 **Suporte a DM:** Alguns comandos funcionam em mensagens diretas!\n🎮 **34 Comandos Disponíveis**\n\n**Selecione uma categoria abaixo para ver os comandos:**',
+    help_footer: '🌵 Use os botões para navegar entre as categorias',
+    help_btn_economy: '💰 Economia',
+    help_btn_gambling: '🎲 Gambling',
+    help_btn_mining: '⛏️ Mineração',
+    help_btn_profile: '👤 Perfil',
+    help_btn_bounty: '🔫 Bounty',
+    help_btn_admin: '⚙️ Admin',
+    help_btn_utility: '🔧 Utilidade',
+    help_btn_home: '🏠 Menu Inicial',
+    help_btn_support: '🆘 Suporte',
+    help_btn_invite: '➕ Adicionar Bot',
+    help_btn_website: '🌐 Website',
+    help_only_user: '❌ Apenas quem usou o comando pode navegar!',
+    
+    // Category Titles (Portuguese)
+    help_economy_title: '💰 Economia & Trading',
+    help_gambling_title: '🎲 Gambling & Jogos',
+    help_mining_title: '⛏️ Sistema de Mineração',
+    help_profile_title: '👤 Perfil & Customização',
+    help_bounty_title: '🔫 Sistema de Bounty',
+    help_admin_title: '⚙️ Administração do Servidor',
+    help_utility_title: '🔧 Comandos de Utilidade',
+    
+    // Category Descriptions (Portuguese)
+    help_economy_desc: '**Sistema econômico completo com moedas, itens e transferências.**\n\n🪙 **Silver Coins** - Moeda principal do servidor\n🥇 **Gold Bars** - Itens valiosos (1 barra = 700 Silver)\n🎟️ **Saloon Tokens** - Moeda premium para customizações\n💼 **Backpack System** - Sistema de mochila com upgrades',
+    help_gambling_desc: '**Jogos de apostas e azar do Velho Oeste!**\n\n💰 Aposte suas Silver Coins\n🎰 Múltiplos jogos disponíveis\n🤝 Jogos solo e cooperativos\n⚠️ Aposte com responsabilidade!',
+    help_mining_desc: '**Mine nas montanhas do Velho Oeste!**\n\n🥇 Encontre Gold Bars valiosas\n💎 Descubra minérios raros\n🤝 Mine sozinho ou em dupla\n⏰ Cooldowns estratégicos',
+    help_profile_desc: '**Personalize seu perfil do Velho Oeste!**\n\n🎨 Backgrounds customizáveis\n📊 Sistema de XP e Níveis\n🖼️ Profile cards visuais\n✨ Efeito glassmorphism',
+    help_bounty_desc: '**Caçada de recompensas no Velho Oeste!**\n\n💀 Coloque recompensas em jogadores\n🎯 Capture criminosos procurados\n💰 Ganhe recompensas em Silver\n⚖️ Sistema de justiça western',
+    help_admin_desc: '**Comandos exclusivos para administradores!**\n\n🛡️ Requer permissões de admin\n🎛️ Configurações do servidor\n💸 Gerenciamento de economia\n📢 Sistema de anúncios avançado',
+    help_utility_desc: '**Ferramentas úteis e informações do bot!**\n\n📊 Status e informações\n🌐 Configurações gerais\n❓ Ajuda e suporte\n⚡ Performance',
   },
   'en-US': {
     cooldown: 'Whoa there, cowpoke! Even the fastest guns need a break. Come back in {time}! 🐴',
