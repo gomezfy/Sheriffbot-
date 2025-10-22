@@ -1,4 +1,5 @@
 import { EmbedBuilder } from 'discord.js';
+import { getSilverCoinEmoji, getGoldBarEmoji, getSaloonTokenEmoji } from './customEmojis';
 
 /**
  * Minimalist Embed System
@@ -166,9 +167,9 @@ export function field(name: string, value: string, inline: boolean = false) {
  */
 export function formatCurrency(amount: number, currency: 'tokens' | 'silver' | 'gold'): string {
   const emoji = {
-    tokens: '<:SaloonToken:1301671095948599309>',
-    silver: '<:SilverCoin:1302424058572771449>',
-    gold: '<:GoldBar:1306797451859722301>'
+    tokens: getSaloonTokenEmoji(),
+    silver: getSilverCoinEmoji(),
+    gold: getGoldBarEmoji()
   };
 
   return `${amount.toLocaleString()} ${emoji[currency]}`;

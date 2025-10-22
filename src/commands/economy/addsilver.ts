@@ -1,4 +1,5 @@
 import { SlashCommandBuilder, EmbedBuilder, ChatInputCommandInteraction, MessageFlags } from 'discord.js';
+import { getSilverCoinEmoji } from '../../utils/customEmojis';
 const { addItem } = require('../../utils/inventoryManager');
 
 const OWNER_ID = process.env.OWNER_ID;
@@ -43,13 +44,15 @@ module.exports = {
       return;
     }
 
+    const silverEmoji = getSilverCoinEmoji();
+    
     const embed = new EmbedBuilder()
       .setColor('#C0C0C0')
       .setTitle('✅ Silver Coins Added!')
-      .setDescription(`Successfully added **${amount.toLocaleString()} 🪙** to ${targetUser.tag}!`)
+      .setDescription(`Successfully added **${amount.toLocaleString()} ${silverEmoji}** to ${targetUser.tag}!`)
       .addFields(
         { name: '👤 User', value: `${targetUser}`, inline: true },
-        { name: '💰 Amount', value: `${amount.toLocaleString()} 🪙`, inline: true }
+        { name: '💰 Amount', value: `${amount.toLocaleString()} ${silverEmoji}`, inline: true }
       )
       .setFooter({ text: 'Manual addition by bot owner' })
       .setTimestamp();

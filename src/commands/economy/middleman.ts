@@ -1,5 +1,6 @@
 import { SlashCommandBuilder, EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, StringSelectMenuBuilder, StringSelectMenuOptionBuilder, ChatInputCommandInteraction, ComponentType, AttachmentBuilder ,MessageFlags} from 'discord.js';
 import path from 'path';
+import { getSilverCoinEmoji, getGoldBarEmoji, getSaloonTokenEmoji } from '../../utils/customEmojis';
 const { getInventory, removeItem } = require('../../utils/inventoryManager');
 const { addUserSilver } = require('../../utils/dataManager');
 
@@ -20,15 +21,19 @@ module.exports = {
 
     const blackMarketImage = new AttachmentBuilder(path.join(__dirname, '..', '..', '..', 'assets', 'black-market.png'));
 
+    const tokenEmoji = getSaloonTokenEmoji();
+    const silverEmoji = getSilverCoinEmoji();
+    const goldEmoji = getGoldBarEmoji();
+
     const embed = new EmbedBuilder()
       .setColor(0xFFD700)
       .setTitle('💱 MIDDLEMAN - CURRENCY EXCHANGE')
       .setImage('attachment://black-market.png')
-      .setDescription('**Welcome to the Middleman, partner!**\n\nExchange your valuable items for Silver Coins at fair rates.\n\n**📊 EXCHANGE RATES**\n🎫 1 Saloon Token = **50** 🪙 Silver Coins\n🥇 1 Gold Bar = **700** 🪙 Silver Coins')
+      .setDescription(`**Welcome to the Middleman, partner!**\n\nExchange your valuable items for Silver Coins at fair rates.\n\n**📊 EXCHANGE RATES**\n${tokenEmoji} 1 Saloon Token = **50** ${silverEmoji} Silver Coins\n${goldEmoji} 1 Gold Bar = **700** ${silverEmoji} Silver Coins`)
       .addFields(
         {
           name: '💼 Your Inventory',
-          value: `\`\`\`yaml\n🎫 Saloon Tokens: ${saloonTokens.toLocaleString()}\n🥇 Gold Bars: ${goldBars.toLocaleString()}\n\`\`\``,
+          value: `\`\`\`yaml\nSaloon Tokens: ${saloonTokens.toLocaleString()}\nGold Bars: ${goldBars.toLocaleString()}\n\`\`\``,
           inline: false
         },
         {
@@ -132,7 +137,7 @@ module.exports = {
         const selectRow = new ActionRowBuilder<StringSelectMenuBuilder>().addComponents(selectMenu);
 
         await i.reply({
-          content: `**Select amount to convert:**\nYou have **${currentTokens}** 🎫 Saloon Tokens`,
+          content: `**Select amount to convert:**\nYou have **${currentTokens}** ${tokenEmoji} Saloon Tokens`,
           components: [selectRow],
           flags: MessageFlags.Ephemeral
         });
@@ -163,10 +168,10 @@ module.exports = {
           const successEmbed = new EmbedBuilder()
             .setColor(0x00FF00)
             .setTitle('✅ EXCHANGE SUCCESSFUL!')
-            .setDescription(`You converted **${amount}** 🎫 Saloon Tokens into **${silverAmount.toLocaleString()}** 🪙 Silver Coins!`)
+            .setDescription(`You converted **${amount}** ${tokenEmoji} Saloon Tokens into **${silverAmount.toLocaleString()}** ${silverEmoji} Silver Coins!`)
             .addFields(
-              { name: 'Tokens Converted', value: `${amount} 🎫`, inline: true },
-              { name: 'Silver Received', value: `${silverAmount.toLocaleString()} 🪙`, inline: true }
+              { name: 'Tokens Converted', value: `${amount} ${tokenEmoji}`, inline: true },
+              { name: 'Silver Received', value: `${silverAmount.toLocaleString()} ${silverEmoji}`, inline: true }
             )
             .setFooter({ text: 'Thanks for using the Middleman service!' })
             .setTimestamp();
@@ -222,7 +227,7 @@ module.exports = {
         const selectRow = new ActionRowBuilder<StringSelectMenuBuilder>().addComponents(selectMenu);
 
         await i.reply({
-          content: `**Select amount to convert:**\nYou have **${currentGold}** 🥇 Gold Bars`,
+          content: `**Select amount to convert:**\nYou have **${currentGold}** ${goldEmoji} Gold Bars`,
           components: [selectRow],
           flags: MessageFlags.Ephemeral
         });
@@ -253,10 +258,10 @@ module.exports = {
           const successEmbed = new EmbedBuilder()
             .setColor(0x00FF00)
             .setTitle('✅ EXCHANGE SUCCESSFUL!')
-            .setDescription(`You converted **${amount}** 🥇 Gold Bars into **${silverAmount.toLocaleString()}** 🪙 Silver Coins!`)
+            .setDescription(`You converted **${amount}** ${goldEmoji} Gold Bars into **${silverAmount.toLocaleString()}** ${silverEmoji} Silver Coins!`)
             .addFields(
-              { name: 'Gold Converted', value: `${amount} 🥇`, inline: true },
-              { name: 'Silver Received', value: `${silverAmount.toLocaleString()} 🪙`, inline: true }
+              { name: 'Gold Converted', value: `${amount} ${goldEmoji}`, inline: true },
+              { name: 'Silver Received', value: `${silverAmount.toLocaleString()} ${silverEmoji}`, inline: true }
             )
             .setFooter({ text: 'Thanks for using the Middleman service!' })
             .setTimestamp();

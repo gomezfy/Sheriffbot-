@@ -1,10 +1,11 @@
 import { SlashCommandBuilder, EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, AttachmentBuilder, ChatInputCommandInteraction ,MessageFlags} from 'discord.js';
 import fs from 'fs';
+import path from 'path';
+import { getSilverCoinEmoji, getGoldBarEmoji } from '../../utils/customEmojis';
 const { addItem, getInventory, removeItem, transferItem } = require('../../utils/inventoryManager');
 const { addUserSilver, getUserSilver, removeUserSilver } = require('../../utils/dataManager');
 const { showProgressBar } = require('../../utils/progressBar');
 const { readData, writeData } = require('../../utils/database');
-import path from 'path';
 
 const GOLD_VALUE = 700; // Silver Coins por barra de ouro
 const SOLO_COOLDOWN = 50 * 60 * 1000; // 50 minutos
@@ -92,6 +93,9 @@ module.exports = {
 
     const miningImage = new AttachmentBuilder(path.join(__dirname, '..', '..', '..', 'assets', 'gold-mining.png'));
 
+    const goldEmoji = getGoldBarEmoji();
+    const silverEmoji = getSilverCoinEmoji();
+
     const embed = new EmbedBuilder()
       .setColor(0xFFD700)
       .setTitle('⛏️ GOLD MINING')
@@ -110,7 +114,7 @@ module.exports = {
         },
         {
           name: '💰 Gold Value',
-          value: `\`\`\`🥇 1 Gold Bar = ${GOLD_VALUE} 🪙 Silver Coins\`\`\``,
+          value: `\`\`\`1 Gold Bar = ${GOLD_VALUE} Silver Coins\`\`\``,
           inline: false
         }
       )
@@ -163,11 +167,11 @@ module.exports = {
           embeds: [{
             color: 0xFFD700,
             title: '⛏️ MINING SUCCESS!',
-            description: `\`\`\`diff\n+ You mined ${goldAmount} 🥇 Gold Bar${goldAmount > 1 ? 's' : ''}!\n\`\`\`\n💼 Weight: **${addResult.newWeight.toFixed(2)}kg / ${userMaxWeight}kg**`,
+            description: `\`\`\`diff\n+ You mined ${goldAmount} ${goldEmoji} Gold Bar${goldAmount > 1 ? 's' : ''}!\n\`\`\`\n💼 Weight: **${addResult.newWeight.toFixed(2)}kg / ${userMaxWeight}kg**`,
             fields: [
               {
                 name: '💰 Value',
-                value: `\`${goldAmount * GOLD_VALUE} 🪙 Silver Coins\``,
+                value: `\`${goldAmount * GOLD_VALUE} ${silverEmoji} Silver Coins\``,
                 inline: true
               },
               {
@@ -201,7 +205,7 @@ module.exports = {
           embeds: [{
             color: 0x00FF00,
             title: '👥 LOOKING FOR MINING PARTNER',
-            description: `**${interaction.user.username}** is looking for a mining partner!\n\n🥇 Reward: 4-6 Gold Bars (split between both)\n⏰ Duration: 2 hours cooldown\n\n**Click below to join!**`,
+            description: `**${interaction.user.username}** is looking for a mining partner!\n\n${goldEmoji} Reward: 4-6 Gold Bars (split between both)\n⏰ Duration: 2 hours cooldown\n\n**Click below to join!**`,
             footer: { text: 'First person to click joins!' }
           }],
           components: [inviteRow]
@@ -295,7 +299,7 @@ module.exports = {
                 const partnerPayment = addUserSilver(partnerId, GOLD_VALUE);
                 
                 if (partnerPayment.success) {
-                  compensationMessage = `\n\n💰 ${interaction.user.username} paid ${coopI.user.username} **${GOLD_VALUE} 🪙 Silver Coins** for keeping the extra gold!`;
+                  compensationMessage = `\n\n💰 ${interaction.user.username} paid ${coopI.user.username} **${GOLD_VALUE} ${silverEmoji} Silver Coins** for keeping the extra gold!`;
                 } else {
                   // Partner can't receive Silver - transfer extra gold to them
                   addUserSilver(userId, GOLD_VALUE); // Return Silver to owner
@@ -382,16 +386,16 @@ module.exports = {
             embeds: [{
               color: 0xFFD700,
               title: '⛏️ COOPERATIVE MINING SUCCESS!',
-              description: `\`\`\`diff\n+ Found ${goldAmount} 🥇 Gold Bars!\n\`\`\``,
+              description: `\`\`\`diff\n+ Found ${goldAmount} ${goldEmoji} Gold Bars!\n\`\`\``,
               fields: [
                 {
                   name: `${interaction.user.username}'s Share`,
-                  value: `\`${ownerGold} 🥇 Gold Bars\`\n*Weight: ${ownerResult.newWeight.toFixed(2)}kg/${ownerMaxWeight}kg*`,
+                  value: `\`${ownerGold} ${goldEmoji} Gold Bars\`\n*Weight: ${ownerResult.newWeight.toFixed(2)}kg/${ownerMaxWeight}kg*`,
                   inline: true
                 },
                 {
                   name: `${coopI.user.username}'s Share`,
-                  value: `\`${partnerGold} 🥇 Gold Bars\`\n*Weight: ${partnerResult.newWeight.toFixed(2)}kg/${partnerMaxWeight}kg*`,
+                  value: `\`${partnerGold} ${goldEmoji} Gold Bars\`\n*Weight: ${partnerResult.newWeight.toFixed(2)}kg/${partnerMaxWeight}kg*`,
                   inline: true
                 }
               ],
