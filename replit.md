@@ -48,6 +48,19 @@ None specified yet.
 
 ## Recent Changes
 - **October 22, 2025:**
+  - **DM Support Implementation:** Enabled Direct Message functionality for user-focused commands
+    - 9 commands now work in DMs: /ping, /help, /avatar, /profile, /inventory, /daily, /redeem, /leaderboard, /casino
+    - Added setContexts([0, 1, 2]) and setIntegrationTypes([0, 1]) to DM-compatible commands
+    - Guild-dependent commands remain server-only (admin, bounty, /give)
+    - All 34 commands re-registered successfully with Discord API
+  - **Advanced Announcement System:** Completely redesigned /announcement command with professional features
+    - Preview & Confirmation: Ephemeral preview with ✅/❌ buttons before sending (60s timeout)
+    - 8 Western Color Presets: Gold Rush, Wanted Poster, Sheriff Badge, Saloon Night, Royal Poker, Desert Sunset, Western Leather, Silver Coin
+    - Rich Customization: Thumbnail URL, image banner, custom footer, newline support
+    - Advanced Targeting: Role mentions, @everyone, @here with permission validation
+    - Template System: Create, list, use, and delete reusable announcement templates
+    - Persistent History: Tracks last 100 announcements per guild with timestamps
+    - Race-condition-safe persistence with shared addToHistory helper
   - **Profile Visual Enhancement:** Completely redesigned profile cards with glassmorphism effects
     - Reduced background overlay from 60% to 25% opacity to showcase custom backgrounds
     - Added double-border avatar with levelColor accent and white semi-transparent inner ring
