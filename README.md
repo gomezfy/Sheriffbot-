@@ -10,6 +10,8 @@ A feature-rich Discord bot with a Wild West theme featuring:
 
 ## Quick Start
 
+### Desenvolvimento Local (Replit)
+
 1. **Configure Secrets**
    - Set `DISCORD_TOKEN` in environment secrets
    - Set `CLIENT_ID` in environment secrets
@@ -17,13 +19,25 @@ A feature-rich Discord bot with a Wild West theme featuring:
 
 2. **Run the Bot**
    ```bash
-   ts-node src/index.ts
+   npm start
    ```
 
 3. **Deploy Commands**
    ```bash
-   ts-node src/deploy-commands.ts
+   npm run deploy
    ```
+
+### Deploy em Produção (Vertra Cloud)
+
+Para fazer deploy do bot no Vertra Cloud:
+- 📋 **Guia Rápido:** Veja [QUICK_START_VERTRA.txt](./QUICK_START_VERTRA.txt)
+- 📖 **Documentação Completa:** Veja [DEPLOY_VERTRA.md](./DEPLOY_VERTRA.md)
+
+**Resumo:**
+1. Crie conta no [Vertra Cloud](https://vertracloud.app)
+2. Configure as variáveis de ambiente (DISCORD_TOKEN, DISCORD_CLIENT_ID)
+3. Faça upload do código
+4. O bot iniciará automaticamente
 
 ## Documentation
 

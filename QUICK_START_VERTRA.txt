@@ -1,0 +1,52 @@
+╔════════════════════════════════════════════════════════════╗
+║         🤠 SHERIFF REX BOT - DEPLOY NO VERTRA CLOUD         ║
+╚════════════════════════════════════════════════════════════╝
+
+📝 CHECKLIST RÁPIDO:
+
+✅ 1. CRIAR CONTA NO VERTRA CLOUD
+   → Acesse: https://vertracloud.app
+   → Faça cadastro/login
+
+✅ 2. OBTER CREDENCIAIS DO DISCORD
+   → Portal: https://discord.com/developers/applications
+   → Copie: DISCORD_TOKEN e DISCORD_CLIENT_ID
+   
+✅ 3. CONFIGURAR NO VERTRA
+   → Novo Projeto → Discord Bot
+   → Settings → Environment Variables
+   → Adicionar:
+      - DISCORD_TOKEN=seu_token
+      - DISCORD_CLIENT_ID=seu_id
+
+✅ 4. FAZER UPLOAD DO CÓDIGO
+   Opção A (Git):
+      - Conecte seu repositório ao Vertra
+      - Push para a branch principal
+   
+   Opção B (Upload):
+      - Compacte o projeto (sem node_modules)
+      - Faça upload no painel Vertra
+
+✅ 5. INICIAR O BOT
+   → O Vertra executará automaticamente: npm start
+   → Aguarde o bot ficar online
+
+✅ 6. REGISTRAR COMANDOS
+   → No console do Vertra ou localmente:
+      npm run deploy
+
+✅ 7. TESTAR
+   → Convide o bot para seu servidor Discord
+   → Teste: /help, /ping, /profile
+
+═══════════════════════════════════════════════════════════
+
+📚 Para informações detalhadas, veja: DEPLOY_VERTRA.md
+
+🆘 Problemas? Verifique:
+   - Token válido e correto
+   - Bot tem intents habilitados no Discord Portal
+   - Variáveis de ambiente configuradas corretamente
+
+═══════════════════════════════════════════════════════════
