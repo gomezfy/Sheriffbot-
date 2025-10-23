@@ -2,6 +2,47 @@
 
 ## 🚨 Problemas Mais Comuns e Soluções
 
+### 0. ⚠️ High Memory Usage (91%+)
+
+**Causa:** O bot está usando quase toda a memória disponível no plano gratuito do Vertra (geralmente 256MB ou menos).
+
+**Sintomas:**
+```
+⚠️ High memory usage: 91.1% (20.10MB / 22.06MB)
+⚠️ High memory usage: 92.0% (20.29MB / 22.06MB)
+```
+
+**Soluções:**
+
+1. **Use o comando start:light (sem otimizações de memória):**
+   ```json
+   {
+     "scripts": {
+       "start": "node dist/src/index.js"
+     }
+   }
+   ```
+
+2. **Atualize vertracloud.config:**
+   ```
+   MEMORY=256
+   MAIN=dist/src/index.js
+   BUILD_COMMAND=npm install && npm run build
+   ```
+
+3. **Desabilite sharding se tiver poucos servidores:**
+   - Use `dist/src/index.js` ao invés de `dist/src/shard.js`
+
+4. **Upgrade para plano pago do Vertra** (recomendado para produção):
+   - Planos pagos oferecem 512MB+ de RAM
+   - Melhor performance e estabilidade
+
+5. **Reduza cache no código** (se necessário):
+   - Edite `src/utils/performance.ts`
+   - Reduza valores de `maxSize` nos caches
+
+---
+
 ### 1. ❌ Erro: "Cannot find module 'typescript'" ou "ts-node not found"
 
 **Causa:** O Vertra Cloud não instalou as dependências corretamente.
