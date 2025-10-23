@@ -5,7 +5,8 @@ import path from 'path';
 import Logger from './utils/logger';
 import { sanitizeErrorForLogging, validateEnvironment, getSafeEnvironmentInfo } from './utils/security';
 import { 
-  PRODUCTION_CACHE_CONFIG, 
+  PRODUCTION_CACHE_CONFIG,
+  LOW_MEMORY_CACHE_CONFIG,
   PRODUCTION_SWEEPERS, 
   PRODUCTION_INTENTS,
   performanceMonitor,
@@ -34,6 +35,12 @@ interface ExtendedClient extends Client {
   commands: Collection<string, any>;
 }
 
+// Detect low memory environment
+const isLowMemory = process.env.LOW_MEMORY === 'true' || 
+                    (process.env.MEMORY_LIMIT && parseInt(process.env.MEMORY_LIMIT) < 100);
+
+console.log(`🎯 Memory mode: ${isLowMemory ? 'LOW MEMORY' : 'PRODUCTION'}`);
+
 // Production-optimized client configuration
 const client = new Client({
   // Optimized intents - only what's needed
@@ -46,8 +53,8 @@ const client = new Client({
     Partials.GuildMember,
   ],
   
-  // Advanced cache configuration for 10k+ users
-  makeCache: PRODUCTION_CACHE_CONFIG,
+  // Advanced cache configuration - auto-detect based on memory
+  makeCache: isLowMemory ? LOW_MEMORY_CACHE_CONFIG : PRODUCTION_CACHE_CONFIG,
   
   // Aggressive sweepers for memory management
   sweepers: PRODUCTION_SWEEPERS,

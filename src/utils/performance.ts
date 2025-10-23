@@ -6,6 +6,53 @@
 import { Client, Options, Sweepers, GatewayIntentBits } from 'discord.js';
 
 /**
+ * Low memory cache configuration for constrained environments
+ * Optimized for minimal memory usage (< 50MB)
+ */
+export const LOW_MEMORY_CACHE_CONFIG = Options.cacheWithLimits({
+  // Application Commands - Minimal cache
+  ApplicationCommandManager: {
+    maxSize: 50,
+    keepOverLimit: () => false
+  },
+  
+  // Disable emoji caching
+  BaseGuildEmojiManager: 0,
+  GuildEmojiManager: 0,
+  
+  // Guild Members - Very limited
+  GuildMemberManager: {
+    maxSize: 100,
+    keepOverLimit: (member) => member.id === member.client.user?.id
+  },
+  
+  // Messages - Minimal
+  MessageManager: {
+    maxSize: 10,
+    keepOverLimit: () => false
+  },
+  
+  // Users - Limited
+  UserManager: {
+    maxSize: 200,
+    keepOverLimit: (user) => user.id === user.client.user?.id
+  },
+  
+  // Disable all unused managers
+  GuildBanManager: 0,
+  GuildInviteManager: 0,
+  GuildScheduledEventManager: 0,
+  GuildStickerManager: 0,
+  PresenceManager: 0,
+  ReactionManager: 0,
+  ReactionUserManager: 0,
+  StageInstanceManager: 0,
+  ThreadManager: 0,
+  ThreadMemberManager: 0,
+  VoiceStateManager: 0
+});
+
+/**
  * Advanced cache configuration for high-performance production
  * Optimized for memory efficiency and speed
  */

@@ -7,6 +7,7 @@
     "start": "node --expose-gc --max-old-space-size=1024 dist/src/index.js",
     "start:shard": "node --expose-gc --max-old-space-size=1024 dist/src/shard.js",
     "start:light": "node dist/src/index.js",
+    "start:low-memory": "LOW_MEMORY=true node --expose-gc --max-old-space-size=64 dist/src/index.js",
     "dev": "ts-node --max-old-space-size=1024 src/index.ts",
     "dev:shard": "ts-node --max-old-space-size=1024 src/shard.ts",
     "build": "tsc",
