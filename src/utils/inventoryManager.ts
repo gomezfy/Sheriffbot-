@@ -2,8 +2,9 @@ import fs from 'fs';
 import path from 'path';
 import { EMOJI_TEXT } from './customEmojis';
 import { cacheManager } from './cacheManager';
+import { getDataPath } from './database';
 
-const inventoryFile = path.join(process.cwd(), 'src', 'data', 'inventory.json');
+const inventoryFile = path.join(getDataPath('data'), 'inventory.json');
 
 interface Item {
   name: string;

@@ -1,4 +1,5 @@
 import { Guild } from 'discord.js';
+import { getDataPath } from './database';
 import fs from 'fs';
 import path from 'path';
 
@@ -6,8 +7,8 @@ interface EmojiMapping {
   [key: string]: string; // name -> emoji ID format <:name:id>
 }
 
-const EMOJI_MAPPING_FILE = path.join(process.cwd(), 'src', 'data', 'emoji-mapping.json');
-const CUSTOM_EMOJIS_DIR = path.join(process.cwd(), 'assets', 'custom-emojis');
+const EMOJI_MAPPING_FILE = path.join(getDataPath('data'), 'emoji-mapping.json');
+const CUSTOM_EMOJIS_DIR = getDataPath('assets', 'custom-emojis');
 
 /**
  * Carrega o mapeamento de emojis do arquivo JSON

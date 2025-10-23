@@ -1,7 +1,8 @@
 import fs from 'fs';
+import { getDataPath } from './database';
 import path from 'path';
 
-const profilesFile = path.join(process.cwd(), 'src', 'data', 'profiles.json');
+const profilesFile = path.join(getDataPath('data'), 'profiles.json');
 
 if (!fs.existsSync(profilesFile)) {
   fs.writeFileSync(profilesFile, JSON.stringify({}, null, 2));

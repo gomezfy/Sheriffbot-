@@ -1,4 +1,5 @@
 import fs from 'fs';
+import { getDataPath } from './database';
 import path from 'path';
 import { getUserProfile, setUserProfile } from './profileManager';
 import { getUserGold, removeUserGold } from './dataManager';
@@ -209,6 +210,6 @@ export function getRarityEmoji(rarity: string): string {
  * Check if background file exists
  */
 export function backgroundFileExists(filename: string): boolean {
-  const bgPath = path.join(process.cwd(), 'assets', 'profile-backgrounds', filename);
+  const bgPath = getDataPath('assets', 'profile-backgrounds', filename);
   return fs.existsSync(bgPath);
 }

@@ -1,4 +1,5 @@
 import path from 'path';
+import { getDataPath } from './database';
 import fs from 'fs';
 
 export const EMOJI_MAP: Record<string, string> = {
@@ -60,7 +61,7 @@ export const EMOJI_MAP: Record<string, string> = {
   '⚔️': 'big-iron.png',
 };
 
-const EMOJI_DIR = path.join(process.cwd(), 'assets', 'emojis');
+const EMOJI_DIR = getDataPath('assets', 'emojis');
 
 export function getEmojiPath(emoji: string): string | null {
   const filename = EMOJI_MAP[emoji];

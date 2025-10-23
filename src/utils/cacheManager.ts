@@ -1,4 +1,5 @@
 import fs from 'fs';
+import { getDataPath } from './database';
 import path from 'path';
 
 interface CacheConfig {
@@ -20,7 +21,7 @@ class CacheManager {
   private dataDir: string;
 
   constructor() {
-    this.dataDir = path.join(process.cwd(), 'src', 'data');
+    this.dataDir = path.join(getDataPath('data'));
     this.setupGracefulShutdown();
   }
 

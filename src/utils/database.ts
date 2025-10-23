@@ -3,8 +3,28 @@ import path from 'path';
 import { isValidDataFilename } from './security';
 import { measureDatabaseOperation } from './performance';
 
-// Use process.cwd() to get project root (works in both dev and production)
-const dataDir = path.join(process.cwd(), 'src', 'data');
+/**
+ * Get the correct path for data/assets based on environment
+ * In production (compiled): /app/data, /app/assets
+ * In development: /workspace/src/data, /workspace/assets
+ */
+export function getDataPath(...segments: string[]): string {
+  const isProduction = process.env.NODE_ENV === 'production' || !fs.existsSync(path.join(process.cwd(), 'src'));
+  
+  if (isProduction) {
+    // Production: use root-level data directory
+    return path.join(process.cwd(), ...segments);
+  } else {
+    // Development: check if first segment is 'data' or 'src/data'
+    if (segments[0] === 'data') {
+      return path.join(process.cwd(), 'src', ...segments);
+    }
+    return path.join(process.cwd(), ...segments);
+  }
+}
+
+// Determine data directory based on environment
+const dataDir = getDataPath('data');
 
 // In-memory cache for frequently accessed data
 const dataCache = new Map<string, { data: any; timestamp: number }>();
@@ -21,6 +41,8 @@ setInterval(() => {
 }, 60000); // Cleanup every minute
 
 export function initializeDatabase(): void {
+  console.log(`📁 Data directory: ${dataDir}`);
+  
   if (!fs.existsSync(dataDir)) {
     fs.mkdirSync(dataDir, { recursive: true });
     console.log('✅ Pasta data/ criada!');

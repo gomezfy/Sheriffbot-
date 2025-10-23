@@ -1,7 +1,8 @@
 import fs from 'fs';
+import { getDataPath } from './database';
 import path from 'path';
 
-const punishmentFile = path.join(process.cwd(), 'src', 'data', 'punishment.json');
+const punishmentFile = path.join(getDataPath('data'), 'punishment.json');
 
 if (!fs.existsSync(punishmentFile)) {
   fs.writeFileSync(punishmentFile, JSON.stringify({}, null, 2));

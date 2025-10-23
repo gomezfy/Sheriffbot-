@@ -1,4 +1,5 @@
 import { createCanvas, loadImage, GlobalFonts } from '@napi-rs/canvas';
+import { getDataPath } from './database';
 import { User } from 'discord.js';
 import path from 'path';
 
