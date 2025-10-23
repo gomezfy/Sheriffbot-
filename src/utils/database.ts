@@ -1,5 +1,6 @@
 import fs from 'fs';
 import path from 'path';
+import { isValidDataFilename } from './security';
 
 const dataDir = path.join(__dirname, '..', 'data');
 
@@ -32,6 +33,12 @@ export function initializeDatabase(): void {
 }
 
 export function readData(filename: string): any {
+  // Security: Validate filename to prevent path traversal
+  if (!isValidDataFilename(filename)) {
+    console.error(`🚨 SECURITY: Invalid filename attempted: ${filename}`);
+    throw new Error(`Invalid filename: ${filename}`);
+  }
+  
   const filePath = path.join(dataDir, filename);
   
   try {
@@ -57,6 +64,12 @@ export function readData(filename: string): any {
 }
 
 export function writeData(filename: string, data: any): boolean {
+  // Security: Validate filename to prevent path traversal
+  if (!isValidDataFilename(filename)) {
+    console.error(`🚨 SECURITY: Invalid filename attempted: ${filename}`);
+    throw new Error(`Invalid filename: ${filename}`);
+  }
+  
   const filePath = path.join(dataDir, filename);
   
   try {

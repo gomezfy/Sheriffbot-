@@ -1,7 +1,6 @@
 import { SlashCommandBuilder, EmbedBuilder, ChatInputCommandInteraction ,MessageFlags} from 'discord.js';
+import { isOwner, adminRateLimiter } from '../../utils/security';
 const { addItem, getInventory } = require('../../utils/inventoryManager');
-
-const OWNER_ID = '339772388566892546';
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -15,11 +14,19 @@ module.exports = {
     )
     .setDefaultMemberPermissions(0),
   async execute(interaction: ChatInputCommandInteraction): Promise<void> {
-    if (interaction.user.id !== OWNER_ID) {
+    // Security: Validate owner
+    if (!await isOwner(interaction)) {
+      return;
+    }
+    
+    // Security: Rate limit admin commands
+    if (!adminRateLimiter.canExecute(interaction.user.id)) {
+      const remaining = adminRateLimiter.getRemainingCooldown(interaction.user.id);
       await interaction.reply({
-        content: '❌ This command is only available to the bot owner!',
+        content: `⏰ Please wait ${(remaining / 1000).toFixed(1)}s before using another admin command.`,
         flags: MessageFlags.Ephemeral
       });
+      return;
     }
 
     const targetUser = interaction.options.getUser('user', true);
@@ -33,6 +40,7 @@ module.exports = {
         content: `⚠️ ${targetUser.tag} already has ${currentTokens.toLocaleString()} 🎫 Saloon Tokens. They don't need starter tokens!`,
         flags: MessageFlags.Ephemeral
       });
+      return;
     }
 
     const result = addItem(targetUser.id, 'saloon_token', starterAmount);
@@ -42,6 +50,7 @@ module.exports = {
         content: `❌ Failed to add tokens: ${result.error}`,
         flags: MessageFlags.Ephemeral
       });
+      return;
     }
 
     const embed = new EmbedBuilder()

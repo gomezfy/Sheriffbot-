@@ -1,4 +1,5 @@
 import { SlashCommandBuilder, EmbedBuilder, ChatInputCommandInteraction, ColorResolvable, MessageFlags } from 'discord.js';
+import { isValidBetAmount, MAX_BET_AMOUNT, isSafeMultiplication } from '../../utils/security';
 const { getUserGold, addUserGold, removeUserGold } = require('../../utils/dataManager');
 
 const cooldowns = new Map();
@@ -39,6 +40,7 @@ module.exports = {
         .setDescription('Amount of Saloon Tokens to bet')
         .setRequired(true)
         .setMinValue(10)
+        .setMaxValue(MAX_BET_AMOUNT)
     ),
   async execute(interaction: ChatInputCommandInteraction): Promise<void> {
     const userId = interaction.user.id;
@@ -48,6 +50,15 @@ module.exports = {
       await interaction.reply({
         content: '❌ Please specify a bet amount!',
         flags: [MessageFlags.Ephemeral]
+      });
+      return;
+    }
+    
+    // Security: Validate bet amount
+    if (!isValidBetAmount(bet)) {
+      await interaction.reply({
+        content: `❌ Invalid bet amount! Must be between 10 and ${MAX_BET_AMOUNT.toLocaleString()}.`,
+        flags: MessageFlags.Ephemeral
       });
       return;
     }
@@ -163,6 +174,17 @@ module.exports = {
     }
 
     const won = multiplier > 0;
+    
+    // Security: Check for integer overflow before calculating winnings
+    if (won && !isSafeMultiplication(bet, multiplier)) {
+      // Refund bet if overflow would occur
+      addUserGold(userId, bet);
+      await interaction.editReply({
+        content: '❌ Bet amount too large for this multiplier! Your bet has been refunded.',
+      });
+      return;
+    }
+    
     const winAmount = won ? Math.floor(bet * multiplier) : 0;
 
     // If won, add winnings

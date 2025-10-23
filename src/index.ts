@@ -3,6 +3,7 @@ import { Client, GatewayIntentBits, Partials, Collection, Events, ActivityType, 
 import fs from 'fs';
 import path from 'path';
 import Logger from './utils/logger';
+import { sanitizeErrorForLogging } from './utils/security';
 
 const { initializeDatabase } = require('./utils/database');
 console.log('🔄 Inicializando sistema de dados...');
@@ -167,11 +168,12 @@ client.on(Events.InteractionCreate, async interaction => {
     console.error(`Error executing ${interaction.commandName}:`);
     console.error(error);
     
+    // Security: Sanitize error before logging to prevent information leakage
     if (interaction.guild) {
       Logger.log(client, interaction.guild.id, 'error', {
         command: interaction.commandName,
         user: interaction.user,
-        error: error.stack || error.message || String(error)
+        error: sanitizeErrorForLogging(error)
       });
     }
     
