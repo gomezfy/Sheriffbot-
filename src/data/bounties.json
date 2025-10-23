@@ -12,5 +12,19 @@
     ],
     "createdAt": 1760966934036,
     "updatedAt": 1760966934036
+  },
+  {
+    "targetId": "997313362998333540",
+    "targetTag": "verde15bih",
+    "totalAmount": 50000,
+    "contributors": [
+      {
+        "id": "339772388566892546",
+        "tag": "gomezfy_",
+        "amount": 50000
+      }
+    ],
+    "createdAt": 1761136942593,
+    "updatedAt": 1761136942593
   }
 ]
