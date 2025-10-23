@@ -1,0 +1,53 @@
+# Vertra Cloud - Arquivos a ignorar no upload
+
+# Node modules (será instalado automaticamente)
+node_modules/
+
+# Build artifacts
+dist/
+*.tsbuildinfo
+
+# Environment files
+.env
+.env.*
+
+# Data files (não incluir dados de desenvolvimento)
+src/data/*.json
+data/*.json
+
+# Logs
+*.log
+logs/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+
+# Git
+.git/
+.gitignore
+
+# Dev container
+.devcontainer/
+
+# Test files
+tests/
+*.test.ts
+*.spec.ts
+
+# Documentation (opcional - remova se quiser incluir)
+# *.md
+
+# Assets grandes (opcional)
+attached_assets/
+website_updated.zip
+
+# Temporary files
+tmp/
+temp/
+*.tmp
