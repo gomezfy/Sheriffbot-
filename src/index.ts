@@ -1,9 +1,20 @@
 import 'dotenv/config';
-import { Client, GatewayIntentBits, Partials, Collection, Events, ActivityType, MessageFlags, Options, Sweepers } from 'discord.js';
+import { Client, Partials, Collection, Events, MessageFlags } from 'discord.js';
 import fs from 'fs';
 import path from 'path';
 import Logger from './utils/logger';
 import { sanitizeErrorForLogging } from './utils/security';
+import { 
+  PRODUCTION_CACHE_CONFIG, 
+  PRODUCTION_SWEEPERS, 
+  PRODUCTION_INTENTS,
+  performanceMonitor,
+  measureCommandTime,
+  setupGracefulShutdown,
+  setupMemoryOptimization,
+  setupPerformanceMonitoring,
+  healthCheck
+} from './utils/performance';
 
 const { initializeDatabase } = require('./utils/database');
 console.log('🔄 Inicializando sistema de dados...');
@@ -13,49 +24,46 @@ interface ExtendedClient extends Client {
   commands: Collection<string, any>;
 }
 
+// Production-optimized client configuration
 const client = new Client({
-  intents: [
-    GatewayIntentBits.Guilds,
-    GatewayIntentBits.GuildMessages,
-    GatewayIntentBits.MessageContent,
-    GatewayIntentBits.GuildMembers,
-  ],
+  // Optimized intents - only what's needed
+  intents: PRODUCTION_INTENTS,
+  
+  // Minimal partials for better performance
   partials: [
     Partials.User,
     Partials.Channel,
     Partials.GuildMember,
-    Partials.Message
   ],
-  makeCache: Options.cacheWithLimits({
-    MessageManager: 100,
-    GuildMemberManager: {
-      maxSize: 200,
-      keepOverLimit: (member) => member.id === client.user?.id
-    },
-    UserManager: {
-      maxSize: 200,
-      keepOverLimit: (user) => user.id === client.user?.id
-    },
-    GuildBanManager: 0,
-    GuildInviteManager: 0,
-    GuildScheduledEventManager: 0,
-    StageInstanceManager: 0,
-    ThreadManager: 0,
-    ThreadMemberManager: 0,
-    PresenceManager: 0,
-    VoiceStateManager: 0,
-    ReactionManager: 0,
-    ReactionUserManager: 0
-  }),
-  sweepers: {
-    messages: {
-      interval: 300,
-      lifetime: 180
-    },
-    users: {
-      interval: 600,
-      filter: () => (user) => user.id !== client.user?.id
-    }
+  
+  // Advanced cache configuration for 10k+ users
+  makeCache: PRODUCTION_CACHE_CONFIG,
+  
+  // Aggressive sweepers for memory management
+  sweepers: PRODUCTION_SWEEPERS,
+  
+  // Connection settings for stability
+  rest: {
+    timeout: 15000,
+    retries: 3,
+  },
+  
+  // Presence configuration
+  presence: {
+    status: 'online',
+    activities: [{
+      name: '🤠 Sheriff Rex | /help',
+      type: 0 // Playing
+    }]
+  },
+  
+  // Fail if cache is full (prevents memory leaks)
+  failIfNotExists: false,
+  
+  // Allow mentions
+  allowedMentions: {
+    parse: ['users', 'roles'],
+    repliedUser: true
   }
 }) as ExtendedClient;
 
@@ -112,6 +120,8 @@ client.on(Events.InteractionCreate, async interaction => {
     return;
   }
 
+  // Performance monitoring - start timer
+  const commandStartTime = Date.now();
   const cooldownKey = `${interaction.user.id}:${interaction.commandName}`;
   const now = Date.now();
   
@@ -153,6 +163,9 @@ client.on(Events.InteractionCreate, async interaction => {
 
   try {
     await command.execute(interaction);
+    
+    // Performance monitoring - measure command time
+    measureCommandTime(interaction.commandName, commandStartTime);
     
     if (interaction.guild) {
       const options = interaction.options.data.map(opt => `${opt.name}: ${opt.value}`).join(', ');
@@ -271,14 +284,50 @@ if (!token) {
 
 console.log('🔐 Token found, attempting login...');
 
+// Setup production optimizations
+console.log('⚡ Setting up production optimizations...');
+setupGracefulShutdown(client);
+setupMemoryOptimization();
+setupPerformanceMonitoring(client);
+
+// Health check endpoint (if running with web server)
+if (process.env.ENABLE_HEALTH_CHECK === 'true') {
+  const express = require('express');
+  const app = express();
+  
+  app.get('/health', (req: any, res: any) => {
+    const status = healthCheck.getStatus();
+    const metrics = performanceMonitor.getMetrics();
+    
+    res.json({
+      status: status.healthy ? 'healthy' : 'unhealthy',
+      uptime: performanceMonitor.getUptime(),
+      memory: performanceMonitor.getMemoryUsage(),
+      guilds: client.guilds.cache.size,
+      users: client.users.cache.size,
+      metrics: metrics,
+      errors: status.errors
+    });
+  });
+  
+  const healthPort = process.env.HEALTH_PORT || 3001;
+  app.listen(healthPort, () => {
+    console.log(`🏥 Health check endpoint: http://localhost:${healthPort}/health`);
+  });
+}
+
 client.login(token)
   .then(() => {
     console.log('✅ Login successful!');
     console.log('🤠 Sheriff Bot is ready!\n');
+    console.log('⚡ Production optimizations active');
+    console.log(`📊 Monitoring ${client.guilds.cache.size} guilds`);
+    healthCheck.markHealthy();
   })
   .catch((error: Error) => {
     console.error('❌ LOGIN ERROR:');
     console.error('Details:', error.message);
+    healthCheck.markUnhealthy(`Login failed: ${error.message}`);
     
     if (error.message.includes('token')) {
       console.error('');

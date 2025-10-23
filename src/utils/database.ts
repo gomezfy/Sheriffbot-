@@ -1,8 +1,13 @@
 import fs from 'fs';
 import path from 'path';
 import { isValidDataFilename } from './security';
+import { measureDatabaseOperation } from './performance';
 
 const dataDir = path.join(__dirname, '..', 'data');
+
+// In-memory cache for frequently accessed data
+const dataCache = new Map<string, { data: any; timestamp: number }>();
+const CACHE_TTL = 5000; // 5 seconds cache
 
 export function initializeDatabase(): void {
   if (!fs.existsSync(dataDir)) {
@@ -33,10 +38,19 @@ export function initializeDatabase(): void {
 }
 
 export function readData(filename: string): any {
+  const startTime = Date.now();
+  
   // Security: Validate filename to prevent path traversal
   if (!isValidDataFilename(filename)) {
     console.error(`🚨 SECURITY: Invalid filename attempted: ${filename}`);
     throw new Error(`Invalid filename: ${filename}`);
+  }
+  
+  // Check cache first
+  const cached = dataCache.get(filename);
+  if (cached && Date.now() - cached.timestamp < CACHE_TTL) {
+    measureDatabaseOperation(`read_${filename}_cached`, startTime);
+    return cached.data;
   }
   
   const filePath = path.join(dataDir, filename);
@@ -48,22 +62,37 @@ export function readData(filename: string): any {
     
     if (!fs.existsSync(filePath)) {
       fs.writeFileSync(filePath, '{}', 'utf8');
-      return {};
+      const emptyData = {};
+      dataCache.set(filename, { data: emptyData, timestamp: Date.now() });
+      measureDatabaseOperation(`read_${filename}`, startTime);
+      return emptyData;
     }
     
     const data = fs.readFileSync(filePath, 'utf8');
     if (!data.trim()) {
-      return {};
+      const emptyData = {};
+      dataCache.set(filename, { data: emptyData, timestamp: Date.now() });
+      measureDatabaseOperation(`read_${filename}`, startTime);
+      return emptyData;
     }
     
-    return JSON.parse(data);
+    const parsed = JSON.parse(data);
+    
+    // Cache the result
+    dataCache.set(filename, { data: parsed, timestamp: Date.now() });
+    
+    measureDatabaseOperation(`read_${filename}`, startTime);
+    return parsed;
   } catch (error: any) {
     console.error(`❌ Erro ao ler ${filename}:`, error.message);
+    measureDatabaseOperation(`read_${filename}_error`, startTime);
     return {};
   }
 }
 
 export function writeData(filename: string, data: any): boolean {
+  const startTime = Date.now();
+  
   // Security: Validate filename to prevent path traversal
   if (!isValidDataFilename(filename)) {
     console.error(`🚨 SECURITY: Invalid filename attempted: ${filename}`);
@@ -78,9 +107,36 @@ export function writeData(filename: string, data: any): boolean {
     }
     
     fs.writeFileSync(filePath, JSON.stringify(data, null, 2), 'utf8');
+    
+    // Update cache
+    dataCache.set(filename, { data: data, timestamp: Date.now() });
+    
+    measureDatabaseOperation(`write_${filename}`, startTime);
     return true;
   } catch (error: any) {
     console.error(`❌ Erro ao escrever ${filename}:`, error.message);
+    measureDatabaseOperation(`write_${filename}_error`, startTime);
     return false;
   }
+}
+
+/**
+ * Clear cache for a specific file or all files
+ */
+export function clearCache(filename?: string): void {
+  if (filename) {
+    dataCache.delete(filename);
+  } else {
+    dataCache.clear();
+  }
+}
+
+/**
+ * Get cache statistics
+ */
+export function getCacheStats(): { size: number; files: string[] } {
+  return {
+    size: dataCache.size,
+    files: Array.from(dataCache.keys())
+  };
 }
