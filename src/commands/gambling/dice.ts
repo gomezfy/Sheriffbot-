@@ -132,7 +132,7 @@ module.exports = {
       new ActionRowBuilder<ButtonBuilder>().addComponents(guessButtons.slice(10))
     ];
 
-    const diceGameImage = new AttachmentBuilder(path.join(__dirname, '../../../assets/dice-game.png'));
+    const diceGameImage = new AttachmentBuilder(path.join(process.cwd(), 'assets/dice-game.png'));
 
     const challengeEmbed = new EmbedBuilder()
       .setColor('#FFD700')

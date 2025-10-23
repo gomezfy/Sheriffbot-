@@ -9,9 +9,9 @@ import fs from 'fs';
 import path from 'path';
 
 // Register Nunito font
-GlobalFonts.registerFromPath(path.join(__dirname, '../../../assets/fonts/Nunito-Bold.ttf'), 'Nunito');
-GlobalFonts.registerFromPath(path.join(__dirname, '../../../assets/fonts/Nunito-SemiBold.ttf'), 'Nunito SemiBold');
-GlobalFonts.registerFromPath(path.join(__dirname, '../../../assets/fonts/Nunito-Regular.ttf'), 'Nunito Regular');
+GlobalFonts.registerFromPath(path.join(process.cwd(), 'assets/fonts/Nunito-Bold.ttf'), 'Nunito');
+GlobalFonts.registerFromPath(path.join(process.cwd(), 'assets/fonts/Nunito-SemiBold.ttf'), 'Nunito SemiBold');
+GlobalFonts.registerFromPath(path.join(process.cwd(), 'assets/fonts/Nunito-Regular.ttf'), 'Nunito Regular');
 
 module.exports = {
   data: new SlashCommandBuilder()

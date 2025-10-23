@@ -57,7 +57,7 @@ module.exports = {
 
     const row = new ActionRowBuilder<ButtonBuilder>().addComponents(joinButton);
 
-    const bankRobberyImage = new AttachmentBuilder(path.join(__dirname, '../../../assets/bank-robbery.png'));
+    const bankRobberyImage = new AttachmentBuilder(path.join(process.cwd(), 'assets/bank-robbery.png'));
 
     const embed = new EmbedBuilder()
       .setColor('#FF0000')
