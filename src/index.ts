@@ -28,6 +28,7 @@ try {
 }
 
 const { initializeDatabase } = require('./utils/database');
+const { isPunished, getRemainingTime, formatTime } = require('./utils/punishmentManager');
 console.log('🔄 Inicializando sistema de dados...');
 initializeDatabase();
 
@@ -170,7 +171,6 @@ client.on(Events.InteractionCreate, async interaction => {
 
   const allowedWhenPunished = ['help', 'ping', 'inventory', 'profile', 'avatar', 'bounties'];
   if (!allowedWhenPunished.includes(interaction.commandName)) {
-    const { isPunished, getRemainingTime, formatTime } = require('./utils/punishmentManager');
     const punishment = isPunished(interaction.user.id);
     
     if (punishment) {
