@@ -141,6 +141,13 @@ client.on(Events.InteractionCreate, async interaction => {
     console.error(`Command ${interaction.commandName} not found.`);
     return;
   }
+  
+  // Prevent double execution
+  if ((interaction as any)._handled) {
+    console.log(`Interaction already handled for ${interaction.commandName}`);
+    return;
+  }
+  (interaction as any)._handled = true;
 
   // Performance monitoring - start timer
   const commandStartTime = Date.now();
@@ -211,16 +218,22 @@ client.on(Events.InteractionCreate, async interaction => {
       });
     }
     
-    if (interaction.replied || interaction.deferred) {
-      await interaction.followUp({ 
-        content: 'There was an error executing this command!', 
-        flags: MessageFlags.Ephemeral 
-      });
-    } else {
-      await interaction.reply({ 
-        content: 'There was an error executing this command!', 
-        flags: MessageFlags.Ephemeral 
-      });
+    // Try to respond to the user about the error
+    try {
+      const errorContent = 'There was an error executing this command!';
+      
+      if (interaction.replied) {
+        // Already replied, can't do anything
+        console.log(`Cannot send error message - interaction already replied`);
+      } else if (interaction.deferred) {
+        // Deferred, use editReply
+        await interaction.editReply({ content: errorContent });
+      } else {
+        // Not replied or deferred, use reply
+        await interaction.reply({ content: errorContent, flags: MessageFlags.Ephemeral });
+      }
+    } catch (replyError: any) {
+      console.error('Failed to send error message to user:', replyError.message);
     }
   }
 });
