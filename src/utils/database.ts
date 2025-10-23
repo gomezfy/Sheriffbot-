@@ -3,7 +3,11 @@ import path from 'path';
 import { isValidDataFilename } from './security';
 import { measureDatabaseOperation } from './performance';
 
-const dataDir = path.join(__dirname, '..', 'data');
+// Use project root to find data directory (works in both dev and production)
+// In production: __dirname is dist/src/utils, need to go up 3 levels to project root
+// In dev: __dirname is src/utils, need to go up 2 levels to project root
+const projectRoot = path.join(__dirname, '..', '..', '..');
+const dataDir = path.join(projectRoot, 'src', 'data');
 
 // In-memory cache for frequently accessed data
 const dataCache = new Map<string, { data: any; timestamp: number }>();
