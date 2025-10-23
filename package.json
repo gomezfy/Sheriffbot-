@@ -15,6 +15,9 @@
     "deploy": "ts-node src/deploy-commands.ts",
     "prod": "npm run build && npm run start:shard",
     "health": "ENABLE_HEALTH_CHECK=true npm run start",
+    "linked-roles": "ts-node src/linked-roles-server.ts",
+    "linked-roles:prod": "node dist/src/linked-roles-server.js",
+    "register-metadata": "ts-node src/register-metadata.ts",
     "postinstall": "npm run build"
   },
   "keywords": [

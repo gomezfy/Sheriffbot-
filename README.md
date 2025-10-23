@@ -64,6 +64,18 @@ The web dashboard has been archived to `website.zip`. See [WEBSITE_README.md](./
 - [Privacy Policy](./PRIVACY_POLICY.md)
 - [Security Policy](./SECURITY.md)
 
+## Discord Linked Roles
+
+Sheriff Rex Bot supports Discord's Linked Roles feature! Server admins can gate roles based on:
+- 💰 Total Coins (wealth requirement)
+- 🎫 Total Tokens (premium currency)
+- ⭐ Level (calculated from wealth)
+- 🎯 Bounties Captured
+- 🎰 Games Played
+- ⛏️ Mining Sessions
+
+**Setup Guide:** [LINKED_ROLES_SETUP.md](./LINKED_ROLES_SETUP.md)
+
 ## Features
 
 ### 💰 Economy System
