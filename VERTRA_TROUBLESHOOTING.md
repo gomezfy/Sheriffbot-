@@ -2,7 +2,50 @@
 
 ## 🚨 Problemas Mais Comuns e Soluções
 
-### 0. ⚠️ High Memory Usage (91%+)
+### 0. ❌ Cannot find module '/app/dist/src/shard.js'
+
+**Causa:** O build do TypeScript não foi executado antes de iniciar o bot.
+
+**Sintomas:**
+```
+Error [ERR_MODULE_NOT_FOUND]: Cannot find module '/app/dist/src/shard.js'
+```
+
+**Soluções:**
+
+1. **Verificar se o build está configurado:**
+   - No painel Vertra, vá em Settings → Build
+   - Build Command deve ser: `npm install && npm run build`
+   - Start Command deve ser: `node dist/src/shard.js`
+
+2. **Executar build manualmente (se necessário):**
+   ```bash
+   npm run build
+   ```
+
+3. **Verificar se dist/ existe:**
+   ```bash
+   ls -la dist/src/
+   # Deve mostrar: index.js, shard.js, etc.
+   ```
+
+4. **Usar postinstall (já configurado):**
+   - O package.json tem `"postinstall": "npm run build"`
+   - Isso garante que o build seja executado após npm install
+
+5. **Alternativa - usar ts-node diretamente:**
+   - Start Command: `npx ts-node src/shard.ts`
+   - Mais lento, mas não requer build
+
+**Verificação:**
+```bash
+# Deve existir e ter conteúdo
+cat dist/src/shard.js | head -5
+```
+
+---
+
+### 1. ⚠️ High Memory Usage (91%+)
 
 **Causa:** O bot está usando quase toda a memória disponível no plano gratuito do Vertra (geralmente 256MB ou menos).
 
