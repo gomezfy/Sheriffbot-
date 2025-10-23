@@ -10,7 +10,7 @@ import express, { Request, Response } from 'express';
 import session from 'express-session';
 import axios from 'axios';
 import crypto from 'crypto';
-import { readUserData } from './utils/database';
+import { readData } from './utils/database';
 
 const app = express();
 const PORT = parseInt(process.env.LINKED_ROLES_PORT || '3000');
@@ -43,6 +43,7 @@ declare module 'express-session' {
   interface SessionData {
     userId?: string;
     accessToken?: string;
+    state?: string;
   }
 }
 
@@ -125,7 +126,8 @@ async function updateRoleConnectionMetadata(userId: string, accessToken: string,
  * Get user metadata from bot database
  */
 function getUserMetadata(userId: string): any {
-  const userData = readUserData(userId);
+  const economyData = readData('economy.json');
+  const userData = economyData[userId];
   
   if (!userData) {
     return {
