@@ -1,8 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 
-const projectRoot = path.join(__dirname, '..', '..', '..');
-const profilesFile = path.join(projectRoot, 'src', 'data', 'profiles.json');
+const profilesFile = path.join(process.cwd(), 'src', 'data', 'profiles.json');
 
 if (!fs.existsSync(profilesFile)) {
   fs.writeFileSync(profilesFile, JSON.stringify({}, null, 2));

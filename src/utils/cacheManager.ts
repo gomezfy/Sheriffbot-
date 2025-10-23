@@ -20,8 +20,7 @@ class CacheManager {
   private dataDir: string;
 
   constructor() {
-    const projectRoot = path.join(__dirname, '..', '..', '..');
-    this.dataDir = path.join(projectRoot, 'src', 'data');
+    this.dataDir = path.join(process.cwd(), 'src', 'data');
     this.setupGracefulShutdown();
   }
 

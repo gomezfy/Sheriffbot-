@@ -2,8 +2,7 @@ import fs from 'fs';
 import path from 'path';
 import { getItem, addItem, removeItem } from './inventoryManager';
 
-const projectRoot = path.join(__dirname, '..', '..', '..');
-const dataDir = path.join(projectRoot, 'src', 'data');
+const dataDir = path.join(process.cwd(), 'src', 'data');
 const economyFile = path.join(dataDir, 'economy.json');
 const bountiesFile = path.join(dataDir, 'bounties.json');
 const welcomeFile = path.join(dataDir, 'welcome.json');

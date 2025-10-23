@@ -6,9 +6,8 @@ interface EmojiMapping {
   [key: string]: string; // name -> emoji ID format <:name:id>
 }
 
-const projectRoot = path.join(__dirname, '..', '..', '..');
-const EMOJI_MAPPING_FILE = path.join(projectRoot, 'src', 'data', 'emoji-mapping.json');
-const CUSTOM_EMOJIS_DIR = path.join(projectRoot, 'assets', 'custom-emojis');
+const EMOJI_MAPPING_FILE = path.join(process.cwd(), 'src', 'data', 'emoji-mapping.json');
+const CUSTOM_EMOJIS_DIR = path.join(process.cwd(), 'assets', 'custom-emojis');
 
 /**
  * Carrega o mapeamento de emojis do arquivo JSON

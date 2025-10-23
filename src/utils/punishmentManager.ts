@@ -1,8 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 
-const projectRoot = path.join(__dirname, '..', '..', '..');
-const punishmentFile = path.join(projectRoot, 'src', 'data', 'punishment.json');
+const punishmentFile = path.join(process.cwd(), 'src', 'data', 'punishment.json');
 
 if (!fs.existsSync(punishmentFile)) {
   fs.writeFileSync(punishmentFile, JSON.stringify({}, null, 2));

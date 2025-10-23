@@ -1,8 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 
-const projectRoot = path.join(__dirname, '..', '..', '..');
-const configPath = path.join(projectRoot, 'data', 'guild-config.json');
+const configPath = path.join(process.cwd(), 'data', 'guild-config.json');
 
 interface GuildConfig {
   logsEnabled: boolean;

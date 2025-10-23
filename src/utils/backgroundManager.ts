@@ -209,7 +209,6 @@ export function getRarityEmoji(rarity: string): string {
  * Check if background file exists
  */
 export function backgroundFileExists(filename: string): boolean {
-  const projectRoot = path.join(__dirname, '..', '..', '..');
-  const bgPath = path.join(projectRoot, 'assets', 'profile-backgrounds', filename);
+  const bgPath = path.join(process.cwd(), 'assets', 'profile-backgrounds', filename);
   return fs.existsSync(bgPath);
 }
