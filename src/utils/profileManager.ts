@@ -2,8 +2,15 @@ import fs from 'fs';
 import { getDataPath } from './database';
 import path from 'path';
 
-const profilesFile = path.join(getDataPath('data'), 'profiles.json');
+const dataDir = getDataPath('data');
+const profilesFile = path.join(dataDir, 'profiles.json');
 
+// Ensure data directory exists
+if (!fs.existsSync(dataDir)) {
+  fs.mkdirSync(dataDir, { recursive: true });
+}
+
+// Ensure profiles file exists
 if (!fs.existsSync(profilesFile)) {
   fs.writeFileSync(profilesFile, JSON.stringify({}, null, 2));
 }

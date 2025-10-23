@@ -2,8 +2,15 @@ import fs from 'fs';
 import { getDataPath } from './database';
 import path from 'path';
 
-const punishmentFile = path.join(getDataPath('data'), 'punishment.json');
+const dataDir = getDataPath('data');
+const punishmentFile = path.join(dataDir, 'punishment.json');
 
+// Ensure data directory exists
+if (!fs.existsSync(dataDir)) {
+  fs.mkdirSync(dataDir, { recursive: true });
+}
+
+// Ensure punishment file exists
 if (!fs.existsSync(punishmentFile)) {
   fs.writeFileSync(punishmentFile, JSON.stringify({}, null, 2));
 }

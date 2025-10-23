@@ -1,8 +1,16 @@
 import fs from 'fs';
 import path from 'path';
+import { getDataPath } from './database';
 
-const xpFile = path.join(process.cwd(), 'src', 'data', 'xp.json');
+const dataDir = getDataPath('data');
+const xpFile = path.join(dataDir, 'xp.json');
 
+// Ensure data directory exists
+if (!fs.existsSync(dataDir)) {
+  fs.mkdirSync(dataDir, { recursive: true });
+}
+
+// Ensure xp file exists
 if (!fs.existsSync(xpFile)) {
   fs.writeFileSync(xpFile, JSON.stringify({}, null, 2));
 }

@@ -4,7 +4,8 @@ import { EMOJI_TEXT } from './customEmojis';
 import { cacheManager } from './cacheManager';
 import { getDataPath } from './database';
 
-const inventoryFile = path.join(getDataPath('data'), 'inventory.json');
+const dataDir = getDataPath('data');
+const inventoryFile = path.join(dataDir, 'inventory.json');
 
 interface Item {
   name: string;
@@ -42,6 +43,12 @@ export const ITEMS: Record<string, Item> = {
 
 export const MAX_WEIGHT = 100;
 
+// Ensure data directory exists
+if (!fs.existsSync(dataDir)) {
+  fs.mkdirSync(dataDir, { recursive: true });
+}
+
+// Ensure inventory file exists
 if (!fs.existsSync(inventoryFile)) {
   fs.writeFileSync(inventoryFile, JSON.stringify({}, null, 2));
 }
