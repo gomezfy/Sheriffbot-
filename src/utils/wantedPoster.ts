@@ -3,8 +3,9 @@ import { User } from 'discord.js';
 import path from 'path';
 
 // Register Nunito font
-GlobalFonts.registerFromPath(path.join(__dirname, '../../assets/fonts/Nunito-Bold.ttf'), 'Nunito');
-GlobalFonts.registerFromPath(path.join(__dirname, '../../assets/fonts/Nunito-Regular.ttf'), 'Nunito Regular');
+const projectRoot = path.join(__dirname, '..', '..', '..');
+GlobalFonts.registerFromPath(path.join(projectRoot, 'assets/fonts/Nunito-Bold.ttf'), 'Nunito');
+GlobalFonts.registerFromPath(path.join(projectRoot, 'assets/fonts/Nunito-Regular.ttf'), 'Nunito Regular');
 
 export async function generateWantedPoster(user: User, bountyAmount: number): Promise<Buffer> {
   const width = 600;

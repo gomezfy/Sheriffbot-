@@ -60,7 +60,8 @@ export const EMOJI_MAP: Record<string, string> = {
   '⚔️': 'big-iron.png',
 };
 
-const EMOJI_DIR = path.join(__dirname, '..', '..', 'assets', 'emojis');
+const projectRoot = path.join(__dirname, '..', '..', '..');
+const EMOJI_DIR = path.join(projectRoot, 'assets', 'emojis');
 
 export function getEmojiPath(emoji: string): string | null {
   const filename = EMOJI_MAP[emoji];

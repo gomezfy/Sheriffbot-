@@ -1,7 +1,8 @@
 import fs from 'fs';
 import path from 'path';
 
-const xpFile = path.join(__dirname, '..', 'data', 'xp.json');
+const projectRoot = path.join(__dirname, '..', '..', '..');
+const xpFile = path.join(projectRoot, 'src', 'data', 'xp.json');
 
 if (!fs.existsSync(xpFile)) {
   fs.writeFileSync(xpFile, JSON.stringify({}, null, 2));

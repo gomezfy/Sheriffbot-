@@ -3,7 +3,8 @@ import path from 'path';
 import { EMOJI_TEXT } from './customEmojis';
 import { cacheManager } from './cacheManager';
 
-const inventoryFile = path.join(__dirname, '..', 'data', 'inventory.json');
+const projectRoot = path.join(__dirname, '..', '..', '..');
+const inventoryFile = path.join(projectRoot, 'src', 'data', 'inventory.json');
 
 interface Item {
   name: string;

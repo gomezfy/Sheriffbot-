@@ -1,8 +1,9 @@
 import path from 'path';
 import { getCustomEmoji } from './emojiUploader';
 
+const projectRoot = path.join(__dirname, '..', '..', '..');
 export const CUSTOM_EMOJIS = {
-  SALOON_TOKEN: path.join(__dirname, '..', '..', 'assets', 'saloon-token.png'),
+  SALOON_TOKEN: path.join(projectRoot, 'assets', 'saloon-token.png'),
 };
 
 // Fallback text emojis (usados se não houver emoji customizado)
