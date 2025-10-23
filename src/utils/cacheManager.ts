@@ -27,7 +27,7 @@ class CacheManager {
   registerCache(cacheName: string, config: Partial<CacheConfig> = {}) {
     const defaultConfig: CacheConfig = {
       ttl: 5 * 60 * 1000,
-      maxSize: 1000,
+      maxSize: 500, // Reduced from 1000 to save memory
       syncInterval: 10000,
       ...config
     };
@@ -241,14 +241,15 @@ class CacheManager {
 
 export const cacheManager = new CacheManager();
 
-cacheManager.registerCache('economy', { syncInterval: 15000, ttl: 10 * 60 * 1000 });
-cacheManager.registerCache('profiles', { syncInterval: 20000, ttl: 15 * 60 * 1000 });
-cacheManager.registerCache('inventory', { syncInterval: 15000, ttl: 10 * 60 * 1000 });
-cacheManager.registerCache('xp', { syncInterval: 30000, ttl: 20 * 60 * 1000 });
-cacheManager.registerCache('daily', { syncInterval: 60000, ttl: 30 * 60 * 1000 });
-cacheManager.registerCache('bounties', { syncInterval: 20000, ttl: 15 * 60 * 1000 });
-cacheManager.registerCache('mining', { syncInterval: 20000, ttl: 15 * 60 * 1000 });
-cacheManager.registerCache('backgrounds', { syncInterval: 60000, ttl: 60 * 60 * 1000 });
-cacheManager.registerCache('punishment', { syncInterval: 30000, ttl: 20 * 60 * 1000 });
+// Optimized cache settings for lower memory usage
+cacheManager.registerCache('economy', { syncInterval: 20000, ttl: 5 * 60 * 1000, maxSize: 300 });
+cacheManager.registerCache('profiles', { syncInterval: 30000, ttl: 10 * 60 * 1000, maxSize: 200 });
+cacheManager.registerCache('inventory', { syncInterval: 20000, ttl: 5 * 60 * 1000, maxSize: 300 });
+cacheManager.registerCache('xp', { syncInterval: 40000, ttl: 10 * 60 * 1000, maxSize: 200 });
+cacheManager.registerCache('daily', { syncInterval: 60000, ttl: 20 * 60 * 1000, maxSize: 200 });
+cacheManager.registerCache('bounties', { syncInterval: 30000, ttl: 10 * 60 * 1000, maxSize: 100 });
+cacheManager.registerCache('mining', { syncInterval: 30000, ttl: 10 * 60 * 1000, maxSize: 100 });
+cacheManager.registerCache('backgrounds', { syncInterval: 60000, ttl: 30 * 60 * 1000, maxSize: 50 });
+cacheManager.registerCache('punishment', { syncInterval: 40000, ttl: 15 * 60 * 1000, maxSize: 100 });
 
 console.log('✅ Cache system initialized with auto-sync!');

@@ -70,8 +70,8 @@ module.exports = {
       return;
     }
 
+    // Defer reply immediately for better performance
     await interaction.deferReply();
-    await showProgressBar(interaction, '🌅 DAILY REWARD', 'Collecting your daily reward...', 2000, '#FFD700');
 
     const wasStreakBroken = timeSinceLastClaim > (dailyCooldown * 2);
     const previousStreak = userData.streak; // Capture previous streak before mutation

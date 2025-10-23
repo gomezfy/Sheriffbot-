@@ -7,7 +7,17 @@ const dataDir = path.join(__dirname, '..', 'data');
 
 // In-memory cache for frequently accessed data
 const dataCache = new Map<string, { data: any; timestamp: number }>();
-const CACHE_TTL = 5000; // 5 seconds cache
+const CACHE_TTL = 30000; // 30 seconds cache (increased for better performance)
+
+// Cleanup old cache entries periodically
+setInterval(() => {
+  const now = Date.now();
+  for (const [key, value] of dataCache.entries()) {
+    if (now - value.timestamp > CACHE_TTL * 2) {
+      dataCache.delete(key);
+    }
+  }
+}, 60000); // Cleanup every minute
 
 export function initializeDatabase(): void {
   if (!fs.existsSync(dataDir)) {

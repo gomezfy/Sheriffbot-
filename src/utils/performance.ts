@@ -382,7 +382,7 @@ export function setupGracefulShutdown(client: Client): void {
  * Memory optimization - Force garbage collection periodically
  */
 export function setupMemoryOptimization(): void {
-  // Force GC every 30 minutes if available
+  // Force GC every 5 minutes if available (more aggressive)
   if (global.gc) {
     setInterval(() => {
       const before = process.memoryUsage().heapUsed;
@@ -393,7 +393,7 @@ export function setupMemoryOptimization(): void {
       if (freed > 0) {
         console.log(`🧹 Garbage collection freed ${freed.toFixed(2)}MB`);
       }
-    }, 1800000); // 30 minutes
+    }, 300000); // 5 minutes (more aggressive)
   }
   
   // Monitor memory usage
@@ -407,11 +407,20 @@ export function setupMemoryOptimization(): void {
     performanceMonitor.record('memory_heap_total', heapTotalMB);
     
     // Warn if memory usage is high
-    if (percentage > 90) {
+    if (percentage > 85) {
       console.warn(`⚠️  High memory usage: ${percentage.toFixed(1)}% (${heapUsedMB.toFixed(2)}MB / ${heapTotalMB.toFixed(2)}MB)`);
+      
+      // Force GC if memory is critically high
+      if (percentage > 90 && global.gc) {
+        console.log('🧹 Forcing garbage collection due to high memory...');
+        global.gc();
+      }
+      
       healthCheck.markUnhealthy(`High memory usage: ${percentage.toFixed(1)}%`);
+    } else {
+      healthCheck.markHealthy();
     }
-  }, 60000); // Every minute
+  }, 30000); // Every 30 seconds (more frequent monitoring)
 }
 
 /**
