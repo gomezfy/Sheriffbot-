@@ -78,7 +78,9 @@ const commandCategories = fs.readdirSync(commandsPath).filter(item => {
 let commandCount = 0;
 for (const category of commandCategories) {
   const categoryPath = path.join(commandsPath, category);
-  const commandFiles = fs.readdirSync(categoryPath).filter(file => file.endsWith('.js') || file.endsWith('.ts'));
+  const commandFiles = fs.readdirSync(categoryPath).filter(file => 
+    (file.endsWith('.js') || file.endsWith('.ts')) && !file.endsWith('.d.ts')
+  );
   
   for (const file of commandFiles) {
     const filePath = path.join(categoryPath, file);
@@ -92,7 +94,9 @@ for (const category of commandCategories) {
 console.log(`[COMMANDS] Loaded ${commandCount} commands`);
 
 const eventsPath = path.join(__dirname, 'events');
-const eventFiles = fs.readdirSync(eventsPath).filter(file => file.endsWith('.js') || file.endsWith('.ts'));
+const eventFiles = fs.readdirSync(eventsPath).filter(file => 
+  (file.endsWith('.js') || file.endsWith('.ts')) && !file.endsWith('.d.ts')
+);
 
 let eventCount = 0;
 for (const file of eventFiles) {
