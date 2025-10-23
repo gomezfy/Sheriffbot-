@@ -25,7 +25,7 @@ async function showBackgroundCarousel(interaction: any, index: number, isUpdate:
     .setTimestamp();
   
   // Add background image
-  const backgroundsDir = path.join(__dirname, '..', '..', 'assets', 'profile-backgrounds');
+  const backgroundsDir = path.join(process.cwd(), 'assets', 'profile-backgrounds');
   const bgPath = path.join(backgroundsDir, bg.filename);
   
   const files = [];

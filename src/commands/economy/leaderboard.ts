@@ -3,9 +3,9 @@ import { createCanvas, loadImage, GlobalFonts } from '@napi-rs/canvas';
 import * as path from 'path';
 const { getTopUsers, getUserInventory } = require('../../utils/inventoryManager');
 
-GlobalFonts.registerFromPath(path.join(__dirname, '..', '..', '..', 'assets', 'fonts', 'Nunito-Bold.ttf'), 'Nunito-Bold');
-GlobalFonts.registerFromPath(path.join(__dirname, '..', '..', '..', 'assets', 'fonts', 'Nunito-Regular.ttf'), 'Nunito');
-GlobalFonts.registerFromPath(path.join(__dirname, '..', '..', '..', 'assets', 'fonts', 'Nunito-SemiBold.ttf'), 'Nunito-SemiBold');
+GlobalFonts.registerFromPath(path.join(process.cwd(), 'assets', 'fonts', 'Nunito-Bold.ttf'), 'Nunito-Bold');
+GlobalFonts.registerFromPath(path.join(process.cwd(), 'assets', 'fonts', 'Nunito-Regular.ttf'), 'Nunito');
+GlobalFonts.registerFromPath(path.join(process.cwd(), 'assets', 'fonts', 'Nunito-SemiBold.ttf'), 'Nunito-SemiBold');
 
 interface UserData {
   userId: string;

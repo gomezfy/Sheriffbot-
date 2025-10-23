@@ -19,7 +19,7 @@ module.exports = {
 
     const shopUrl = `https://${process.env.REPLIT_DEV_DOMAIN || 'sheriff-bot.repl.co'}/shop.html`;
 
-    const blackMarketImage = new AttachmentBuilder(path.join(__dirname, '..', '..', '..', 'assets', 'black-market.png'));
+    const blackMarketImage = new AttachmentBuilder(path.join(process.cwd(), 'assets', 'black-market.png'));
 
     const tokenEmoji = getSaloonTokenEmoji();
     const silverEmoji = getSilverCoinEmoji();

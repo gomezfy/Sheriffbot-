@@ -91,7 +91,7 @@ module.exports = {
           .setStyle(ButtonStyle.Success)
       );
 
-    const miningImage = new AttachmentBuilder(path.join(__dirname, '..', '..', '..', 'assets', 'gold-mining.png'));
+    const miningImage = new AttachmentBuilder(path.join(process.cwd(), 'assets', 'gold-mining.png'));
 
     const goldEmoji = getGoldBarEmoji();
     const silverEmoji = getSilverCoinEmoji();

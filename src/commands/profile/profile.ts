@@ -81,7 +81,7 @@ async function createProfileCard(user: User, stats: any): Promise<AttachmentBuil
   let backgroundLoaded = false;
   if (stats.background) {
     try {
-      const bgPath = path.join(__dirname, '..', '..', '..', 'assets', 'profile-backgrounds', stats.background);
+      const bgPath = path.join(process.cwd(), 'assets', 'profile-backgrounds', stats.background);
       if (fs.existsSync(bgPath)) {
         const bgImage = await loadImage(bgPath);
         ctx.drawImage(bgImage, 0, 0, 800, 550);
