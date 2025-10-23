@@ -1,5 +1,5 @@
 import { SlashCommandBuilder, EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, AttachmentBuilder, ChatInputCommandInteraction ,MessageFlags} from 'discord.js';
-const { getUserSilver, addUserSilver, removeUserSilver, setUserSilver } = require('../../utils/dataManager');
+const { getUserSilver, addUserSilver, removeUserSilver } = require('../../utils/dataManager');
 import path from 'path';
 
 const activeDuels = new Map();
@@ -172,23 +172,58 @@ module.exports = {
         return;
       }
 
-      // Duel accepted!
-      activeDuels.set(challenger.id, true);
-      activeDuels.set(opponent.id, true);
+      // Duel accepted! Re-check balances before deducting (prevent race condition)
+      const challengerCurrentBalance = getUserSilver(challenger.id);
+      const opponentCurrentBalance = getUserSilver(opponent.id);
 
-      // Deduct bets
+      if (challengerCurrentBalance < bet) {
+        const errorEmbed = new EmbedBuilder()
+          .setColor('#FF0000')
+          .setTitle('❌ Insufficient Funds')
+          .setDescription(`**${challenger.username}** no longer has enough Silver Coins! Duel cancelled.`)
+          .setFooter({ text: 'Balance changed during challenge' });
+
+        await i.update({ embeds: [errorEmbed], components: [] });
+        return;
+      }
+
+      if (opponentCurrentBalance < bet) {
+        const errorEmbed = new EmbedBuilder()
+          .setColor('#FF0000')
+          .setTitle('❌ Insufficient Funds')
+          .setDescription(`**${opponent.username}** no longer has enough Silver Coins! Duel cancelled.`)
+          .setFooter({ text: 'Balance changed during challenge' });
+
+        await i.update({ embeds: [errorEmbed], components: [] });
+        return;
+      }
+
+      // Deduct bets BEFORE marking duel as active
       const challengerRemove = removeUserSilver(challenger.id, bet);
       const opponentRemove = removeUserSilver(opponent.id, bet);
 
       if (!challengerRemove.success || !opponentRemove.success) {
-        activeDuels.delete(challenger.id);
-        activeDuels.delete(opponent.id);
-        return i.update({
-          content: '❌ Failed to process bets. Duel cancelled.',
-          embeds: [],
-          components: []
-        });
+        // Rollback if one succeeded but the other failed
+        if (challengerRemove.success) {
+          addUserSilver(challenger.id, bet);
+        }
+        if (opponentRemove.success) {
+          addUserSilver(opponent.id, bet);
+        }
+
+        const errorEmbed = new EmbedBuilder()
+          .setColor('#FF0000')
+          .setTitle('❌ Transaction Failed')
+          .setDescription('Failed to process bets. Duel cancelled.')
+          .setFooter({ text: 'Your silver has been refunded' });
+
+        await i.update({ embeds: [errorEmbed], components: [] });
+        return;
       }
+
+      // Only mark as active after successful transaction
+      activeDuels.set(challenger.id, true);
+      activeDuels.set(opponent.id, true);
 
       // Initialize duel state
       const duelState = {

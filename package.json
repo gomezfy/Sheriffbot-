@@ -4,10 +4,15 @@
   "description": "Sheriff Rex - Western Discord Bot with TypeScript",
   "main": "dist/src/index.js",
   "scripts": {
-    "start": "ts-node src/index.ts",
+    "start": "node --expose-gc dist/src/index.js",
+    "start:shard": "node --expose-gc dist/src/shard.js",
     "dev": "ts-node src/index.ts",
+    "dev:shard": "ts-node src/shard.ts",
     "build": "tsc",
-    "deploy": "ts-node src/deploy-commands.ts"
+    "build:prod": "tsc && npm run deploy",
+    "deploy": "ts-node src/deploy-commands.ts",
+    "prod": "npm run build && npm run start:shard",
+    "health": "ENABLE_HEALTH_CHECK=true npm run start"
   },
   "keywords": [
     "discord",
