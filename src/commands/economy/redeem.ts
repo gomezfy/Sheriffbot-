@@ -2,11 +2,11 @@ import { SlashCommandBuilder, EmbedBuilder, ChatInputCommandInteraction } from '
 import * as fs from 'fs';
 import * as path from 'path';
 import { successEmbed, errorEmbed, warningEmbed, formatCurrency } from '../../utils/embeds';
+import { getDataPath, writeData, readData } from '../../utils/database';
 const { addItem, upgradeBackpack, getBackpackLevel } = require('../../utils/inventoryManager');
 const { showProgressBar } = require('../../utils/progressBar');
-const { writeData } = require('../../utils/database');
 
-const redemptionCodesPath = path.join(__dirname, '..', '..', 'data', 'redemption-codes.json');
+const redemptionCodesPath = path.join(getDataPath('data'), 'redemption-codes.json');
 
 interface RedemptionCode {
   productId: string;
@@ -24,14 +24,12 @@ interface RedemptionCode {
 }
 
 function loadRedemptionCodes(): Record<string, RedemptionCode> {
-  if (!fs.existsSync(redemptionCodesPath)) {
-    const dataDir = path.dirname(redemptionCodesPath);
-    if (!fs.existsSync(dataDir)) {
-      fs.mkdirSync(dataDir, { recursive: true });
-    }
-    fs.writeFileSync(redemptionCodesPath, '{}');
+  try {
+    return readData('redemption-codes.json');
+  } catch (error) {
+    console.error('Error loading redemption codes:', error);
+    return {};
   }
-  return JSON.parse(fs.readFileSync(redemptionCodesPath, 'utf-8'));
 }
 
 function saveRedemptionCodes(data: Record<string, RedemptionCode>): void {
