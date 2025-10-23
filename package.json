@@ -24,8 +24,16 @@
     "western",
     "economy"
   ],
-  "author": "",
+  "author": "gomezfy",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/gomezfy/Sheriffbot-.git"
+  },
+  "homepage": "https://github.com/gomezfy/Sheriffbot-#readme",
+  "bugs": {
+    "url": "https://github.com/gomezfy/Sheriffbot-/issues"
+  },
   "dependencies": {
     "@napi-rs/canvas": "^0.1.80",
     "@types/adm-zip": "^0.5.7",

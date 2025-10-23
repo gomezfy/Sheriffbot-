@@ -53,7 +53,51 @@ The web dashboard has been archived to `website.zip`. See [WEBSITE_README.md](./
 
 ## Status
 
-✅ **Online:** Sheriff Rex#5281  
-✅ **Servers:** 3  
 ✅ **Commands:** 34  
-✅ **Framework:** Discord.js v14 + TypeScript
+✅ **Framework:** Discord.js v14 + TypeScript  
+✅ **Language:** TypeScript  
+✅ **Node.js:** 18.0.0+
+
+## Legal
+
+- [Terms of Service](./TERMS_OF_SERVICE.md)
+- [Privacy Policy](./PRIVACY_POLICY.md)
+- [Security Policy](./SECURITY.md)
+
+## Features
+
+### 💰 Economy System
+- Dual currency: Saloon Tokens + Silver Coins
+- Daily rewards and trading
+- Secure middleman system
+- Visual leaderboards
+
+### 🎰 Gambling & Games
+- Bank Robbery, Casino, Dice, Poker
+- PvP Duels with betting
+- Fair RNG system
+
+### ⛏️ Mining System
+- Solo and cooperative mining
+- Progressive backpack upgrades (100kg → 500kg)
+- Resource management
+
+### 🎯 Bounty Hunting
+- Set bounties on users
+- Capture system with rewards
+- Visual wanted posters
+
+### 👤 Profiles & Customization
+- Visual profile cards with Canvas
+- Inventory management
+- Statistics tracking
+- Multilingual support (PT-BR, EN-US, ES-ES, FR)
+
+## Support
+
+- **GitHub Issues:** [Report bugs or request features](https://github.com/gomezfy/Sheriffbot-/issues)
+- **Documentation:** See [replit.md](./replit.md) for complete docs
+
+## License
+
+This project is licensed under the MIT License - see the LICENSE file for details.
