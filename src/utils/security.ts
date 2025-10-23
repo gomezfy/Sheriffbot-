@@ -46,12 +46,24 @@ export async function isOwner(interaction: ChatInputCommandInteraction): Promise
   }
   
   if (interaction.user.id !== ownerId) {
+    // Log unauthorized access attempt
+    securityLogger.log(SecurityEventType.OWNER_COMMAND_DENIED, interaction.user.id, {
+      command: interaction.commandName,
+      username: interaction.user.tag
+    });
+    
     await interaction.reply({
       content: '❌ This command is only available to the bot owner!',
       flags: MessageFlags.Ephemeral
     });
     return false;
   }
+  
+  // Log successful owner command usage
+  securityLogger.log(SecurityEventType.ADMIN_COMMAND_USED, interaction.user.id, {
+    command: interaction.commandName,
+    type: 'owner'
+  });
   
   return true;
 }
@@ -105,6 +117,49 @@ export function sanitizeInput(input: string, maxLength: number = 2000): string {
   sanitized = sanitized.replace(/\0/g, '');
   
   return sanitized;
+}
+
+/**
+ * Validates and sanitizes bio text
+ * @param bio Bio text to validate
+ * @returns Sanitized bio or null if invalid
+ */
+export function validateBio(bio: string): string | null {
+  if (!bio || bio.trim().length === 0) {
+    return null;
+  }
+  
+  // Maximum 500 characters for bio
+  if (bio.length > 500) {
+    return null;
+  }
+  
+  // Sanitize
+  let sanitized = sanitizeInput(bio, 500);
+  
+  // Remove excessive whitespace
+  sanitized = sanitized.replace(/\s+/g, ' ');
+  
+  return sanitized;
+}
+
+/**
+ * Validates JSON string safely
+ * @param jsonString JSON string to validate
+ * @param maxLength Maximum allowed length
+ * @returns Parsed object or null if invalid
+ */
+export function validateJSON(jsonString: string, maxLength: number = 10000): any | null {
+  if (!jsonString || jsonString.length > maxLength) {
+    return null;
+  }
+  
+  try {
+    const parsed = JSON.parse(jsonString);
+    return parsed;
+  } catch {
+    return null;
+  }
 }
 
 /**
@@ -198,6 +253,69 @@ class AdminRateLimiter {
 }
 
 export const adminRateLimiter = new AdminRateLimiter();
+
+/**
+ * General command rate limiter
+ */
+class CommandRateLimiter {
+  private cooldowns: Map<string, Map<string, number>> = new Map();
+  
+  /**
+   * Checks if user can execute command
+   * @param commandName Command name
+   * @param userId User ID
+   * @param cooldownMs Cooldown in milliseconds
+   * @returns true if allowed, false if on cooldown
+   */
+  canExecute(commandName: string, userId: string, cooldownMs: number): boolean {
+    if (!this.cooldowns.has(commandName)) {
+      this.cooldowns.set(commandName, new Map());
+    }
+    
+    const commandCooldowns = this.cooldowns.get(commandName)!;
+    const now = Date.now();
+    const lastUse = commandCooldowns.get(userId);
+    
+    if (lastUse && now - lastUse < cooldownMs) {
+      return false;
+    }
+    
+    commandCooldowns.set(userId, now);
+    
+    // Cleanup old entries
+    if (commandCooldowns.size > 1000) {
+      const fiveMinutesAgo = now - 5 * 60 * 1000;
+      for (const [id, timestamp] of commandCooldowns.entries()) {
+        if (timestamp < fiveMinutesAgo) {
+          commandCooldowns.delete(id);
+        }
+      }
+    }
+    
+    return true;
+  }
+  
+  /**
+   * Gets remaining cooldown time
+   * @param commandName Command name
+   * @param userId User ID
+   * @param cooldownMs Cooldown in milliseconds
+   * @returns Remaining cooldown in ms, or 0 if no cooldown
+   */
+  getRemainingCooldown(commandName: string, userId: string, cooldownMs: number): number {
+    const commandCooldowns = this.cooldowns.get(commandName);
+    if (!commandCooldowns) return 0;
+    
+    const lastUse = commandCooldowns.get(userId);
+    if (!lastUse) return 0;
+    
+    const now = Date.now();
+    const remaining = cooldownMs - (now - lastUse);
+    return remaining > 0 ? remaining : 0;
+  }
+}
+
+export const commandRateLimiter = new CommandRateLimiter();
 
 /**
  * Validates and sanitizes announcement message
@@ -307,3 +425,170 @@ class TransactionLockManager {
 }
 
 export const transactionLockManager = new TransactionLockManager();
+
+/**
+ * Security event types
+ */
+export enum SecurityEventType {
+  OWNER_COMMAND_DENIED = 'OWNER_COMMAND_DENIED',
+  ADMIN_COMMAND_USED = 'ADMIN_COMMAND_USED',
+  LARGE_TRANSFER = 'LARGE_TRANSFER',
+  SUSPICIOUS_ACTIVITY = 'SUSPICIOUS_ACTIVITY',
+  RATE_LIMIT_EXCEEDED = 'RATE_LIMIT_EXCEEDED',
+  INVALID_INPUT = 'INVALID_INPUT',
+  UNAUTHORIZED_ACCESS = 'UNAUTHORIZED_ACCESS'
+}
+
+/**
+ * Security event logger
+ */
+class SecurityLogger {
+  private events: Array<{
+    timestamp: number;
+    type: SecurityEventType;
+    userId: string;
+    details: any;
+  }> = [];
+  
+  private readonly maxEvents = 1000;
+  
+  /**
+   * Logs a security event
+   * @param type Event type
+   * @param userId User ID
+   * @param details Additional details
+   */
+  log(type: SecurityEventType, userId: string, details: any = {}): void {
+    const event = {
+      timestamp: Date.now(),
+      type,
+      userId,
+      details
+    };
+    
+    this.events.push(event);
+    
+    // Keep only recent events
+    if (this.events.length > this.maxEvents) {
+      this.events.shift();
+    }
+    
+    // Console log for monitoring
+    const timestamp = new Date().toISOString();
+    console.log(`[SECURITY] ${timestamp} | ${type} | User: ${userId} | ${JSON.stringify(details)}`);
+  }
+  
+  /**
+   * Gets recent security events
+   * @param limit Maximum number of events to return
+   * @returns Array of recent events
+   */
+  getRecentEvents(limit: number = 100): Array<any> {
+    return this.events.slice(-limit);
+  }
+  
+  /**
+   * Gets events for specific user
+   * @param userId User ID
+   * @param limit Maximum number of events
+   * @returns Array of user events
+   */
+  getUserEvents(userId: string, limit: number = 50): Array<any> {
+    return this.events
+      .filter(e => e.userId === userId)
+      .slice(-limit);
+  }
+  
+  /**
+   * Checks for suspicious activity patterns
+   * @param userId User ID
+   * @returns true if suspicious activity detected
+   */
+  detectSuspiciousActivity(userId: string): boolean {
+    const recentEvents = this.getUserEvents(userId, 20);
+    const now = Date.now();
+    const oneMinuteAgo = now - 60 * 1000;
+    
+    // Count events in last minute
+    const recentCount = recentEvents.filter(e => e.timestamp > oneMinuteAgo).length;
+    
+    // More than 10 security events in 1 minute is suspicious
+    if (recentCount > 10) {
+      this.log(SecurityEventType.SUSPICIOUS_ACTIVITY, userId, {
+        eventCount: recentCount,
+        timeWindow: '1 minute'
+      });
+      return true;
+    }
+    
+    return false;
+  }
+}
+
+export const securityLogger = new SecurityLogger();
+
+/**
+ * Validates required environment variables at startup
+ * @throws Error if validation fails
+ */
+export function validateEnvironment(): void {
+  const required = ['DISCORD_TOKEN', 'DISCORD_CLIENT_ID'];
+  const missing: string[] = [];
+  const invalid: string[] = [];
+  
+  // Check required variables
+  for (const key of required) {
+    const value = process.env[key];
+    if (!value || value.trim() === '') {
+      missing.push(key);
+    }
+  }
+  
+  if (missing.length > 0) {
+    console.error('❌ Missing required environment variables:');
+    missing.forEach(key => console.error(`   - ${key}`));
+    throw new Error(`Missing required environment variables: ${missing.join(', ')}`);
+  }
+  
+  // Validate token format (Discord tokens are typically 70+ characters)
+  const token = process.env.DISCORD_TOKEN!;
+  if (token.length < 50) {
+    invalid.push('DISCORD_TOKEN (too short, appears invalid)');
+  }
+  
+  // Validate client ID format (should be numeric snowflake)
+  const clientId = process.env.DISCORD_CLIENT_ID!;
+  if (!/^\d{17,20}$/.test(clientId)) {
+    invalid.push('DISCORD_CLIENT_ID (should be 17-20 digit number)');
+  }
+  
+  // Validate optional but important variables
+  const ownerId = process.env.OWNER_ID;
+  if (ownerId && !/^\d{17,20}$/.test(ownerId)) {
+    console.warn('⚠️  OWNER_ID format appears invalid (should be 17-20 digit number)');
+  }
+  
+  if (invalid.length > 0) {
+    console.error('❌ Invalid environment variables:');
+    invalid.forEach(msg => console.error(`   - ${msg}`));
+    throw new Error(`Invalid environment variables detected`);
+  }
+  
+  console.log('✅ Environment variables validated successfully');
+}
+
+/**
+ * Gets safe environment info for logging (without exposing secrets)
+ */
+export function getSafeEnvironmentInfo(): any {
+  return {
+    nodeVersion: process.version,
+    platform: process.platform,
+    hasToken: !!process.env.DISCORD_TOKEN,
+    hasClientId: !!process.env.DISCORD_CLIENT_ID,
+    hasOwnerId: !!process.env.OWNER_ID,
+    hasStripe: !!process.env.STRIPE_SECRET_KEY,
+    hasHotmart: !!process.env.HOTMART_CLIENT_ID,
+    nodeEnv: process.env.NODE_ENV || 'development'
+  };
+}

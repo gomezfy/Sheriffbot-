@@ -3,7 +3,7 @@ import { Client, Partials, Collection, Events, MessageFlags } from 'discord.js';
 import fs from 'fs';
 import path from 'path';
 import Logger from './utils/logger';
-import { sanitizeErrorForLogging } from './utils/security';
+import { sanitizeErrorForLogging, validateEnvironment, getSafeEnvironmentInfo } from './utils/security';
 import { 
   PRODUCTION_CACHE_CONFIG, 
   PRODUCTION_SWEEPERS, 
@@ -15,6 +15,16 @@ import {
   setupPerformanceMonitoring,
   healthCheck
 } from './utils/performance';
+
+// Validate environment variables before starting
+console.log('🔐 Validating environment variables...');
+try {
+  validateEnvironment();
+  console.log('📊 Environment info:', getSafeEnvironmentInfo());
+} catch (error) {
+  console.error('❌ Environment validation failed:', error);
+  process.exit(1);
+}
 
 const { initializeDatabase } = require('./utils/database');
 console.log('🔄 Inicializando sistema de dados...');

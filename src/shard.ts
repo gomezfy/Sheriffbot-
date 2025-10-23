@@ -3,16 +3,24 @@
  * Automatically spawns multiple shards based on guild count
  */
 
+import 'dotenv/config';
 import { ShardingManager } from 'discord.js';
 import path from 'path';
 
-const token = process.env.DISCORD_TOKEN;
+// Import validation from security utils (compiled version)
+const { validateEnvironment, getSafeEnvironmentInfo } = require('./utils/security');
 
-if (!token) {
-  console.error('❌ ERROR: Discord token not found!');
-  console.error('📝 Configure the DISCORD_TOKEN environment variable');
+// Validate environment before starting
+console.log('🔐 Validating environment variables...');
+try {
+  validateEnvironment();
+  console.log('📊 Environment info:', getSafeEnvironmentInfo());
+} catch (error) {
+  console.error('❌ Environment validation failed:', error);
   process.exit(1);
 }
+
+const token = process.env.DISCORD_TOKEN!;
 
 // Calculate optimal shard count
 // Discord recommends 1 shard per 1000 guilds
