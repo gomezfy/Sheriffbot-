@@ -1,5 +1,39 @@
 import { readData, writeData } from './database';
 
+/**
+ * Validates if a URL is safe to use in Discord embeds
+ */
+function isValidImageUrl(url: string): boolean {
+  if (!url) return false;
+  
+  try {
+    const parsedUrl = new URL(url);
+    // Only allow https for security
+    if (parsedUrl.protocol !== 'https:') return false;
+    
+    // Check for common image hosting domains (optional - can be removed for more flexibility)
+    const allowedDomains = [
+      'cdn.discordapp.com',
+      'media.discordapp.net',
+      'i.imgur.com',
+      'imgur.com',
+      'i.ibb.co',
+      'cdn.jsdelivr.net',
+      'raw.githubusercontent.com',
+      'cloudinary.com',
+      'imagekit.io'
+    ];
+    
+    // If you want to allow any HTTPS URL, comment out this check:
+    // return true;
+    
+    // Otherwise, check if domain is in allowed list
+    return allowedDomains.some(domain => parsedUrl.hostname.includes(domain));
+  } catch {
+    return false;
+  }
+}
+
 export interface Territory {
   id: string;
   name: string;
@@ -39,7 +73,7 @@ export const TERRITORIES: Territory[] = [
     ],
     rarity: 'rare',
     color: 0xFF8C00, // Dark orange
-    image: 'saloon.png'
+    image: 'SALOON_IMAGE_URL_HERE' // Replace with your image URL
   },
   {
     id: 'gold_mine_shares',
@@ -55,7 +89,7 @@ export const TERRITORIES: Territory[] = [
     ],
     rarity: 'epic',
     color: 0xFFD700, // Gold
-    image: 'mine.png'
+    image: 'MINE_IMAGE_URL_HERE' // Replace with your image URL
   },
   {
     id: 'ranch',
@@ -71,7 +105,7 @@ export const TERRITORIES: Territory[] = [
     ],
     rarity: 'legendary',
     color: 0x8B4513, // Saddle brown
-    image: 'ranch.png'
+    image: 'RANCH_IMAGE_URL_HERE' // Replace with your image URL
   }
 ];
 

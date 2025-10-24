@@ -69,6 +69,11 @@ module.exports = {
         })
         .setTimestamp();
 
+      // Add image if available
+      if (territory.image) {
+        embed.setImage(territory.image);
+      }
+
       return embed;
     };
 
