@@ -2,7 +2,7 @@ import { SlashCommandBuilder, EmbedBuilder, ActionRowBuilder, ButtonBuilder, But
 import fs from 'fs';
 import path from 'path';
 import { getSilverCoinEmoji, getGoldBarEmoji } from '../../utils/customEmojis';
-import { cleanupOldSessions } from '../../utils/miningTracker';
+import { cleanupOldSessions, getActiveSessions, getUnclaimedSessions, getMiningStats, formatTime as formatMiningTime } from '../../utils/miningTracker';
 const { addItem, getInventory, removeItem, transferItem } = require('../../utils/inventoryManager');
 const { addUserSilver, getUserSilver, removeUserSilver } = require('../../utils/dataManager');
 const { readData, writeData } = require('../../utils/database');
@@ -186,7 +186,11 @@ module.exports = {
         new ButtonBuilder()
           .setCustomId('mine_coop')
           .setLabel('👥 Find Partner (30min)')
-          .setStyle(ButtonStyle.Success)
+          .setStyle(ButtonStyle.Success),
+        new ButtonBuilder()
+          .setCustomId('view_sessions')
+          .setLabel('📊 Ver Sessões')
+          .setStyle(ButtonStyle.Secondary)
       );
 
     const miningImage = new AttachmentBuilder(path.join(process.cwd(), 'assets', 'gold-mining.png'));
@@ -231,7 +235,80 @@ module.exports = {
     const collector = response.createMessageComponentCollector({ time: 60000 });
 
     collector.on('collect', async i => {
-      if (i.customId === 'mine_solo') {
+      if (i.customId === 'view_sessions') {
+        // Show mining sessions
+        const activeSessions = getActiveSessions();
+        const unclaimedSessions = getUnclaimedSessions();
+        const stats = getMiningStats();
+        const now = Date.now();
+
+        const sessionsEmbed = new EmbedBuilder()
+          .setColor(0xFFD700)
+          .setTitle('⛏️ MINING SESSIONS TRACKER')
+          .setDescription('Current mining operations across the server')
+          .addFields(
+            {
+              name: '📊 Overview',
+              value: `\`\`\`yaml
+Active Sessions: ${stats.totalActive}
+Solo Mining: ${stats.soloMining}
+Cooperative: ${stats.coopMining}
+Ready to Claim: ${stats.unclaimed}
+Pending Gold: ${stats.totalGoldPending} ${goldEmoji}
+\`\`\``,
+              inline: false
+            }
+          );
+
+        // Show active mining sessions
+        if (activeSessions.length > 0) {
+          const activeList = activeSessions
+            .slice(0, 10)
+            .map(({ userId: uid, session }) => {
+              const timeLeft = session.endTime - now;
+              const progress = Math.floor(((now - session.startTime) / (session.endTime - session.startTime)) * 10);
+              const progressBar = '█'.repeat(progress) + '░'.repeat(10 - progress);
+              return `<@${uid}>\n${progressBar} \`${formatMiningTime(timeLeft)}\` • ${session.type === 'solo' ? '⛏️ Solo' : '👥 Coop'} • ${session.goldAmount} ${goldEmoji}`;
+            })
+            .join('\n\n');
+
+          sessionsEmbed.addFields({
+            name: '⏳ Active Mining',
+            value: activeList + (activeSessions.length > 10 ? `\n\n_+${activeSessions.length - 10} more..._` : ''),
+            inline: false
+          });
+        }
+
+        // Show unclaimed sessions
+        if (unclaimedSessions.length > 0) {
+          const unclaimedList = unclaimedSessions
+            .slice(0, 5)
+            .map(({ userId: uid, session }) => {
+              return `<@${uid}> • ${session.type === 'solo' ? '⛏️' : '👥'} • ${session.goldAmount} ${goldEmoji}`;
+            })
+            .join('\n');
+
+          sessionsEmbed.addFields({
+            name: '✅ Ready to Claim',
+            value: unclaimedList + (unclaimedSessions.length > 5 ? `\n_+${unclaimedSessions.length - 5} more..._` : ''),
+            inline: false
+          });
+        }
+
+        if (activeSessions.length === 0 && unclaimedSessions.length === 0) {
+          sessionsEmbed.addFields({
+            name: '💤 No Active Sessions',
+            value: 'No one is currently mining. Use the buttons below to start!',
+            inline: false
+          });
+        }
+
+        sessionsEmbed.setFooter({ text: '⛏️ Use the buttons below to start mining!' })
+          .setTimestamp();
+
+        await i.reply({ embeds: [sessionsEmbed], flags: MessageFlags.Ephemeral });
+
+      } else if (i.customId === 'mine_solo') {
         // Verify user for solo mining
         if (i.user.id !== interaction.user.id) {
           return i.reply({ content: '❌ This mining operation is not for you!', flags: MessageFlags.Ephemeral });
