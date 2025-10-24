@@ -65,6 +65,11 @@ export = {
   name: Events.InteractionCreate,
   async execute(interaction: Interaction): Promise<void> {
     if (interaction.isButton()) {
+      // Ignore duel buttons - they are handled by the duel command's collector
+      if (interaction.customId.startsWith('duel_')) {
+        return;
+      }
+      
       // Edit Bio Button
       if (interaction.customId === 'edit_bio') {
         const modal = new ModalBuilder()
