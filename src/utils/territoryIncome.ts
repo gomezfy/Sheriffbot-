@@ -8,10 +8,12 @@ const { addItem } = require('./inventoryManager');
 interface TerritoryIncomeData {
   [userId: string]: {
     lastPayout: number;
+    lastGoldPayout?: number; // For weekly Gold Bar rewards from Gold Mine Shares
   };
 }
 
 const PAYOUT_COOLDOWN = 23 * 60 * 60 * 1000; // 23 hours
+const GOLD_PAYOUT_COOLDOWN = 7 * 24 * 60 * 60 * 1000; // 7 days (1 week)
 
 /**
  * Get territory income data
@@ -79,6 +81,17 @@ export async function processTerritoryIncome(client: Client, userId: string): Pr
     let totalGold = 0;
     const incomeDetails: string[] = [];
     
+    // Check if it's time for weekly Gold Bar payout (Gold Mine Shares)
+    const data = getIncomeData();
+    const hasGoldMine = userTerritories.includes('gold_mine_shares');
+    let shouldPayGold = false;
+    
+    if (hasGoldMine) {
+      const lastGoldPayout = data[userId]?.lastGoldPayout || 0;
+      const timeSinceGoldPayout = Date.now() - lastGoldPayout;
+      shouldPayGold = timeSinceGoldPayout >= GOLD_PAYOUT_COOLDOWN;
+    }
+    
     for (const territoryId of userTerritories) {
       const territory = getTerritory(territoryId);
       if (!territory) continue;
@@ -89,6 +102,12 @@ export async function processTerritoryIncome(client: Client, userId: string): Pr
       } else if (territoryId === 'gold_mine_shares') {
         totalSilver += 12000;
         incomeDetails.push('⛏️ **Gold Mine Shares:** +12,000 Silver Coins');
+        
+        // Add weekly Gold Bars if it's time
+        if (shouldPayGold) {
+          totalGold += 2;
+          incomeDetails.push('🥇 **Weekly Bonus:** +2 Gold Bars');
+        }
       } else if (territoryId === 'ranch') {
         totalSilver += 15000;
         incomeDetails.push('🐴 **Ranch:** +15,000 Silver Coins');
@@ -100,14 +119,21 @@ export async function processTerritoryIncome(client: Client, userId: string): Pr
       addItem(userId, 'silver', totalSilver);
     }
     if (totalGold > 0) {
-      addItem(userId, 'gold', totalGold);
+      addItem(userId, 'gold_bar', totalGold);
     }
     
-    // Update payout timestamp
-    const data = getIncomeData();
-    data[userId] = {
-      lastPayout: Date.now()
-    };
+    // Update payout timestamps
+    if (!data[userId]) {
+      data[userId] = { lastPayout: 0 };
+    }
+    
+    data[userId].lastPayout = Date.now();
+    
+    // Update Gold Bar payout timestamp if we paid Gold
+    if (shouldPayGold) {
+      data[userId].lastGoldPayout = Date.now();
+    }
+    
     saveIncomeData(data);
     
     // Send DM to user

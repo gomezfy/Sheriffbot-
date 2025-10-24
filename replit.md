@@ -83,3 +83,13 @@ None specified yet.
     - System now properly handles blocked users without spam attempts
     - Integrated into bot startup in `index.ts` via `startMiningNotifications()`
     - Created comprehensive documentation in `MINING_SYSTEM.md` and `MINING_TEST_PLAN.md`
+  - **Removed `/claim-territories` Command:** System is fully automatic now
+    - Users no longer need to manually claim territory income
+    - All territory benefits are distributed automatically every 23 hours
+    - DM notifications sent automatically when income is credited
+    - Simplified user experience - just buy territories and receive passive income
+  - **Weekly Gold Bar Rewards Implemented:** Gold Mine Shares now give 2 Gold Bars weekly
+    - System tracks weekly cooldown separately from daily income (7 days)
+    - Gold Bars automatically credited when 1 week passes
+    - Bonus shown in DM notification: "🥇 Weekly Bonus: +2 Gold Bars"
+    - Data persisted in `territory-income.json` with `lastGoldPayout` timestamp
