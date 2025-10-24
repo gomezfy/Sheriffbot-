@@ -52,7 +52,8 @@ export function initializeDatabase(): void {
     'daily.json', 'economy.json', 'economy.backup.json', 'profiles.json',
     'xp.json', 'inventory.json', 'wanted.json', 'welcome.json',
     'logs.json', 'bounties.json', 'backgrounds.json', 'punishment.json',
-    'mining.json', 'work.json', 'redemption-codes.json', 'territories.json'
+    'mining.json', 'work.json', 'redemption-codes.json', 'territories.json',
+    'territory-income.json'
   ];
 
   let created = 0;
