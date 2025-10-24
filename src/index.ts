@@ -17,6 +17,7 @@ import {
   healthCheck
 } from './utils/performance';
 import { startAutomaticTerritoryIncome } from './utils/territoryIncome';
+import { startMiningNotifications } from './utils/miningTracker';
 
 // Validate environment variables before starting
 console.log('🔐 Validating environment variables...');
@@ -360,6 +361,9 @@ client.login(token)
     
     // Start automatic territory income system
     startAutomaticTerritoryIncome(client);
+    
+    // Start automatic mining notification system
+    startMiningNotifications(client);
     
     healthCheck.markHealthy();
   })

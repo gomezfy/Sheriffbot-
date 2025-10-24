@@ -1,4 +1,6 @@
-import { readData } from './database';
+import { readData, writeData } from './database';
+import { Client, EmbedBuilder } from 'discord.js';
+import { getGoldBarEmoji } from './customEmojis';
 
 interface MiningSession {
   type: 'solo' | 'coop';
@@ -7,6 +9,7 @@ interface MiningSession {
   claimed: boolean;
   goldAmount: number;
   partnerId: string | null;
+  notified?: boolean; // Track if user was notified via DM
 }
 
 interface MiningData {
@@ -97,7 +100,6 @@ export function formatTime(ms: number): string {
  * Clean up old claimed sessions (older than 24 hours)
  */
 export function cleanupOldSessions(): number {
-  const { writeData } = require('./database');
   const data: MiningData = readData('mining.json');
   const now = Date.now();
   const oneDayAgo = now - (24 * 60 * 60 * 1000);
@@ -116,4 +118,96 @@ export function cleanupOldSessions(): number {
   }
 
   return cleaned;
+}
+
+/**
+ * Check for completed mining sessions and send DM notifications
+ */
+export async function notifyCompletedMining(client: Client): Promise<number> {
+  try {
+    const data: MiningData = readData('mining.json');
+    const now = Date.now();
+    let notified = 0;
+
+    for (const [userId, session] of Object.entries(data)) {
+      // Only notify if: mining complete, not claimed, and not already notified
+      if (!session.claimed && session.endTime <= now && !session.notified) {
+        try {
+          const user = await client.users.fetch(userId);
+          const goldEmoji = getGoldBarEmoji();
+
+          const embed = new EmbedBuilder()
+            .setColor(0x00FF00)
+            .setTitle('✅ MINERAÇÃO COMPLETA!')
+            .setDescription(`Sua operação de mineração foi concluída!\n\n💰 **Recompensa:** ${session.goldAmount} ${goldEmoji} Gold Bar${session.goldAmount > 1 ? 's' : ''}!`)
+            .addFields(
+              {
+                name: '⛏️ Tipo de Mineração',
+                value: session.type === 'solo' ? '⛏️ Solo Mining' : '👥 Cooperative Mining',
+                inline: true
+              },
+              {
+                name: '💎 Ouro Disponível',
+                value: `${session.goldAmount} ${goldEmoji}`,
+                inline: true
+              }
+            )
+            .setFooter({ text: 'Use /mine para coletar seu ouro!' })
+            .setTimestamp();
+
+          await user.send({ embeds: [embed] });
+
+          // Mark as notified
+          session.notified = true;
+          notified++;
+
+          console.log(`⛏️ Sent mining completion DM to ${user.tag}`);
+        } catch (error) {
+          console.error(`❌ Failed to send mining DM to user ${userId}:`, error);
+          // Mark as notified anyway to avoid spam attempts
+          session.notified = true;
+        }
+
+        // Small delay to avoid rate limiting
+        await new Promise(resolve => setTimeout(resolve, 1000));
+      }
+    }
+
+    // Save updated data with notified flags
+    if (notified > 0) {
+      writeData('mining.json', data);
+    }
+
+    return notified;
+  } catch (error) {
+    console.error('❌ Error in notifyCompletedMining:', error);
+    return 0;
+  }
+}
+
+/**
+ * Start automatic mining notification system
+ * Checks every 2 minutes for completed mining sessions
+ */
+export function startMiningNotifications(client: Client): NodeJS.Timeout {
+  console.log('⛏️ Starting automatic mining notification system');
+
+  // Run immediately on startup
+  notifyCompletedMining(client).catch(error => {
+    console.error('❌ Error in initial mining notification check:', error);
+  });
+
+  // Then check every 2 minutes
+  const interval = setInterval(async () => {
+    try {
+      const notified = await notifyCompletedMining(client);
+      if (notified > 0) {
+        console.log(`⛏️ Notified ${notified} users about completed mining`);
+      }
+    } catch (error) {
+      console.error('❌ Error in mining notification interval:', error);
+    }
+  }, 2 * 60 * 1000); // Check every 2 minutes
+
+  return interval;
 }
