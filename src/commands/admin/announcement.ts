@@ -303,8 +303,7 @@ async function handleSend(interaction: ChatInputCommandInteraction): Promise<voi
     content: `**📋 Preview of announcement:**\n${mentionText ? `**Mentions:** ${mentionText}` : ''}`,
     embeds: [previewEmbed],
     components: [confirmRow],
-    flags: MessageFlags.Ephemeral,
-    fetchReply: true
+    flags: MessageFlags.Ephemeral
   });
 
   // Wait for button interaction

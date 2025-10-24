@@ -125,8 +125,7 @@ module.exports = {
 
     const response = await interaction.reply({
       embeds: [initialEmbed],
-      components: initialButtons,
-      fetchReply: true
+      components: initialButtons
     });
 
     // Create collector

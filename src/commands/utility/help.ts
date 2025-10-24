@@ -238,8 +238,7 @@ export = {
     const reply = await interaction.reply({
       embeds: [embed],
       components: [buttons, secondaryButtons, linkButtons],
-      flags: MessageFlags.Ephemeral,
-      fetchReply: true
+      flags: MessageFlags.Ephemeral
     });
 
     const collector = reply.createMessageComponentCollector({
