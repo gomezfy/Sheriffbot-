@@ -92,6 +92,13 @@ module.exports = {
         const progressBar = Math.floor(((now - activeMining.startTime) / (activeMining.endTime - activeMining.startTime)) * 20);
         const bar = '█'.repeat(progressBar) + '░'.repeat(20 - progressBar);
         
+        const viewSessionsButton = new ButtonBuilder()
+          .setCustomId('view_sessions_progress')
+          .setLabel('📊 Ver Sessões')
+          .setStyle(ButtonStyle.Secondary);
+        
+        const progressRow = new ActionRowBuilder<ButtonBuilder>().addComponents(viewSessionsButton);
+        
         const embed = new EmbedBuilder()
           .setColor(0xFFD700)
           .setTitle('⛏️ MINING IN PROGRESS')
@@ -99,7 +106,74 @@ module.exports = {
           .setFooter({ text: 'Come back when mining is complete!' })
           .setTimestamp();
         
-        await interaction.reply({ embeds: [embed], flags: MessageFlags.Ephemeral });
+        const reply = await interaction.reply({ embeds: [embed], components: [progressRow], flags: MessageFlags.Ephemeral });
+        
+        // Handler for view sessions button in progress state
+        const progressCollector = reply.createMessageComponentCollector({ time: 300000 });
+        
+        progressCollector.on('collect', async i => {
+          if (i.customId === 'view_sessions_progress') {
+            const activeSessions = getActiveSessions();
+            const unclaimedSessions = getUnclaimedSessions();
+            const stats = getMiningStats();
+            const nowTime = Date.now();
+
+            const sessionsEmbed = new EmbedBuilder()
+              .setColor(0xFFD700)
+              .setTitle('⛏️ MINING SESSIONS TRACKER')
+              .setDescription('Current mining operations across the server')
+              .addFields({
+                name: '📊 Overview',
+                value: `\`\`\`yaml
+Active Sessions: ${stats.totalActive}
+Solo Mining: ${stats.soloMining}
+Cooperative: ${stats.coopMining}
+Ready to Claim: ${stats.unclaimed}
+Pending Gold: ${stats.totalGoldPending} ${goldEmoji}
+\`\`\``,
+                inline: false
+              });
+
+            if (activeSessions.length > 0) {
+              const activeList = activeSessions.slice(0, 10).map(({ userId: uid, session }) => {
+                const timeLeft = session.endTime - nowTime;
+                const progress = Math.floor(((nowTime - session.startTime) / (session.endTime - session.startTime)) * 10);
+                const progressBar = '█'.repeat(progress) + '░'.repeat(10 - progress);
+                return `<@${uid}>\n${progressBar} \`${formatMiningTime(timeLeft)}\` • ${session.type === 'solo' ? '⛏️ Solo' : '👥 Coop'} • ${session.goldAmount} ${goldEmoji}`;
+              }).join('\n\n');
+
+              sessionsEmbed.addFields({
+                name: '⏳ Active Mining',
+                value: activeList + (activeSessions.length > 10 ? `\n\n_+${activeSessions.length - 10} more..._` : ''),
+                inline: false
+              });
+            }
+
+            if (unclaimedSessions.length > 0) {
+              const unclaimedList = unclaimedSessions.slice(0, 5).map(({ userId: uid, session }) => {
+                return `<@${uid}> • ${session.type === 'solo' ? '⛏️' : '👥'} • ${session.goldAmount} ${goldEmoji}`;
+              }).join('\n');
+
+              sessionsEmbed.addFields({
+                name: '✅ Ready to Claim',
+                value: unclaimedList + (unclaimedSessions.length > 5 ? `\n_+${unclaimedSessions.length - 5} more..._` : ''),
+                inline: false
+              });
+            }
+
+            if (activeSessions.length === 0 && unclaimedSessions.length === 0) {
+              sessionsEmbed.addFields({
+                name: '💤 No Active Sessions',
+                value: 'No one is currently mining.',
+                inline: false
+              });
+            }
+
+            sessionsEmbed.setFooter({ text: '⛏️ Mining sessions update in real-time' }).setTimestamp();
+            await i.reply({ embeds: [sessionsEmbed], flags: MessageFlags.Ephemeral });
+          }
+        });
+        
         return;
       } else {
         // Mineração completa - pode coletar
@@ -108,7 +182,12 @@ module.exports = {
           .setLabel('💎 Collect Gold')
           .setStyle(ButtonStyle.Success);
         
-        const row = new ActionRowBuilder<ButtonBuilder>().addComponents(claimButton);
+        const viewSessionsClaimButton = new ButtonBuilder()
+          .setCustomId('view_sessions_claim')
+          .setLabel('📊 Ver Sessões')
+          .setStyle(ButtonStyle.Secondary);
+        
+        const row = new ActionRowBuilder<ButtonBuilder>().addComponents(claimButton, viewSessionsClaimButton);
         
         const goldEmoji = getGoldBarEmoji();
         
@@ -125,6 +204,67 @@ module.exports = {
         const collector = response.createMessageComponentCollector({ time: 300000 }); // 5 min to collect
         
         collector.on('collect', async i => {
+          if (i.customId === 'view_sessions_claim') {
+            const activeSessions = getActiveSessions();
+            const unclaimedSessions = getUnclaimedSessions();
+            const stats = getMiningStats();
+            const nowTime = Date.now();
+
+            const sessionsEmbed = new EmbedBuilder()
+              .setColor(0xFFD700)
+              .setTitle('⛏️ MINING SESSIONS TRACKER')
+              .setDescription('Current mining operations across the server')
+              .addFields({
+                name: '📊 Overview',
+                value: `\`\`\`yaml
+Active Sessions: ${stats.totalActive}
+Solo Mining: ${stats.soloMining}
+Cooperative: ${stats.coopMining}
+Ready to Claim: ${stats.unclaimed}
+Pending Gold: ${stats.totalGoldPending} ${goldEmoji}
+\`\`\``,
+                inline: false
+              });
+
+            if (activeSessions.length > 0) {
+              const activeList = activeSessions.slice(0, 10).map(({ userId: uid, session }) => {
+                const timeLeft = session.endTime - nowTime;
+                const progress = Math.floor(((nowTime - session.startTime) / (session.endTime - session.startTime)) * 10);
+                const progressBar = '█'.repeat(progress) + '░'.repeat(10 - progress);
+                return `<@${uid}>\n${progressBar} \`${formatMiningTime(timeLeft)}\` • ${session.type === 'solo' ? '⛏️ Solo' : '👥 Coop'} • ${session.goldAmount} ${goldEmoji}`;
+              }).join('\n\n');
+
+              sessionsEmbed.addFields({
+                name: '⏳ Active Mining',
+                value: activeList + (activeSessions.length > 10 ? `\n\n_+${activeSessions.length - 10} more..._` : ''),
+                inline: false
+              });
+            }
+
+            if (unclaimedSessions.length > 0) {
+              const unclaimedList = unclaimedSessions.slice(0, 5).map(({ userId: uid, session }) => {
+                return `<@${uid}> • ${session.type === 'solo' ? '⛏️' : '👥'} • ${session.goldAmount} ${goldEmoji}`;
+              }).join('\n');
+
+              sessionsEmbed.addFields({
+                name: '✅ Ready to Claim',
+                value: unclaimedList + (unclaimedSessions.length > 5 ? `\n_+${unclaimedSessions.length - 5} more..._` : ''),
+                inline: false
+              });
+            }
+
+            if (activeSessions.length === 0 && unclaimedSessions.length === 0) {
+              sessionsEmbed.addFields({
+                name: '💤 No Active Sessions',
+                value: 'No one is currently mining.',
+                inline: false
+              });
+            }
+
+            sessionsEmbed.setFooter({ text: '⛏️ Mining sessions update in real-time' }).setTimestamp();
+            return i.reply({ embeds: [sessionsEmbed], flags: MessageFlags.Ephemeral });
+          }
+          
           if (i.customId !== 'claim_mining') return;
           if (i.user.id !== userId) {
             return i.reply({ content: '❌ This gold is not yours!', flags: MessageFlags.Ephemeral });

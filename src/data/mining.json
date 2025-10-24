@@ -3,7 +3,7 @@
     "type": "solo",
     "startTime": 1761270014978,
     "endTime": 1761275414978,
-    "claimed": false,
+    "claimed": true,
     "goldAmount": 3,
     "partnerId": null
   },
