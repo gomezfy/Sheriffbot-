@@ -42,7 +42,9 @@ None specified yet.
 - **Multilingual Help System:** `help` command is fully translated and supports automatic language detection.
 
 ### System Design Choices
-- **File-based Storage:** All persistent data is stored in JSON files within `src/data/`.
+- **File-based Storage:** All persistent data is stored in JSON files within `src/data/` (development) or `/app/data/` (production).
+  - ⚠️ **CRITICAL FOR VERTRA:** Data persistence requires volume mounting at `/app/data/` - see `VERTRA_VOLUME_PERSISTENTE.md`
+  - Without persistent volume, all user data is lost on restart/redeploy
 - **High-Performance Caching:** In-memory cache layer with automatic sync reduces file I/O by 90% for 4-5x faster response times.
 - **Modular Design:** Code is organized into `commands`, `data`, `events`, and `utils` directories.
 - **Environment Variables:** Utilizes environment variables for sensitive data.
@@ -57,6 +59,16 @@ None specified yet.
 
 ## Recent Changes
 - **October 24, 2025:**
+  - **Territory Image URLs Updated:** Fixed `/territories` command images not displaying
+    - Updated all territory image URLs to use current Replit domain
+    - Fixed: Saloon Business, Gold Mine Shares, and Ranch images now load correctly
+    - Images properly served from website/assets/ via port 5000
+  - **Vertra Cloud Data Persistence Documentation:** Created comprehensive guide
+    - Added `VERTRA_VOLUME_PERSISTENTE.md` with step-by-step volume configuration
+    - Updated `vertracloud.config` with `NODE_ENV=production` and build command
+    - Documented critical issue: data lost on restart without persistent volume
+    - Provided alternatives: PostgreSQL migration, external services, backups
+    - Updated `replit.md` to warn about Vertra data persistence requirements
   - **Mining Sessions Button Integration:** Improved UX for mining session tracking
     - Removed `/mining-sessions` slash command (deprecated)
     - Integrated "📊 Ver Sessões" button directly into `/mine` command
