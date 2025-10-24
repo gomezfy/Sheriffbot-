@@ -65,8 +65,11 @@ export = {
   name: Events.InteractionCreate,
   async execute(interaction: Interaction): Promise<void> {
     if (interaction.isButton()) {
-      // Ignore duel buttons - they are handled by the duel command's collector
-      if (interaction.customId.startsWith('duel_')) {
+      // Ignore duel and mining buttons - they are handled by their command collectors
+      if (interaction.customId.startsWith('duel_') || 
+          interaction.customId.startsWith('mine_') || 
+          interaction.customId.startsWith('join_mining') ||
+          interaction.customId.startsWith('claim_mining')) {
         return;
       }
       
