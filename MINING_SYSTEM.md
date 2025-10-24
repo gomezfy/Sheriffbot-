@@ -56,6 +56,7 @@ The system is configured to:
 - Automatically started when bot logged in
 - Monitoring all mining sessions
 - Sending notifications every 2 minutes for completed mining
+- **Bug fix applied**: Properly handles failed DMs without spam retries
 
 ## User Experience
 

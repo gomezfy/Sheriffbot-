@@ -128,6 +128,7 @@ export async function notifyCompletedMining(client: Client): Promise<number> {
     const data: MiningData = readData('mining.json');
     const now = Date.now();
     let notified = 0;
+    let dataModified = false;
 
     for (const [userId, session] of Object.entries(data)) {
       // Only notify if: mining complete, not claimed, and not already notified
@@ -159,6 +160,7 @@ export async function notifyCompletedMining(client: Client): Promise<number> {
 
           // Mark as notified
           session.notified = true;
+          dataModified = true;
           notified++;
 
           console.log(`⛏️ Sent mining completion DM to ${user.tag}`);
@@ -166,6 +168,7 @@ export async function notifyCompletedMining(client: Client): Promise<number> {
           console.error(`❌ Failed to send mining DM to user ${userId}:`, error);
           // Mark as notified anyway to avoid spam attempts
           session.notified = true;
+          dataModified = true;
         }
 
         // Small delay to avoid rate limiting
@@ -173,8 +176,8 @@ export async function notifyCompletedMining(client: Client): Promise<number> {
       }
     }
 
-    // Save updated data with notified flags
-    if (notified > 0) {
+    // Save updated data if any session was modified (success or failure)
+    if (dataModified) {
       writeData('mining.json', data);
     }
 
