@@ -11,7 +11,7 @@ interface TerritoryIncomeData {
   };
 }
 
-const PAYOUT_COOLDOWN = 24 * 60 * 60 * 1000; // 24 hours
+const PAYOUT_COOLDOWN = 23 * 60 * 60 * 1000; // 23 hours
 
 /**
  * Get territory income data
@@ -178,4 +178,28 @@ export async function processAllTerritoryIncome(client: Client): Promise<void> {
   } catch (error) {
     console.error('❌ Error processing all territory income:', error);
   }
+}
+
+/**
+ * Start automatic territory income processing
+ * Checks every hour and automatically pays users who are eligible
+ */
+export function startAutomaticTerritoryIncome(client: Client): NodeJS.Timeout {
+  console.log('🏛️ Starting automatic territory income system (23-hour cycle)');
+  
+  // Run immediately on startup
+  processAllTerritoryIncome(client).catch(error => {
+    console.error('❌ Error in initial territory income processing:', error);
+  });
+  
+  // Then run every hour to check for eligible users
+  const interval = setInterval(async () => {
+    try {
+      await processAllTerritoryIncome(client);
+    } catch (error) {
+      console.error('❌ Error in automatic territory income processing:', error);
+    }
+  }, 60 * 60 * 1000); // Check every hour
+  
+  return interval;
 }
