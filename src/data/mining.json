@@ -1,7 +1,11 @@
 {
   "339772388566892546": {
-    "cooldownEnd": 1760940247285,
-    "claimed": true
+    "type": "solo",
+    "startTime": 1761270014978,
+    "endTime": 1761275414978,
+    "claimed": false,
+    "goldAmount": 3,
+    "partnerId": null
   },
   "1082867940501749760": {
     "cooldownEnd": 1760940247285
