@@ -21,7 +21,8 @@ function isValidImageUrl(url: string): boolean {
       'cdn.jsdelivr.net',
       'raw.githubusercontent.com',
       'cloudinary.com',
-      'imagekit.io'
+      'imagekit.io',
+      'replit.dev' // Allow Replit-hosted images
     ];
     
     // If you want to allow any HTTPS URL, comment out this check:
@@ -73,7 +74,7 @@ export const TERRITORIES: Territory[] = [
     ],
     rarity: 'rare',
     color: 0xFF8C00, // Dark orange
-    image: 'SALOON_IMAGE_URL_HERE' // Replace with your image URL
+    image: 'https://cd88b7dc-3137-4c51-8e99-a39dcaa38397-00-133e44s8aizp2.picard.replit.dev/assets/saloon.png'
   },
   {
     id: 'gold_mine_shares',
@@ -89,7 +90,7 @@ export const TERRITORIES: Territory[] = [
     ],
     rarity: 'epic',
     color: 0xFFD700, // Gold
-    image: 'MINE_IMAGE_URL_HERE' // Replace with your image URL
+    image: 'https://cd88b7dc-3137-4c51-8e99-a39dcaa38397-00-133e44s8aizp2.picard.replit.dev/assets/mine.png'
   },
   {
     id: 'ranch',
@@ -105,7 +106,7 @@ export const TERRITORIES: Territory[] = [
     ],
     rarity: 'legendary',
     color: 0x8B4513, // Saddle brown
-    image: 'RANCH_IMAGE_URL_HERE' // Replace with your image URL
+    image: 'https://cd88b7dc-3137-4c51-8e99-a39dcaa38397-00-133e44s8aizp2.picard.replit.dev/assets/ranch.png'
   }
 ];
 

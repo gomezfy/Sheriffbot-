@@ -76,6 +76,13 @@ None specified yet.
     - Features navigation buttons, purchase validation, and ownership tracking
     - Real-time state updates ensure accurate affordability and ownership status
     - Persistent storage in `territories.json` for ownership data
+    - **Territory Images:** Added custom Western-themed images for all territories
+      - Images hosted on Replit domain for reliability and fast loading
+      - Saloon: Classic Wild West saloon building with sunset backdrop
+      - Mine: Gold Mine Shares building with water tower
+      - Ranch: Ranch property with horses and cattle
+      - Images stored in `website/assets/` and served via HTTPS
+      - Embedded directly in Discord embeds for immersive visual experience
   - **Gold Value Adjustment:** Increased gold bar value from 700 to 13,439 Silver Coins
     - Updated `/middleman` command exchange rate
     - Updated `/mine` command gold value display
