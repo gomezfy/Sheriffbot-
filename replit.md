@@ -75,3 +75,11 @@ None specified yet.
     - Integrated into main bot initialization in `index.ts`
     - Users no longer need to manually claim territory income with `/claim-territories`
     - Income data persisted in `territory-income.json` with timestamps
+  - **Automatic Mining Notification System:** Fixed critical bug in DM notification persistence
+    - System automatically checks every 2 minutes for completed mining sessions
+    - Sends private DM notifications when mining completes
+    - Fixed bug where failed DM sends weren't persisted, causing infinite retries
+    - Added `dataModified` flag to track session changes regardless of DM success
+    - System now properly handles blocked users without spam attempts
+    - Integrated into bot startup in `index.ts` via `startMiningNotifications()`
+    - Created comprehensive documentation in `MINING_SYSTEM.md` and `MINING_TEST_PLAN.md`
