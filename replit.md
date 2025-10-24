@@ -67,6 +67,16 @@ None specified yet.
 - **Session Management:** `express-session` (for the web dashboard)
 
 ## Recent Changes
+- **October 24, 2025:**
+  - **Mining Session Tracker System:** Enhanced mining system with comprehensive session tracking
+    - Created `miningTracker.ts` utility for tracking all active and unclaimed mining sessions
+    - Added `/mining-sessions` command to view real-time server-wide mining statistics
+    - Implemented automatic cleanup system that removes claimed sessions older than 24 hours
+    - Cleanup runs automatically on each `/mine` command execution to prevent data file growth
+    - Provides overview stats: active sessions, solo/coop counts, unclaimed rewards, pending gold
+    - Displays progress bars and time remaining for all active mining operations
+    - Ready-to-claim sessions highlighted for user convenience
+    - Fully integrated with existing solo (1h30m) and cooperative (30min) mining modes
 - **October 22, 2025:**
   - **Enterprise Performance Optimization:** Complete bot overhaul for professional-grade performance
     - **In-Memory Cache System:** Implemented `cacheManager.ts` with automatic sync, TTL, and LRU eviction
