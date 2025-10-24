@@ -30,10 +30,10 @@ for (const category of commandCategories) {
 }
 
 const token = process.env.DISCORD_TOKEN;
-const clientId = process.env.CLIENT_ID;
+const clientId = process.env.DISCORD_CLIENT_ID || process.env.CLIENT_ID;
 
 if (!token || !clientId) {
-  console.error('❌ ERROR: DISCORD_TOKEN or CLIENT_ID not configured in environment variables');
+  console.error('❌ ERROR: DISCORD_TOKEN or DISCORD_CLIENT_ID not configured in environment variables');
   process.exit(1);
 }
 
