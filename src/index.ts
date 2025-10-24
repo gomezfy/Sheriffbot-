@@ -16,6 +16,7 @@ import {
   setupPerformanceMonitoring,
   healthCheck
 } from './utils/performance';
+import { startAutomaticTerritoryIncome } from './utils/territoryIncome';
 
 // Validate environment variables before starting
 console.log('🔐 Validating environment variables...');
@@ -356,6 +357,10 @@ client.login(token)
     console.log('🤠 Sheriff Bot is ready!\n');
     console.log('⚡ Production optimizations active');
     console.log(`📊 Monitoring ${client.guilds.cache.size} guilds`);
+    
+    // Start automatic territory income system
+    startAutomaticTerritoryIncome(client);
+    
     healthCheck.markHealthy();
   })
   .catch((error: Error) => {
