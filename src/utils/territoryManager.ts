@@ -74,7 +74,7 @@ export const TERRITORIES: Territory[] = [
     ],
     rarity: 'rare',
     color: 0xFF8C00, // Dark orange
-    image: 'https://a29dd531-f71d-4915-9167-800ec4035a0c-00-1d3zcnj95ikzr.kirk.replit.dev/assets/saloon.png'
+    image: 'https://45ea4734-ba05-4935-a258-2132b2c24194-00-pzkrl0aib0wp.picard.replit.dev/assets/saloon.png'
   },
   {
     id: 'gold_mine_shares',
@@ -90,7 +90,7 @@ export const TERRITORIES: Territory[] = [
     ],
     rarity: 'epic',
     color: 0xFFD700, // Gold
-    image: 'https://a29dd531-f71d-4915-9167-800ec4035a0c-00-1d3zcnj95ikzr.kirk.replit.dev/assets/mine.png'
+    image: 'https://45ea4734-ba05-4935-a258-2132b2c24194-00-pzkrl0aib0wp.picard.replit.dev/assets/mine.png'
   },
   {
     id: 'ranch',
@@ -106,7 +106,7 @@ export const TERRITORIES: Territory[] = [
     ],
     rarity: 'legendary',
     color: 0x8B4513, // Saddle brown
-    image: 'https://a29dd531-f71d-4915-9167-800ec4035a0c-00-1d3zcnj95ikzr.kirk.replit.dev/assets/ranch.png'
+    image: 'https://45ea4734-ba05-4935-a258-2132b2c24194-00-pzkrl0aib0wp.picard.replit.dev/assets/ranch.png'
   }
 ];
 
