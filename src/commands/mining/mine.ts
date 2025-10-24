@@ -2,6 +2,7 @@ import { SlashCommandBuilder, EmbedBuilder, ActionRowBuilder, ButtonBuilder, But
 import fs from 'fs';
 import path from 'path';
 import { getSilverCoinEmoji, getGoldBarEmoji } from '../../utils/customEmojis';
+import { cleanupOldSessions } from '../../utils/miningTracker';
 const { addItem, getInventory, removeItem, transferItem } = require('../../utils/inventoryManager');
 const { addUserSilver, getUserSilver, removeUserSilver } = require('../../utils/dataManager');
 const { readData, writeData } = require('../../utils/database');
@@ -74,6 +75,9 @@ module.exports = {
     .setDescription('⛏️ Mine for gold in the mountains'),
   async execute(interaction: ChatInputCommandInteraction): Promise<void> {
     const userId = interaction.user.id;
+    
+    // Clean up old claimed sessions (older than 24 hours)
+    cleanupOldSessions();
     
     // Verificar se já está minerando
     const activeMining = getActiveMining(userId);
