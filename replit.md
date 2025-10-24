@@ -68,6 +68,14 @@ None specified yet.
 
 ## Recent Changes
 - **October 24, 2025:**
+  - **Territory Investment System:** Implemented premium territory ownership feature
+    - Created `/territories` command with interactive carousel interface
+    - 3 territories available: Saloon Business (360k), Gold Mine Shares (699k), Ranch (810k)
+    - Each territory provides unique daily income and exclusive benefits
+    - Designed with extensibility for adding more territories in the future
+    - Features navigation buttons, purchase validation, and ownership tracking
+    - Real-time state updates ensure accurate affordability and ownership status
+    - Persistent storage in `territories.json` for ownership data
   - **Gold Value Adjustment:** Increased gold bar value from 700 to 13,439 Silver Coins
     - Updated `/middleman` command exchange rate
     - Updated `/mine` command gold value display
