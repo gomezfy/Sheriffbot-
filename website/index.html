@@ -70,7 +70,7 @@
                 </div>
                 <div class="hero-badges">
                     <span class="badge">⚡ <strong>4x Faster</strong> - 150-300ms</span>
-                    <span class="badge">🎯 <span data-i18n="hero_badge_commands">35 Commands</span></span>
+                    <span class="badge">🎯 <span data-i18n="hero_badge_commands">36 Commands</span></span>
                     <span class="badge">🎨 Custom Emojis</span>
                     <span class="badge">🌍 <span data-i18n="hero_badge_languages">4 Languages</span></span>
                     <span class="badge">📊 90% Less I/O</span>
@@ -108,7 +108,7 @@
                     <p style="color: #888; font-size: 14px; margin-top: 10px;">In-memory caching system</p>
                 </div>
                 <div style="background: rgba(255,255,255,0.05); padding: 40px; border-radius: 20px; border: 2px solid rgba(255,215,0,0.3);">
-                    <div style="font-size: 56px; font-weight: 900; background: linear-gradient(135deg, #FFD700, #FFA500); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">35</div>
+                    <div style="font-size: 56px; font-weight: 900; background: linear-gradient(135deg, #FFD700, #FFA500); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">36</div>
                     <div style="font-size: 18px; color: #aaa; font-weight: 600; margin-top: 10px;">Total Commands</div>
                     <p style="color: #888; font-size: 14px; margin-top: 10px;">All categories covered</p>
                 </div>
@@ -173,10 +173,10 @@
                     <h3 data-i18n="feature_economy_title">Economy System</h3>
                     <p data-i18n="feature_economy_desc">Dual currency: Saloon Tokens (premium) and Silver Coins (standard)</p>
                     <ul class="feature-list">
-                        <li data-i18n="feature_economy_1">Weight-based inventory (100kg)</li>
-                        <li data-i18n="feature_economy_2">🛠️ 5 Western Jobs (/work)</li>
-                        <li data-i18n="feature_economy_3">🏆 Leaderboard System</li>
-                        <li data-i18n="feature_economy_4">Convertible Gold Bars</li>
+                        <li data-i18n="feature_economy_1">Weight-based inventory (100-500kg)</li>
+                        <li data-i18n="feature_economy_2">🏆 Visual Leaderboard</li>
+                        <li data-i18n="feature_economy_3">💼 Territory Investments (passive income)</li>
+                        <li data-i18n="feature_economy_4">🎁 Daily Rewards & /redeem codes</li>
                     </ul>
                 </div>
 
@@ -259,12 +259,24 @@
                     </ul>
                 </div>
 
+                <div class="feature-card">
+                    <div class="feature-icon">🏛️</div>
+                    <h3 data-i18n="feature_territories_title">Territory System</h3>
+                    <p data-i18n="feature_territories_desc">Invest in businesses and receive automatic passive income</p>
+                    <ul class="feature-list">
+                        <li data-i18n="feature_territories_1">🏪 Saloon Business (400 coins/day)</li>
+                        <li data-i18n="feature_territories_2">⛏️ Gold Mine Shares (600 coins/day + 2 bars/week)</li>
+                        <li data-i18n="feature_territories_3">🤠 Automatic income every 23h</li>
+                        <li data-i18n="feature_territories_4">📬 DM notifications with breakdown</li>
+                    </ul>
+                </div>
+
                 <div class="feature-card highlight">
                     <div class="feature-icon">💬</div>
                     <h3 data-i18n="feature_autoreply_title">Western Auto-Reply</h3>
-                    <p data-i18n="feature_autoreply_desc">100+ themed phrases in 3 languages</p>
+                    <p data-i18n="feature_autoreply_desc">100+ themed phrases in 4 languages</p>
                     <ul class="feature-list">
-                        <li data-i18n="feature_autoreply_1">PT-BR, EN-US, ES-ES</li>
+                        <li data-i18n="feature_autoreply_1">PT-BR, EN-US, ES-ES, FR</li>
                         <li data-i18n="feature_autoreply_2">30+ keywords</li>
                         <li data-i18n="feature_autoreply_3">Anti-spam cooldown</li>
                     </ul>
@@ -277,19 +289,15 @@
     <section id="commands" class="commands">
         <div class="container">
             <h2 class="section-title" data-i18n="commands_title">📋 Available Commands</h2>
-            <p class="section-subtitle" data-i18n="commands_subtitle">35 slash commands organized by category</p>
+            <p class="section-subtitle" data-i18n="commands_subtitle">36 slash commands organized by category</p>
             
             <div class="commands-grid">
                 <div class="command-category">
-                    <h3 data-i18n="cmd_economy">💰 Economy (7)</h3>
+                    <h3 data-i18n="cmd_economy">💰 Economy (9)</h3>
                     <div class="command-list">
                         <div class="command-item">
                             <code>/daily</code>
                             <span data-i18n="cmd_economy_daily">Daily reward</span>
-                        </div>
-                        <div class="command-item">
-                            <code>/work</code>
-                            <span data-i18n="cmd_economy_work">Work a job to earn coins</span>
                         </div>
                         <div class="command-item">
                             <code>/leaderboard</code>
@@ -301,11 +309,19 @@
                         </div>
                         <div class="command-item">
                             <code>/give</code>
-                            <span data-i18n="cmd_economy_give">Give coins</span>
+                            <span data-i18n="cmd_economy_give">Give coins to others</span>
                         </div>
                         <div class="command-item">
                             <code>/middleman</code>
                             <span data-i18n="cmd_economy_middleman">Exchange currencies</span>
+                        </div>
+                        <div class="command-item">
+                            <code>/territories</code>
+                            <span data-i18n="cmd_economy_territories">Invest in territories (passive income)</span>
+                        </div>
+                        <div class="command-item">
+                            <code>/redeem</code>
+                            <span data-i18n="cmd_economy_redeem">Redeem shop codes</span>
                         </div>
                         <div class="command-item">
                             <code>/migrate</code>
@@ -586,7 +602,7 @@
             <h2 class="section-title" data-i18n="stats_title">📊 Statistics</h2>
             <div class="stats-grid">
                 <div class="stat-card">
-                    <div class="stat-number">26</div>
+                    <div class="stat-number">36</div>
                     <div class="stat-label" data-i18n="stats_commands">Commands</div>
                 </div>
                 <div class="stat-card">
@@ -598,7 +614,7 @@
                     <div class="stat-label" data-i18n="stats_events">Events</div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-number">3</div>
+                    <div class="stat-number">4</div>
                     <div class="stat-label" data-i18n="stats_languages">Languages</div>
                 </div>
                 <div class="stat-card">
@@ -623,7 +639,7 @@
                         Sheriff Bot is a Discord bot with Wild West theme that offers a complete experience of economy, mining, games and much more!
                     </p>
                     <p data-i18n="about_p2" data-i18n-html="true">
-                        Built with <strong>Discord.js v14</strong>, the bot uses <strong>Canvas</strong> to generate custom images (profile cards, wanted posters) and supports <strong>3 languages</strong> (PT-BR, EN-US, ES-ES).
+                        Built with <strong>Discord.js v14</strong>, the bot uses <strong>Canvas</strong> to generate custom images (profile cards, wanted posters) and supports <strong>4 languages</strong> (PT-BR, EN-US, ES-ES, FR).
                     </p>
                     <div class="tech-stack">
                         <h4 data-i18n="about_tech">🔧 Technologies:</h4>
@@ -702,9 +718,9 @@
                 <div class="footer-info">
                     <h4 data-i18n="footer_resources">Resources</h4>
                     <ul>
-                        <li data-i18n="footer_commands_count">26 Commands</li>
+                        <li data-i18n="footer_commands_count">36 Commands</li>
                         <li data-i18n="footer_emojis_count">47 Emojis</li>
-                        <li data-i18n="footer_languages_count">3 Languages</li>
+                        <li data-i18n="footer_languages_count">4 Languages</li>
                         <li data-i18n="footer_logs_count">9 Log Types</li>
                     </ul>
                 </div>
