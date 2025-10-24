@@ -8,11 +8,35 @@ const router = express.Router();
 const DISCORD_CLIENT_ID = process.env.DISCORD_CLIENT_ID || '1426734768111747284';
 const DISCORD_CLIENT_SECRET = process.env.DISCORD_CLIENT_SECRET || '';
 const DISCORD_BOT_TOKEN = process.env.DISCORD_TOKEN || '';
-const REDIRECT_URI = process.env.REPL_SLUG ? 
-    `https://${process.env.REPL_SLUG}.${process.env.REPL_OWNER}.repl.co/api/auth/callback` :
-    'http://localhost:5000/api/auth/callback';
+
+const getRedirectUri = () => {
+    if (process.env.REPLIT_DEV_DOMAIN) {
+        return `https://${process.env.REPLIT_DEV_DOMAIN}/api/auth/callback`;
+    }
+    if (process.env.REPL_SLUG && process.env.REPL_OWNER) {
+        return `https://${process.env.REPL_SLUG}.${process.env.REPL_OWNER}.repl.co/api/auth/callback`;
+    }
+    return 'http://localhost:5000/api/auth/callback';
+};
+
+const REDIRECT_URI = getRedirectUri();
 
 const guildConfigPath = path.join(__dirname, '..', '..', 'data', 'guild-config.json');
+
+interface GuildConfig {
+    logsEnabled?: boolean;
+    logsChannel?: string;
+    welcomeEnabled?: boolean;
+    welcomeChannel?: string;
+    welcomeMessage?: string;
+    wantedEnabled?: boolean;
+    wantedChannel?: string;
+    language?: string;
+    autoRoleEnabled?: boolean;
+    autoRoleId?: string;
+    updatedAt?: number;
+    updatedBy?: string;
+}
 
 function ensureGuildConfigFile(): void {
     const dataDir = path.dirname(guildConfigPath);
@@ -24,14 +48,24 @@ function ensureGuildConfigFile(): void {
     }
 }
 
-function loadGuildConfigs(): any {
+function loadGuildConfigs(): Record<string, GuildConfig> {
     ensureGuildConfigFile();
-    return JSON.parse(fs.readFileSync(guildConfigPath, 'utf-8'));
+    try {
+        return JSON.parse(fs.readFileSync(guildConfigPath, 'utf-8'));
+    } catch (error) {
+        console.error('Error loading guild configs:', error);
+        return {};
+    }
 }
 
-function saveGuildConfigs(data: any): void {
+function saveGuildConfigs(data: Record<string, GuildConfig>): void {
     ensureGuildConfigFile();
-    fs.writeFileSync(guildConfigPath, JSON.stringify(data, null, 2));
+    try {
+        fs.writeFileSync(guildConfigPath, JSON.stringify(data, null, 2));
+    } catch (error) {
+        console.error('Error saving guild configs:', error);
+        throw error;
+    }
 }
 
 function requireAuth(req: Request, res: Response, next: NextFunction): void | Response {
@@ -154,6 +188,28 @@ router.get('/guilds', requireAuth as any, async (req: Request, res: Response) =>
     }
 });
 
+router.get('/guilds/:guildId', requireAuth as any, async (req: Request, res: Response) => {
+    const { guildId } = req.params;
+    
+    if (!DISCORD_BOT_TOKEN) {
+        return res.status(500).json({ error: 'Bot token not configured' });
+    }
+    
+    try {
+        const guildResponse = await axios.get(`https://discord.com/api/guilds/${guildId}?with_counts=true`, {
+            headers: {
+                Authorization: `Bot ${DISCORD_BOT_TOKEN}`
+            }
+        });
+        
+        res.json(guildResponse.data);
+        
+    } catch (error: any) {
+        console.error('Error fetching guild:', error.response?.data || error.message);
+        res.status(500).json({ error: 'Failed to fetch guild information' });
+    }
+});
+
 router.get('/guilds/:guildId/channels', requireAuth as any, async (req: Request, res: Response) => {
     const { guildId } = req.params;
     
@@ -168,11 +224,39 @@ router.get('/guilds/:guildId/channels', requireAuth as any, async (req: Request,
             }
         });
         
-        res.json(channelsResponse.data);
+        const textChannels = channelsResponse.data.filter((channel: any) => 
+            channel.type === 0 || channel.type === 5
+        );
+        
+        res.json(textChannels);
         
     } catch (error: any) {
         console.error('Error fetching channels:', error.response?.data || error.message);
         res.status(500).json({ error: 'Failed to fetch channels' });
+    }
+});
+
+router.get('/guilds/:guildId/roles', requireAuth as any, async (req: Request, res: Response) => {
+    const { guildId } = req.params;
+    
+    if (!DISCORD_BOT_TOKEN) {
+        return res.status(500).json({ error: 'Bot token not configured' });
+    }
+    
+    try {
+        const rolesResponse = await axios.get(`https://discord.com/api/guilds/${guildId}/roles`, {
+            headers: {
+                Authorization: `Bot ${DISCORD_BOT_TOKEN}`
+            }
+        });
+        
+        const sortedRoles = rolesResponse.data.sort((a: any, b: any) => b.position - a.position);
+        
+        res.json(sortedRoles);
+        
+    } catch (error: any) {
+        console.error('Error fetching roles:', error.response?.data || error.message);
+        res.status(500).json({ error: 'Failed to fetch roles' });
     }
 });
 
@@ -181,7 +265,7 @@ router.get('/guilds/:guildId/config', requireAuth as any, async (req: Request, r
     
     try {
         const configs = loadGuildConfigs();
-        const config = configs[guildId] || {
+        const config: GuildConfig = configs[guildId] || {
             logsEnabled: false,
             logsChannel: '',
             welcomeEnabled: false,
@@ -189,7 +273,9 @@ router.get('/guilds/:guildId/config', requireAuth as any, async (req: Request, r
             welcomeMessage: 'Welcome {user} to {server}! 🤠',
             wantedEnabled: false,
             wantedChannel: '',
-            language: 'en-US'
+            language: 'en-US',
+            autoRoleEnabled: false,
+            autoRoleId: ''
         };
         
         res.json(config);
@@ -202,7 +288,11 @@ router.get('/guilds/:guildId/config', requireAuth as any, async (req: Request, r
 
 router.post('/guilds/:guildId/config', requireAuth as any, async (req: Request, res: Response) => {
     const { guildId } = req.params;
-    const config = req.body;
+    const config: GuildConfig = req.body;
+    
+    if (!config || typeof config !== 'object') {
+        return res.status(400).json({ error: 'Invalid configuration data' });
+    }
     
     try {
         const configs = loadGuildConfigs();
@@ -214,11 +304,117 @@ router.post('/guilds/:guildId/config', requireAuth as any, async (req: Request, 
         
         saveGuildConfigs(configs);
         
-        res.json({ success: true });
+        res.json({ success: true, message: 'Configuration saved successfully' });
         
     } catch (error) {
         console.error('Error saving config:', error);
         res.status(500).json({ error: 'Failed to save configuration' });
+    }
+});
+
+router.delete('/guilds/:guildId/config', requireAuth as any, async (req: Request, res: Response) => {
+    const { guildId } = req.params;
+    
+    try {
+        const configs = loadGuildConfigs();
+        
+        if (configs[guildId]) {
+            delete configs[guildId];
+            saveGuildConfigs(configs);
+            res.json({ success: true, message: 'Configuration reset successfully' });
+        } else {
+            res.json({ success: true, message: 'No configuration to reset' });
+        }
+        
+    } catch (error) {
+        console.error('Error resetting config:', error);
+        res.status(500).json({ error: 'Failed to reset configuration' });
+    }
+});
+
+router.get('/guilds/:guildId/stats', requireAuth as any, async (req: Request, res: Response) => {
+    const { guildId } = req.params;
+    
+    try {
+        const economyPath = path.join(__dirname, '..', '..', 'src', 'data', 'economy.json');
+        const xpPath = path.join(__dirname, '..', '..', 'src', 'data', 'xp.json');
+        
+        let totalMembers = 0;
+        let totalSilver = 0;
+        let totalGold = 0;
+        let totalLevels = 0;
+        
+        if (fs.existsSync(economyPath)) {
+            const economyData = JSON.parse(fs.readFileSync(economyPath, 'utf-8'));
+            const guildEconomy = economyData[guildId] || {};
+            
+            totalMembers = Object.keys(guildEconomy).length;
+            Object.values(guildEconomy).forEach((user: any) => {
+                totalSilver += user.silver || 0;
+                totalGold += user.gold || 0;
+            });
+        }
+        
+        if (fs.existsSync(xpPath)) {
+            const xpData = JSON.parse(fs.readFileSync(xpPath, 'utf-8'));
+            const guildXp = xpData[guildId] || {};
+            
+            Object.values(guildXp).forEach((user: any) => {
+                totalLevels += user.level || 0;
+            });
+        }
+        
+        res.json({
+            totalMembers,
+            totalSilver,
+            totalGold,
+            totalLevels,
+            averageLevel: totalMembers > 0 ? Math.round(totalLevels / totalMembers) : 0
+        });
+        
+    } catch (error) {
+        console.error('Error fetching stats:', error);
+        res.json({
+            totalMembers: 0,
+            totalSilver: 0,
+            totalGold: 0,
+            totalLevels: 0,
+            averageLevel: 0
+        });
+    }
+});
+
+router.get('/bot/status', requireAuth as any, async (req: Request, res: Response) => {
+    if (!DISCORD_BOT_TOKEN) {
+        return res.json({ 
+            online: false, 
+            error: 'Bot token not configured' 
+        });
+    }
+    
+    try {
+        const botResponse = await axios.get('https://discord.com/api/users/@me', {
+            headers: {
+                Authorization: `Bot ${DISCORD_BOT_TOKEN}`
+            }
+        });
+        
+        res.json({
+            online: true,
+            bot: {
+                id: botResponse.data.id,
+                username: botResponse.data.username,
+                discriminator: botResponse.data.discriminator,
+                avatar: botResponse.data.avatar
+            }
+        });
+        
+    } catch (error: any) {
+        console.error('Error checking bot status:', error.message);
+        res.json({ 
+            online: false, 
+            error: 'Failed to connect to bot' 
+        });
     }
 });
 
