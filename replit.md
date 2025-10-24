@@ -54,3 +54,24 @@ None specified yet.
 - **Payment Processing:** `Hotmart API` (for e-commerce)
 - **Canvas Rendering:** `@napi-rs/canvas`
 - **Session Management:** `express-session` (for the web dashboard)
+
+## Recent Changes
+- **October 24, 2025:**
+  - **Mining Sessions Button Integration:** Improved UX for mining session tracking
+    - Removed `/mining-sessions` slash command (deprecated)
+    - Integrated "📊 Ver Sessões" button directly into `/mine` command
+    - Button now appears in ALL `/mine` states: idle, in-progress, and claim-ready
+    - Users can view server-wide mining statistics from any mining screen
+    - Shows active sessions, unclaimed rewards, progress bars, and time remaining
+    - Ephemeral responses ensure privacy and reduce channel clutter
+    - Consolidated functionality improves discoverability and accessibility
+  - **Automatic Territory Income System:** Implemented automatic territory income distribution
+    - Changed payout cooldown from 24 hours to 23 hours for more frequent rewards
+    - Created `startAutomaticTerritoryIncome()` function that runs on bot startup
+    - System checks every hour for users eligible to receive territory income
+    - Automatically credits Silver Coins to user inventory when 23 hours have passed
+    - Sends DM notification to users with breakdown of income from each territory
+    - Includes 1-second delay between users to avoid Discord rate limiting
+    - Integrated into main bot initialization in `index.ts`
+    - Users no longer need to manually claim territory income with `/claim-territories`
+    - Income data persisted in `territory-income.json` with timestamps
