@@ -5,7 +5,7 @@ const { getInventory, removeItem } = require('../../utils/inventoryManager');
 const { addUserSilver } = require('../../utils/dataManager');
 
 const TOKEN_TO_SILVER = 50; // 1 Saloon Token = 50 Silver Coins
-const GOLD_TO_SILVER = 700; // 1 Gold Bar = 700 Silver Coins
+const GOLD_TO_SILVER = 13439; // 1 Gold Bar = 13,439 Silver Coins
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -29,7 +29,7 @@ module.exports = {
       .setColor(0xFFD700)
       .setTitle('💱 MIDDLEMAN - CURRENCY EXCHANGE')
       .setImage('attachment://black-market.png')
-      .setDescription(`**Welcome to the Middleman, partner!**\n\nExchange your valuable items for Silver Coins at fair rates.\n\n**📊 EXCHANGE RATES**\n${tokenEmoji} 1 Saloon Token = **50** ${silverEmoji} Silver Coins\n${goldEmoji} 1 Gold Bar = **700** ${silverEmoji} Silver Coins`)
+      .setDescription(`**Welcome to the Middleman, partner!**\n\nExchange your valuable items for Silver Coins at fair rates.\n\n**📊 EXCHANGE RATES**\n${tokenEmoji} 1 Saloon Token = **50** ${silverEmoji} Silver Coins\n${goldEmoji} 1 Gold Bar = **13,439** ${silverEmoji} Silver Coins`)
       .addFields(
         {
           name: '💼 Your Inventory',

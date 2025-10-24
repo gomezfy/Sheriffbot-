@@ -7,7 +7,7 @@ const { addItem, getInventory, removeItem, transferItem } = require('../../utils
 const { addUserSilver, getUserSilver, removeUserSilver } = require('../../utils/dataManager');
 const { readData, writeData } = require('../../utils/database');
 
-const GOLD_VALUE = 700; // Silver Coins por barra de ouro
+const GOLD_VALUE = 13439; // Silver Coins por barra de ouro
 const SOLO_DURATION = 90 * 60 * 1000; // 1h30m (90 minutos)
 const COOP_DURATION = 30 * 60 * 1000; // 30 minutos
 

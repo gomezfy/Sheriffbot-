@@ -68,6 +68,10 @@ None specified yet.
 
 ## Recent Changes
 - **October 24, 2025:**
+  - **Gold Value Adjustment:** Increased gold bar value from 700 to 13,439 Silver Coins
+    - Updated `/middleman` command exchange rate
+    - Updated `/mine` command gold value display
+    - Makes gold mining significantly more valuable for players
   - **Mining Session Tracker System:** Enhanced mining system with comprehensive session tracking
     - Created `miningTracker.ts` utility for tracking all active and unclaimed mining sessions
     - Added `/mining-sessions` command to view real-time server-wide mining statistics
