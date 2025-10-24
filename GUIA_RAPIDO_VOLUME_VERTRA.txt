@@ -40,16 +40,13 @@
    └───────────────────────────────────────┘
 
 ┌─────────────────────────────────────────────────────────────┐
-│ 4️⃣  ADICIONAR VARIÁVEL DE AMBIENTE                          │
+│ 4️⃣  REINICIAR O BOT                                         │
 └─────────────────────────────────────────────────────────────┘
-   Settings → Environment Variables → Add Variable
-   
-   ┌───────────────────────────────────────┐
-   │ NODE_ENV = production                 │
-   └───────────────────────────────────────┘
+   ✅ O bot detecta produção AUTOMATICAMENTE!
+   ✅ NÃO precisa configurar NODE_ENV=production
 
 ┌─────────────────────────────────────────────────────────────┐
-│ 5️⃣  REINICIAR O BOT                                         │
+│ 5️⃣  FAZER GIT PUSH PARA O VERTRA                            │
 └─────────────────────────────────────────────────────────────┘
    → Settings → Restart Application
    → Ou clique em "Restart"

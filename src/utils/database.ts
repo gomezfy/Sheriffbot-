@@ -4,12 +4,41 @@ import { isValidDataFilename } from './security';
 import { measureDatabaseOperation } from './performance';
 
 /**
+ * Detect if running in production environment
+ * Production indicators:
+ * 1. NODE_ENV is set to 'production'
+ * 2. Running from compiled code (dist/ directory)
+ * 3. src/ directory doesn't exist
+ */
+function isProductionEnvironment(): boolean {
+  // Check NODE_ENV first
+  if (process.env.NODE_ENV === 'production') {
+    return true;
+  }
+  
+  // Check if running from dist/ (compiled code)
+  // In production: node dist/src/index.js
+  // In development: ts-node src/index.ts
+  const mainModule = process.argv[1];
+  if (mainModule && mainModule.includes('dist/')) {
+    return true;
+  }
+  
+  // Fallback: check if src/ directory exists
+  if (!fs.existsSync(path.join(process.cwd(), 'src'))) {
+    return true;
+  }
+  
+  return false;
+}
+
+/**
  * Get the correct path for data/assets based on environment
- * In production (compiled): /app/data, /app/assets
- * In development: /workspace/src/data, /workspace/assets
+ * In production (compiled): /app/data or /workspace/data
+ * In development: /workspace/src/data
  */
 export function getDataPath(...segments: string[]): string {
-  const isProduction = process.env.NODE_ENV === 'production' || !fs.existsSync(path.join(process.cwd(), 'src'));
+  const isProduction = isProductionEnvironment();
   
   if (isProduction) {
     // Production: use root-level data directory

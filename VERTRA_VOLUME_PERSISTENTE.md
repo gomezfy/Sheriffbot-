@@ -165,14 +165,15 @@ export function getDataPath(...segments: string[]): string {
 }
 ```
 
-### Garantir Ambiente de Produção
+### ✅ Detecção Automática de Ambiente
 
-Adicione às **Environment Variables** no Vertra:
-```
-NODE_ENV=production
-```
+O bot agora **detecta automaticamente** se está em produção! Não precisa configurar `NODE_ENV`.
 
-Isso garante que o bot use `/app/data` ao invés de `src/data`.
+**Como funciona:**
+- Quando roda `node dist/src/shard.js` → Detecta produção → Usa `/app/data`
+- Quando roda `ts-node src/index.ts` → Detecta desenvolvimento → Usa `src/data`
+
+**Você NÃO precisa configurar `NODE_ENV=production` no Vertra!**
 
 ---
 
