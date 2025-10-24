@@ -195,7 +195,8 @@ export function isValidDataFilename(filename: string): boolean {
     'punishment.json',
     'mining.json',
     'work.json',
-    'redemption-codes.json'
+    'redemption-codes.json',
+    'territories.json'
   ];
   
   return allowedFiles.includes(filename);
