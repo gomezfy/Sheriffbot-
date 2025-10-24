@@ -94,7 +94,7 @@ module.exports = {
         
         const viewSessionsButton = new ButtonBuilder()
           .setCustomId('view_sessions_progress')
-          .setLabel('📊 Ver Sessões')
+          .setLabel('📊 View Sessions')
           .setStyle(ButtonStyle.Secondary);
         
         const progressRow = new ActionRowBuilder<ButtonBuilder>().addComponents(viewSessionsButton);
@@ -184,7 +184,7 @@ Pending Gold: ${stats.totalGoldPending} ${goldEmoji}
         
         const viewSessionsClaimButton = new ButtonBuilder()
           .setCustomId('view_sessions_claim')
-          .setLabel('📊 Ver Sessões')
+          .setLabel('📊 View Sessions')
           .setStyle(ButtonStyle.Secondary);
         
         const row = new ActionRowBuilder<ButtonBuilder>().addComponents(claimButton, viewSessionsClaimButton);
@@ -329,7 +329,7 @@ Pending Gold: ${stats.totalGoldPending} ${goldEmoji}
           .setStyle(ButtonStyle.Success),
         new ButtonBuilder()
           .setCustomId('view_sessions')
-          .setLabel('📊 Ver Sessões')
+          .setLabel('📊 View Sessions')
           .setStyle(ButtonStyle.Secondary)
       );
 
