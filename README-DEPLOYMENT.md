@@ -43,7 +43,7 @@ Antes de publicar, configure estas variáveis no painel do Replit:
 
 **Desenvolvimento:**
 - `npm run dev` - Inicia bot em modo desenvolvimento
-- `npm run dev:shard` - Inicia bot com sharding
+- `npm run dev:shard` - Start bot with sharding
 
 **Produção:**
 - `npm run start` - Inicia bot compilado
