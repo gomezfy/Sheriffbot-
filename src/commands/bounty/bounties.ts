@@ -1,6 +1,6 @@
 import { SlashCommandBuilder, ChatInputCommandInteraction } from 'discord.js';
 import { infoEmbed, warningEmbed, formatCurrency } from '../../utils/embeds';
-import { getScrollEmoji, getDartEmoji, getMoneybagEmoji, getCowboysEmoji } from '../../utils/customEmojis';
+import { getScrollEmoji, getDartEmoji, getMoneybagEmoji, getCowboysEmoji, getStarEmoji } from '../../utils/customEmojis';
 const { getAllBounties } = require('../../utils/dataManager');
 
 interface Bounty {
@@ -43,7 +43,8 @@ module.exports = {
     const groupEmoji = getCowboysEmoji();
     
     for (const bounty of sortedBounties.slice(0, 10)) {
-      const stars = '⭐'.repeat(Math.min(Math.floor(bounty.totalAmount / 5000), 5)) || '🔸';
+      const starEmoji = getStarEmoji();
+      const stars = starEmoji.repeat(Math.min(Math.floor(bounty.totalAmount / 5000), 5)) || '🔸';
       
       description += `${stars} **${bounty.targetTag}**\n`;
       description += `   ${moneyEmoji} Reward: ${formatCurrency(bounty.totalAmount, 'silver')}\n`;

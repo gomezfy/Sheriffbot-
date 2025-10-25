@@ -1,7 +1,7 @@
 import { SlashCommandBuilder, EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, AttachmentBuilder, ChatInputCommandInteraction ,MessageFlags} from 'discord.js';
 import fs from 'fs';
 import path from 'path';
-import { getSilverCoinEmoji, getGoldBarEmoji, getCowboyEmoji } from '../../utils/customEmojis';
+import { getSilverCoinEmoji, getGoldBarEmoji, getCowboyEmoji, getPickaxeEmoji } from '../../utils/customEmojis';
 import { cleanupOldSessions, getActiveSessions, getUnclaimedSessions, getMiningStats, formatTime as formatMiningTime } from '../../utils/miningTracker';
 const { addItem, getInventory, removeItem, transferItem } = require('../../utils/inventoryManager');
 const { addUserSilver, getUserSilver, removeUserSilver } = require('../../utils/dataManager');
@@ -72,7 +72,7 @@ function formatTime(ms: number) {
 module.exports = {
   data: new SlashCommandBuilder()
     .setName('mine')
-    .setDescription('⛏️ Mine for gold in the mountains'),
+    .setDescription(`${getPickaxeEmoji()} Mine for gold in the mountains`),
   async execute(interaction: ChatInputCommandInteraction): Promise<void> {
     const userId = interaction.user.id;
     
@@ -101,8 +101,8 @@ module.exports = {
         
         const embed = new EmbedBuilder()
           .setColor(0xFFD700)
-          .setTitle('⛏️ MINING IN PROGRESS')
-          .setDescription(`You're currently mining for gold!\n\n${bar}\n\n**Time Remaining:** ${formatTime(timeLeft)}\n**Type:** ${activeMining.type === 'solo' ? '⛏️ Solo Mining' : '👥 Cooperative Mining'}\n**Expected Reward:** ${activeMining.goldAmount} ${goldEmoji} Gold Bar${activeMining.goldAmount > 1 ? 's' : ''}`)
+          .setTitle(`${getPickaxeEmoji()} MINING IN PROGRESS`)
+          .setDescription(`You're currently mining for gold!\n\n${bar}\n\n**Time Remaining:** ${formatTime(timeLeft)}\n**Type:** ${activeMining.type === 'solo' ? `${getPickaxeEmoji()} Solo Mining` : '👥 Cooperative Mining'}\n**Expected Reward:** ${activeMining.goldAmount} ${goldEmoji} Gold Bar${activeMining.goldAmount > 1 ? 's' : ''}`)
           .setFooter({ text: 'Come back when mining is complete!' })
           .setTimestamp();
         
@@ -120,7 +120,7 @@ module.exports = {
 
             const sessionsEmbed = new EmbedBuilder()
               .setColor(0xFFD700)
-              .setTitle('⛏️ MINING SESSIONS TRACKER')
+              .setTitle(`${getPickaxeEmoji()} MINING SESSIONS TRACKER`)
               .setDescription('Current mining operations across the server')
               .addFields({
                 name: '📊 Overview',
@@ -139,7 +139,7 @@ Pending Gold: ${stats.totalGoldPending} ${goldEmoji}
                 const timeLeft = session.endTime - nowTime;
                 const progress = Math.floor(((nowTime - session.startTime) / (session.endTime - session.startTime)) * 10);
                 const progressBar = '█'.repeat(progress) + '░'.repeat(10 - progress);
-                return `<@${uid}>\n${progressBar} \`${formatMiningTime(timeLeft)}\` • ${session.type === 'solo' ? '⛏️ Solo' : '👥 Coop'} • ${session.goldAmount} ${goldEmoji}`;
+                return `<@${uid}>\n${progressBar} \`${formatMiningTime(timeLeft)}\` • ${session.type === 'solo' ? `${getPickaxeEmoji()} Solo` : '👥 Coop'} • ${session.goldAmount} ${goldEmoji}`;
               }).join('\n\n');
 
               sessionsEmbed.addFields({
@@ -151,7 +151,7 @@ Pending Gold: ${stats.totalGoldPending} ${goldEmoji}
 
             if (unclaimedSessions.length > 0) {
               const unclaimedList = unclaimedSessions.slice(0, 5).map(({ userId: uid, session }) => {
-                return `<@${uid}> • ${session.type === 'solo' ? '⛏️' : '👥'} • ${session.goldAmount} ${goldEmoji}`;
+                return `<@${uid}> • ${session.type === 'solo' ? `${getPickaxeEmoji()}` : '👥'} • ${session.goldAmount} ${goldEmoji}`;
               }).join('\n');
 
               sessionsEmbed.addFields({
@@ -169,7 +169,7 @@ Pending Gold: ${stats.totalGoldPending} ${goldEmoji}
               });
             }
 
-            sessionsEmbed.setFooter({ text: '⛏️ Mining sessions update in real-time' }).setTimestamp();
+            sessionsEmbed.setFooter({ text: `${getPickaxeEmoji()} Mining sessions update in real-time` }).setTimestamp();
             await i.reply({ embeds: [sessionsEmbed], flags: MessageFlags.Ephemeral });
           }
         });
@@ -212,7 +212,7 @@ Pending Gold: ${stats.totalGoldPending} ${goldEmoji}
 
             const sessionsEmbed = new EmbedBuilder()
               .setColor(0xFFD700)
-              .setTitle('⛏️ MINING SESSIONS TRACKER')
+              .setTitle(`${getPickaxeEmoji()} MINING SESSIONS TRACKER`)
               .setDescription('Current mining operations across the server')
               .addFields({
                 name: '📊 Overview',
@@ -231,7 +231,7 @@ Pending Gold: ${stats.totalGoldPending} ${goldEmoji}
                 const timeLeft = session.endTime - nowTime;
                 const progress = Math.floor(((nowTime - session.startTime) / (session.endTime - session.startTime)) * 10);
                 const progressBar = '█'.repeat(progress) + '░'.repeat(10 - progress);
-                return `<@${uid}>\n${progressBar} \`${formatMiningTime(timeLeft)}\` • ${session.type === 'solo' ? '⛏️ Solo' : '👥 Coop'} • ${session.goldAmount} ${goldEmoji}`;
+                return `<@${uid}>\n${progressBar} \`${formatMiningTime(timeLeft)}\` • ${session.type === 'solo' ? `${getPickaxeEmoji()} Solo` : '👥 Coop'} • ${session.goldAmount} ${goldEmoji}`;
               }).join('\n\n');
 
               sessionsEmbed.addFields({
@@ -243,7 +243,7 @@ Pending Gold: ${stats.totalGoldPending} ${goldEmoji}
 
             if (unclaimedSessions.length > 0) {
               const unclaimedList = unclaimedSessions.slice(0, 5).map(({ userId: uid, session }) => {
-                return `<@${uid}> • ${session.type === 'solo' ? '⛏️' : '👥'} • ${session.goldAmount} ${goldEmoji}`;
+                return `<@${uid}> • ${session.type === 'solo' ? `${getPickaxeEmoji()}` : '👥'} • ${session.goldAmount} ${goldEmoji}`;
               }).join('\n');
 
               sessionsEmbed.addFields({
@@ -261,7 +261,7 @@ Pending Gold: ${stats.totalGoldPending} ${goldEmoji}
               });
             }
 
-            sessionsEmbed.setFooter({ text: '⛏️ Mining sessions update in real-time' }).setTimestamp();
+            sessionsEmbed.setFooter({ text: `${getPickaxeEmoji()} Mining sessions update in real-time` }).setTimestamp();
             return i.reply({ embeds: [sessionsEmbed], flags: MessageFlags.Ephemeral });
           }
           
@@ -294,7 +294,7 @@ Pending Gold: ${stats.totalGoldPending} ${goldEmoji}
           await i.editReply({
             embeds: [{
               color: 0xFFD700,
-              title: '⛏️ GOLD COLLECTED!',
+              title: `${getPickaxeEmoji()} GOLD COLLECTED!`,
               description: `\`\`\`diff\n+ You collected ${activeMining.goldAmount} ${goldEmoji} Gold Bar${activeMining.goldAmount > 1 ? 's' : ''}!\n\`\`\`\n💼 Weight: **${addResult.newWeight.toFixed(2)}kg / ${userInventory.maxWeight}kg**`,
               fields: [
                 {
@@ -321,7 +321,7 @@ Pending Gold: ${stats.totalGoldPending} ${goldEmoji}
       .addComponents(
         new ButtonBuilder()
           .setCustomId('mine_solo')
-          .setLabel('⛏️ Mine Alone (1h30m)')
+          .setLabel(`${getPickaxeEmoji()} Mine Alone (1h30m)`)
           .setStyle(ButtonStyle.Primary),
         new ButtonBuilder()
           .setCustomId('mine_coop')
@@ -340,12 +340,12 @@ Pending Gold: ${stats.totalGoldPending} ${goldEmoji}
 
     const embed = new EmbedBuilder()
       .setColor(0xFFD700)
-      .setTitle('⛏️ GOLD MINING')
+      .setTitle(`${getPickaxeEmoji()} GOLD MINING`)
       .setImage('attachment://gold-mining.png')
       .setDescription('Choose your mining method:')
       .addFields(
         {
-          name: '⛏️ Solo Mining',
+          name: `${getPickaxeEmoji()} Solo Mining`,
           value: '```yaml\nDuration: 1h 30min\nReward: 1-3 Gold Bars\nPlayers: 1```',
           inline: true
         },
@@ -384,7 +384,7 @@ Pending Gold: ${stats.totalGoldPending} ${goldEmoji}
 
         const sessionsEmbed = new EmbedBuilder()
           .setColor(0xFFD700)
-          .setTitle('⛏️ MINING SESSIONS TRACKER')
+          .setTitle(`${getPickaxeEmoji()} MINING SESSIONS TRACKER`)
           .setDescription('Current mining operations across the server')
           .addFields(
             {
@@ -408,7 +408,7 @@ Pending Gold: ${stats.totalGoldPending} ${goldEmoji}
               const timeLeft = session.endTime - now;
               const progress = Math.floor(((now - session.startTime) / (session.endTime - session.startTime)) * 10);
               const progressBar = '█'.repeat(progress) + '░'.repeat(10 - progress);
-              return `<@${uid}>\n${progressBar} \`${formatMiningTime(timeLeft)}\` • ${session.type === 'solo' ? '⛏️ Solo' : '👥 Coop'} • ${session.goldAmount} ${goldEmoji}`;
+              return `<@${uid}>\n${progressBar} \`${formatMiningTime(timeLeft)}\` • ${session.type === 'solo' ? '${getPickaxeEmoji()} Solo' : '👥 Coop'} • ${session.goldAmount} ${goldEmoji}`;
             })
             .join('\n\n');
 
@@ -424,7 +424,7 @@ Pending Gold: ${stats.totalGoldPending} ${goldEmoji}
           const unclaimedList = unclaimedSessions
             .slice(0, 5)
             .map(({ userId: uid, session }) => {
-              return `<@${uid}> • ${session.type === 'solo' ? '⛏️' : '👥'} • ${session.goldAmount} ${goldEmoji}`;
+              return `<@${uid}> • ${session.type === 'solo' ? '${getPickaxeEmoji()}' : '👥'} • ${session.goldAmount} ${goldEmoji}`;
             })
             .join('\n');
 
@@ -443,7 +443,7 @@ Pending Gold: ${stats.totalGoldPending} ${goldEmoji}
           });
         }
 
-        sessionsEmbed.setFooter({ text: '⛏️ Use the buttons below to start mining!' })
+        sessionsEmbed.setFooter({ text: `${getPickaxeEmoji()} Use the buttons below to start mining!` })
           .setTimestamp();
 
         await i.reply({ embeds: [sessionsEmbed], flags: MessageFlags.Ephemeral });
@@ -460,7 +460,7 @@ Pending Gold: ${stats.totalGoldPending} ${goldEmoji}
         await i.update({
           embeds: [{
             color: 0xFFD700,
-            title: '⛏️ SOLO MINING STARTED!',
+            title: `${getPickaxeEmoji()} SOLO MINING STARTED!`,
             description: `You started mining for gold!\n\n⏰ **Duration:** 1 hour 30 minutes\n💎 **Expected:** ${goldAmount} ${goldEmoji} Gold Bar${goldAmount > 1 ? 's' : ''}\n\nThe mining will happen automatically.\n**Come back in 1h30m** to collect your gold!`,
             footer: { text: 'Use /mine to check progress!' },
             timestamp: new Date().toISOString()
@@ -479,7 +479,7 @@ Pending Gold: ${stats.totalGoldPending} ${goldEmoji}
           .addComponents(
             new ButtonBuilder()
               .setCustomId('join_mining')
-              .setLabel('⛏️ Join Mining!')
+              .setLabel(`${getPickaxeEmoji()} Join Mining!`)
               .setStyle(ButtonStyle.Success)
           );
 
@@ -528,7 +528,7 @@ Pending Gold: ${stats.totalGoldPending} ${goldEmoji}
           await coopI.update({
             embeds: [{
               color: 0xFFD700,
-              title: '⛏️ COOPERATIVE MINING STARTED!',
+              title: `${getPickaxeEmoji()} COOPERATIVE MINING STARTED!`,
               description: `**${interaction.user.username}** and **${coopI.user.username}** started mining together!\n\n⏰ **Duration:** 30 minutes\n💎 **Total Gold:** ${goldAmount} ${goldEmoji} Gold Bars\n\n**${interaction.user.username}:** ${ownerGold} ${goldEmoji}\n**${coopI.user.username}:** ${partnerGold} ${goldEmoji}\n\nThe mining will happen automatically.\n**Come back in 30 minutes** to collect your gold!`,
               footer: { text: 'Use /mine to check progress!' },
               timestamp: new Date().toISOString()
