@@ -1,5 +1,14 @@
 import { EmbedBuilder } from 'discord.js';
-import { getSilverCoinEmoji, getGoldBarEmoji, getSaloonTokenEmoji } from './customEmojis';
+import { 
+  getSilverCoinEmoji, 
+  getGoldBarEmoji, 
+  getSaloonTokenEmoji,
+  getCheckEmoji,
+  getCancelEmoji,
+  getWarningEmoji,
+  getInfoEmoji,
+  getMoneybagEmoji
+} from './customEmojis';
 
 /**
  * Minimalist Embed System
@@ -61,7 +70,7 @@ export function createMinimalEmbed(options: MinimalEmbedOptions): EmbedBuilder {
  */
 export function successEmbed(title: string, description?: string, footer?: string): EmbedBuilder {
   return createMinimalEmbed({
-    title: `✅ ${title}`,
+    title: `${getCheckEmoji()} ${title}`,
     description,
     footer,
     color: Colors.SUCCESS
@@ -73,7 +82,7 @@ export function successEmbed(title: string, description?: string, footer?: strin
  */
 export function errorEmbed(title: string, description?: string, footer?: string): EmbedBuilder {
   return createMinimalEmbed({
-    title: `❌ ${title}`,
+    title: `${getCancelEmoji()} ${title}`,
     description,
     footer,
     color: Colors.ERROR
@@ -85,7 +94,7 @@ export function errorEmbed(title: string, description?: string, footer?: string)
  */
 export function warningEmbed(title: string, description?: string, footer?: string): EmbedBuilder {
   return createMinimalEmbed({
-    title: `⚠️ ${title}`,
+    title: `${getWarningEmoji()} ${title}`,
     description,
     footer,
     color: Colors.WARNING
@@ -97,7 +106,7 @@ export function warningEmbed(title: string, description?: string, footer?: strin
  */
 export function infoEmbed(title: string, description?: string, footer?: string): EmbedBuilder {
   return createMinimalEmbed({
-    title: `ℹ️ ${title}`,
+    title: `${getInfoEmoji()} ${title}`,
     description,
     footer,
     color: Colors.INFO
@@ -121,7 +130,7 @@ export function neutralEmbed(title: string, description?: string, footer?: strin
  */
 export function economyEmbed(title: string, description?: string, footer?: string): EmbedBuilder {
   return createMinimalEmbed({
-    title: `💰 ${title}`,
+    title: `${getMoneybagEmoji()} ${title}`,
     description,
     footer,
     color: Colors.GOLD,

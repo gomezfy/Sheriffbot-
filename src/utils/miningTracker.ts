@@ -1,6 +1,11 @@
 import { readData, writeData } from './database';
 import { Client, EmbedBuilder } from 'discord.js';
-import { getGoldBarEmoji } from './customEmojis';
+import { 
+  getGoldBarEmoji,
+  getCheckEmoji,
+  getMoneybagEmoji,
+  getGemEmoji
+} from './customEmojis';
 
 interface MiningSession {
   type: 'solo' | 'coop';
@@ -137,10 +142,14 @@ export async function notifyCompletedMining(client: Client): Promise<number> {
           const user = await client.users.fetch(userId);
           const goldEmoji = getGoldBarEmoji();
 
+          const checkEmoji = getCheckEmoji();
+          const moneybagEmoji = getMoneybagEmoji();
+          const gemEmoji = getGemEmoji();
+
           const embed = new EmbedBuilder()
             .setColor(0x00FF00)
-            .setTitle('✅ MINERAÇÃO COMPLETA!')
-            .setDescription(`Sua operação de mineração foi concluída!\n\n💰 **Recompensa:** ${session.goldAmount} ${goldEmoji} Gold Bar${session.goldAmount > 1 ? 's' : ''}!`)
+            .setTitle(`${checkEmoji} MINERAÇÃO COMPLETA!`)
+            .setDescription(`Sua operação de mineração foi concluída!\n\n${moneybagEmoji} **Recompensa:** ${session.goldAmount} ${goldEmoji} Gold Bar${session.goldAmount > 1 ? 's' : ''}!`)
             .addFields(
               {
                 name: '⛏️ Tipo de Mineração',
@@ -148,7 +157,7 @@ export async function notifyCompletedMining(client: Client): Promise<number> {
                 inline: true
               },
               {
-                name: '💎 Ouro Disponível',
+                name: `${gemEmoji} Ouro Disponível`,
                 value: `${session.goldAmount} ${goldEmoji}`,
                 inline: true
               }
