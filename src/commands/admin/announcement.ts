@@ -13,6 +13,13 @@ import {
 } from 'discord.js';
 import * as fs from 'fs';
 import * as path from 'path';
+import { 
+  getCowboyEmoji, 
+  getScrollEmoji, 
+  getCancelEmoji, 
+  getCheckEmoji, 
+  getTimerEmoji 
+} from '../../utils/customEmojis';
 
 interface AnnouncementData {
   templates: Record<string, Template>;
@@ -94,12 +101,12 @@ const COLOR_PRESETS: Record<string, { name: string; hex: string }> = {
 module.exports = {
   data: new SlashCommandBuilder()
     .setName('announcement')
-    .setDescription('🤠 Advanced announcement system with templates and preview')
+    .setDescription(`${getCowboyEmoji()} Advanced announcement system with templates and preview`)
     .setDefaultMemberPermissions(PermissionFlagsBits.Administrator)
     .addSubcommand(sub =>
       sub
         .setName('send')
-        .setDescription('📢 Send an advanced announcement with preview')
+        .setDescription('Send an advanced announcement with preview')
         .addChannelOption(option =>
           option
             .setName('channel')
@@ -174,7 +181,7 @@ module.exports = {
     .addSubcommand(sub =>
       sub
         .setName('template')
-        .setDescription('📝 Manage announcement templates')
+        .setDescription('Manage announcement templates')
         .addStringOption(option =>
           option
             .setName('action')
@@ -203,7 +210,7 @@ module.exports = {
     .addSubcommand(sub =>
       sub
         .setName('history')
-        .setDescription('📜 View announcement history')
+        .setDescription(`${getScrollEmoji()} View announcement history`)
         .addIntegerOption(option =>
           option
             .setName('limit')
@@ -245,7 +252,7 @@ async function handleSend(interaction: ChatInputCommandInteraction): Promise<voi
   // Validate channel type
   if (!channel || !('send' in channel)) {
     await interaction.reply({
-      content: '❌ The channel must be a text channel!',
+      content: `${getCancelEmoji()} The channel must be a text channel!`,
       flags: MessageFlags.Ephemeral
     });
     return;
@@ -255,7 +262,7 @@ async function handleSend(interaction: ChatInputCommandInteraction): Promise<voi
   if (mentionEveryone || mentionHere) {
     if (!interaction.memberPermissions?.has(PermissionFlagsBits.MentionEveryone)) {
       await interaction.reply({
-        content: '❌ You need the "Mention Everyone" permission to use @everyone or @here mentions!',
+        content: `${getCancelEmoji()} You need the "Mention Everyone" permission to use @everyone or @here mentions!`,
         flags: MessageFlags.Ephemeral
       });
       return;
@@ -290,11 +297,11 @@ async function handleSend(interaction: ChatInputCommandInteraction): Promise<voi
     .addComponents(
       new ButtonBuilder()
         .setCustomId('confirm_announcement')
-        .setLabel('✅ Confirm & Send')
+        .setLabel(`${getCheckEmoji()} Confirm & Send`)
         .setStyle(ButtonStyle.Success),
       new ButtonBuilder()
         .setCustomId('cancel_announcement')
-        .setLabel('❌ Cancel')
+        .setLabel(`${getCancelEmoji()} Cancel`)
         .setStyle(ButtonStyle.Danger)
     );
 
