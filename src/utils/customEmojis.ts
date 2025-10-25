@@ -166,3 +166,9 @@ export function getStatsEmoji(): string { return getEmoji('stats'); }
 export function getTimerEmoji(): string { return getEmoji('timer'); }
 export function getWarningEmoji(): string { return getEmoji('warning'); }
 export function getLockEmoji(): string { return getEmoji('lock'); }
+export function getGreenCircle(): string { return '🟢'; }
+export function getRedCircle(): string { return '🔴'; }
+export function getClipboardEmoji(): string { return '📋'; }
+export function getPartyEmoji(): string { return '🎉'; }
+export function getBuildingEmoji(): string { return '🏛️'; }
+export function getSlotMachineEmoji(): string { return '🎰'; }
