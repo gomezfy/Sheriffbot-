@@ -94,7 +94,7 @@ module.exports = {
         
         const viewSessionsButton = new ButtonBuilder()
           .setCustomId('view_sessions_progress')
-          .setLabel('📊 View Sessions')
+          .setLabel('View Sessions')
           .setStyle(ButtonStyle.Secondary);
         
         const progressRow = new ActionRowBuilder<ButtonBuilder>().addComponents(viewSessionsButton);
@@ -179,12 +179,12 @@ Pending Gold: ${stats.totalGoldPending} ${goldEmoji}
         // Mineração completa - pode coletar
         const claimButton = new ButtonBuilder()
           .setCustomId('claim_mining')
-          .setLabel('💎 Collect Gold')
+          .setLabel('Collect Gold')
           .setStyle(ButtonStyle.Success);
         
         const viewSessionsClaimButton = new ButtonBuilder()
           .setCustomId('view_sessions_claim')
-          .setLabel('📊 View Sessions')
+          .setLabel('View Sessions')
           .setStyle(ButtonStyle.Secondary);
         
         const row = new ActionRowBuilder<ButtonBuilder>().addComponents(claimButton, viewSessionsClaimButton);
@@ -321,15 +321,15 @@ Pending Gold: ${stats.totalGoldPending} ${goldEmoji}
       .addComponents(
         new ButtonBuilder()
           .setCustomId('mine_solo')
-          .setLabel(`${getPickaxeEmoji()} Mine Alone (1h30m)`)
+          .setLabel('Mine Alone (1h30m)')
           .setStyle(ButtonStyle.Primary),
         new ButtonBuilder()
           .setCustomId('mine_coop')
-          .setLabel('👥 Find Partner (30min)')
+          .setLabel('Find Partner (30min)')
           .setStyle(ButtonStyle.Success),
         new ButtonBuilder()
           .setCustomId('view_sessions')
-          .setLabel('📊 View Sessions')
+          .setLabel('View Sessions')
           .setStyle(ButtonStyle.Secondary)
       );
 
@@ -479,7 +479,7 @@ Pending Gold: ${stats.totalGoldPending} ${goldEmoji}
           .addComponents(
             new ButtonBuilder()
               .setCustomId('join_mining')
-              .setLabel(`${getPickaxeEmoji()} Join Mining!`)
+              .setLabel('Join Mining!')
               .setStyle(ButtonStyle.Success)
           );
 
