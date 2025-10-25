@@ -38,6 +38,7 @@ export const CUSTOM_EMOJIS = {
   STATS: getDataPath('assets', 'custom-emojis', 'stats.png'),
   TIMER: getDataPath('assets', 'custom-emojis', 'timer.png'),
   WARNING: getDataPath('assets', 'custom-emojis', 'warning.png'),
+  LOCK: getDataPath('assets', 'custom-emojis', 'lock.png'),
 };
 
 // Fallback text emojis (usados se não houver emoji customizado)
@@ -76,6 +77,7 @@ export const EMOJI_TEXT = {
   STATS: '📊',
   TIMER: '⏱️',
   WARNING: '⚠️',
+  LOCK: '🔒',
 };
 
 /**
@@ -163,3 +165,4 @@ export function getStarEmoji(): string { return getEmoji('star', '⭐'); }
 export function getStatsEmoji(): string { return getEmoji('stats', '📊'); }
 export function getTimerEmoji(): string { return getEmoji('timer', '⏱️'); }
 export function getWarningEmoji(): string { return getEmoji('warning', '⚠️'); }
+export function getLockEmoji(): string { return getEmoji('lock', '🔒'); }
