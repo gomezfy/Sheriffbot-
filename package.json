@@ -20,6 +20,7 @@
     "register-metadata": "ts-node src/register-metadata.ts",
     "db:push": "drizzle-kit push",
     "db:studio": "drizzle-kit studio",
+    "db:migrate": "ts-node scripts/migrate-to-postgres.ts",
     "postinstall": "npm run build"
   },
   "keywords": [
