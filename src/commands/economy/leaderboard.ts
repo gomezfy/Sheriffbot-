@@ -131,10 +131,19 @@ async function createLeaderboardImage(
   drawRoundedRect(ctx, 40, 30, 1320, 120, 20);
   ctx.stroke();
 
-  const emoji = category === 'tokens' ? getSaloonTokenEmoji() : getSilverCoinEmoji();
+  const emojiFileName = category === 'tokens' ? 'saloon_token.png' : 'silver_coin.png';
   const name = category === 'tokens' ? 'SALOON TOKENS' : 'SILVER COINS';
   const color = category === 'tokens' ? '#FFD700' : '#E8E8E8';
   const secondaryColor = category === 'tokens' ? '#FFA500' : '#C0C0C0';
+  
+  // Load emoji image
+  let emojiImage;
+  try {
+    const emojiPath = path.join(process.cwd(), 'assets', 'custom-emojis', emojiFileName);
+    emojiImage = await loadImage(emojiPath);
+  } catch (error) {
+    console.error(`Failed to load emoji ${emojiFileName}:`, error);
+  }
 
   // Title with shadow
   ctx.shadowColor = 'rgba(0, 0, 0, 0.5)';
@@ -142,10 +151,15 @@ async function createLeaderboardImage(
   ctx.shadowOffsetX = 3;
   ctx.shadowOffsetY = 3;
   
+  // Draw emoji image if loaded
+  if (emojiImage) {
+    ctx.drawImage(emojiImage, 600, 50, 50, 50);
+  }
+  
   ctx.fillStyle = color;
   ctx.font = 'bold 56px Nunito-Bold';
   ctx.textAlign = 'center';
-  ctx.fillText(`${emoji} ${name}`, 700, 85);
+  ctx.fillText(name, 750, 85);
   
   ctx.shadowBlur = 0;
   ctx.shadowOffsetX = 0;
@@ -268,8 +282,10 @@ async function createLeaderboardImage(
     ctx.textAlign = 'right';
     ctx.fillText(amountText, 820, y);
     
-    ctx.font = '28px Nunito';
-    ctx.fillText(emoji, 850, y);
+    // Draw emoji image
+    if (emojiImage) {
+      ctx.drawImage(emojiImage, 835, y - 14, 24, 24);
+    }
   }
 
   // Draw top 3 avatars in right panel
@@ -331,7 +347,15 @@ async function createLeaderboardImage(
       // Amount
       ctx.fillStyle = borderColor;
       ctx.font = 'bold 20px Nunito-Bold';
-      ctx.fillText(`${userData.amount.toLocaleString()} ${emoji}`, pos.x, pos.y + avatarSize / 2 + 55);
+      ctx.textAlign = 'center';
+      const amountStr = `${userData.amount.toLocaleString()}`;
+      const textWidth = ctx.measureText(amountStr).width;
+      ctx.fillText(amountStr, pos.x - 10, pos.y + avatarSize / 2 + 55);
+      
+      // Draw emoji image
+      if (emojiImage) {
+        ctx.drawImage(emojiImage, pos.x + textWidth / 2 - 5, pos.y + avatarSize / 2 + 40, 20, 20);
+      }
       
     } catch (error) {
       console.error(`Failed to load avatar for user ${userData.userId}:`, error);
@@ -348,17 +372,35 @@ async function createLeaderboardImage(
   // Calculate total wealth
   const totalWealth = topUsers.reduce((sum, user) => sum + user.amount, 0);
   
+  // Load and draw cowboy emoji image
+  try {
+    const cowboyEmojiPath = path.join(process.cwd(), 'assets', 'custom-emojis', 'cowboy.png');
+    const cowboyEmojiImg = await loadImage(cowboyEmojiPath);
+    ctx.drawImage(cowboyEmojiImg, 50, 862, 20, 20);
+  } catch (error) {
+    console.error('Failed to load cowboy emoji:', error);
+  }
+  
   ctx.fillStyle = '#d4af37';
   ctx.font = '18px Nunito-SemiBold';
   ctx.textAlign = 'left';
-  ctx.fillText(`🤠 Sheriff Rex Bot`, 50, 880);
+  ctx.fillText(`Sheriff Rex Bot`, 75, 880);
   
   ctx.textAlign = 'center';
-  ctx.fillText(`Total Wealth: ${totalWealth.toLocaleString()} ${emoji} • ${topUsers.length} Cowboys`, 700, 880);
+  const totalWealthText = `Total Wealth: ${totalWealth.toLocaleString()}`;
+  ctx.fillText(totalWealthText, 650, 880);
+  if (emojiImage) {
+    ctx.drawImage(emojiImage, 730, 866, 18, 18);
+  }
+  ctx.fillText(`• ${topUsers.length} Cowboys`, 800, 880);
   
   ctx.textAlign = 'right';
   if (currentUserRank !== -1) {
-    ctx.fillText(`Your Rank: #${currentUserRank + 1} • ${currentUserAmount.toLocaleString()} ${emoji}`, 1350, 880);
+    const yourRankText = `Your Rank: #${currentUserRank + 1} • ${currentUserAmount.toLocaleString()}`;
+    ctx.fillText(yourRankText, 1330, 880);
+    if (emojiImage) {
+      ctx.drawImage(emojiImage, 1335, 866, 18, 18);
+    }
   } else {
     ctx.fillText(`Keep earning to join the leaderboard!`, 1350, 880);
   }
