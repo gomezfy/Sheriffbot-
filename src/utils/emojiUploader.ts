@@ -63,9 +63,17 @@ export async function uploadCustomEmojis(guild: Guild): Promise<{ success: numbe
     return results;
   }
 
+  // Fetch emojis to update cache
+  try {
+    await guild.emojis.fetch();
+  } catch (error: any) {
+    results.errors.push(`Failed to fetch server emojis: ${error.message}`);
+  }
+
   const mapping = loadEmojiMapping();
 
-  for (const file of files) {
+  // Process uploads in parallel with limit to avoid rate limiting
+  const uploadPromises = files.map(async (file) => {
     try {
       const filePath = path.join(CUSTOM_EMOJIS_DIR, file);
       const emojiName = file.replace(/\.(png|gif)$/, '');
@@ -73,20 +81,25 @@ export async function uploadCustomEmojis(guild: Guild): Promise<{ success: numbe
       // Verifica o tamanho do arquivo (máximo 256KB)
       const stats = fs.statSync(filePath);
       if (stats.size > 256 * 1024) {
-        results.failed++;
-        results.errors.push(`${file}: File too large (${Math.round(stats.size / 1024)}KB > 256KB)`);
-        continue;
+        return {
+          success: false,
+          name: emojiName,
+          error: `File too large (${Math.round(stats.size / 1024)}KB > 256KB)`
+        };
       }
 
-      // Verifica se o emoji já existe no servidor
+      // Verifica se o emoji já existe no servidor (usando cache)
       const existingEmoji = guild.emojis.cache.find(e => e.name === emojiName);
       
       if (existingEmoji) {
         // Atualiza o mapeamento com o emoji existente
         const prefix = existingEmoji.animated ? 'a:' : ':';
-        mapping[emojiName] = `<${prefix}${existingEmoji.name}:${existingEmoji.id}>`;
-        results.success++;
-        continue;
+        return {
+          success: true,
+          name: emojiName,
+          emojiString: `<${prefix}${existingEmoji.name}:${existingEmoji.id}>`,
+          wasExisting: true
+        };
       }
 
       // Faz upload do emoji para o servidor
@@ -98,12 +111,39 @@ export async function uploadCustomEmojis(guild: Guild): Promise<{ success: numbe
 
       // Salva o mapeamento (usa sintaxe correta para animated)
       const prefix = emoji.animated ? 'a:' : ':';
-      mapping[emojiName] = `<${prefix}${emoji.name}:${emoji.id}>`;
-      results.success++;
+      return {
+        success: true,
+        name: emojiName,
+        emojiString: `<${prefix}${emoji.name}:${emoji.id}>`,
+        wasExisting: false
+      };
       
     } catch (error: any) {
+      return {
+        success: false,
+        name: file.replace(/\.(png|gif)$/, ''),
+        error: error.message
+      };
+    }
+  });
+
+  // Wait for all uploads to complete
+  const uploadResults = await Promise.allSettled(uploadPromises);
+
+  // Process results
+  for (const result of uploadResults) {
+    if (result.status === 'fulfilled') {
+      const data = result.value;
+      if (data.success && data.emojiString) {
+        results.success++;
+        mapping[data.name] = data.emojiString;
+      } else {
+        results.failed++;
+        results.errors.push(`${data.name}: ${data.error || 'Unknown error'}`);
+      }
+    } else {
       results.failed++;
-      results.errors.push(`${file}: ${error.message}`);
+      results.errors.push(`Unknown error: ${result.reason}`);
     }
   }
 
