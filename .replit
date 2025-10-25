@@ -27,7 +27,7 @@ outputType = "console"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "NODE_OPTIONS='--max-old-space-size=1024' ts-node src/index.ts"
+args = "NODE_OPTIONS=\"--max-old-space-size=1024\" ts-node src/index.ts"
 
 [[ports]]
 localPort = 5000
