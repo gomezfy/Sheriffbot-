@@ -18,6 +18,8 @@
     "linked-roles": "ts-node src/linked-roles-server.ts",
     "linked-roles:prod": "node dist/src/linked-roles-server.js",
     "register-metadata": "ts-node src/register-metadata.ts",
+    "db:push": "drizzle-kit push",
+    "db:studio": "drizzle-kit studio",
     "postinstall": "npm run build"
   },
   "keywords": [
@@ -39,6 +41,7 @@
   },
   "dependencies": {
     "@napi-rs/canvas": "^0.1.80",
+    "@neondatabase/serverless": "^0.10.4",
     "@types/adm-zip": "^0.5.7",
     "@types/express": "^5.0.3",
     "@types/express-session": "^1.18.2",
@@ -47,12 +50,15 @@
     "axios": "^1.12.2",
     "discord.js": "^14.23.2",
     "dotenv": "^16.6.1",
+    "drizzle-kit": "^0.31.5",
+    "drizzle-orm": "^0.44.7",
     "express": "^5.1.0",
     "express-session": "^1.18.2",
     "pg": "^8.16.3",
     "stripe": "^19.1.0",
     "ts-node": "^10.9.2",
-    "typescript": "^5.9.3"
+    "typescript": "^5.9.3",
+    "ws": "^8.18.3"
   },
   "engines": {
     "node": ">=18.0.0"
