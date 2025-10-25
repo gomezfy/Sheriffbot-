@@ -58,6 +58,13 @@ None specified yet.
 - **Session Management:** `express-session` (for the web dashboard)
 
 ## Recent Changes
+- **October 25, 2025:**
+  - **Custom Emoji Integration in Core Commands:** Replaced Unicode emojis with custom emoji functions
+    - Updated 7 high-traffic commands: announcement, daily, casino, profile, wanted, bounties, help
+    - Custom emojis now used in embeds and message content for better branding
+    - Maintained Unicode emojis in slash command descriptions (Discord API requirement)
+    - All changes compiled successfully with TypeScript
+    - Custom emoji system provides consistent Western theme throughout bot experience
 - **October 24, 2025:**
   - **Territory Image URLs Updated:** Fixed `/territories` command images not displaying
     - Updated all territory image URLs to use current Replit domain
