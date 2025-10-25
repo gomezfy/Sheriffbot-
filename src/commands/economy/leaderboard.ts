@@ -348,11 +348,10 @@ async function createLeaderboardImage(
   // Calculate total wealth
   const totalWealth = topUsers.reduce((sum, user) => sum + user.amount, 0);
   
-  const cowboyEmoji = getCowboyEmoji();
   ctx.fillStyle = '#d4af37';
   ctx.font = '18px Nunito-SemiBold';
   ctx.textAlign = 'left';
-  ctx.fillText(`${cowboyEmoji} Sheriff Rex Bot`, 50, 880);
+  ctx.fillText(`🤠 Sheriff Rex Bot`, 50, 880);
   
   ctx.textAlign = 'center';
   ctx.fillText(`Total Wealth: ${totalWealth.toLocaleString()} ${emoji} • ${topUsers.length} Cowboys`, 700, 880);
