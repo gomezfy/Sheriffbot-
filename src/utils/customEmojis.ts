@@ -41,6 +41,9 @@ export const CUSTOM_EMOJIS = {
   LOCK: getDataPath('assets', 'custom-emojis', 'lock.png'),
   TROPHY: getDataPath('assets', 'custom-emojis', 'trophy.png'),
   GEM: getDataPath('assets', 'custom-emojis', 'gem.png'),
+  COWBOY: getDataPath('assets', 'custom-emojis', 'cowboy.png'),
+  GIFT: getDataPath('assets', 'custom-emojis', 'gift.png'),
+  PICKAXE: getDataPath('assets', 'custom-emojis', 'pickaxe.png'),
 };
 
 // Fallback text emojis (usados se não houver emoji customizado)
@@ -82,6 +85,9 @@ export const EMOJI_TEXT = {
   LOCK: '🔒',
   TROPHY: '🏆',
   GEM: '💎',
+  COWBOY: '🤠',
+  GIFT: '🎁',
+  PICKAXE: '⛏️',
 };
 
 /**
@@ -131,13 +137,13 @@ export function getGreenCircle(): string { return '🟢'; }
 export function getRedCircle(): string { return '🔴'; }
 export function getYellowCircle(): string { return '🟡'; }
 // Emojis comuns (mantidos como texto para compatibilidade universal)
-export function getGiftEmoji(): string { return '🎁'; }
+export function getGiftEmoji(): string { return getEmoji('gift', '🎁'); }
 export function getClipboardEmoji(): string { return '📋'; }
 export function getPartyEmoji(): string { return '🎉'; }
 export function getBuildingEmoji(): string { return '🏛️'; }
-export function getCowboyEmoji(): string { return '🤠'; }
+export function getCowboyEmoji(): string { return getEmoji('cowboy', '🤠'); }
 export function getSlotMachineEmoji(): string { return '🎰'; }
-export function getPickaxeEmoji(): string { return '⛏️'; }
+export function getPickaxeEmoji(): string { return getEmoji('pickaxe', '⛏️'); }
 export function getTrophyEmoji(): string { return getEmoji('trophy', '🏆'); }
 export function getGemEmoji(): string { return getEmoji('gem', '💎'); }
 export function getBackpackEmoji(): string { return getEmoji('backpack', '🎒'); }
