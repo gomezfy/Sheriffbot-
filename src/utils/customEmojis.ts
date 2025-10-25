@@ -39,6 +39,8 @@ export const CUSTOM_EMOJIS = {
   TIMER: getDataPath('assets', 'custom-emojis', 'timer.png'),
   WARNING: getDataPath('assets', 'custom-emojis', 'warning.png'),
   LOCK: getDataPath('assets', 'custom-emojis', 'lock.png'),
+  TROPHY: getDataPath('assets', 'custom-emojis', 'trophy.png'),
+  GEM: getDataPath('assets', 'custom-emojis', 'gem.png'),
 };
 
 // Fallback text emojis (usados se não houver emoji customizado)
@@ -78,6 +80,8 @@ export const EMOJI_TEXT = {
   TIMER: '⏱️',
   WARNING: '⚠️',
   LOCK: '🔒',
+  TROPHY: '🏆',
+  GEM: '💎',
 };
 
 /**
@@ -134,7 +138,8 @@ export function getBuildingEmoji(): string { return '🏛️'; }
 export function getCowboyEmoji(): string { return '🤠'; }
 export function getSlotMachineEmoji(): string { return '🎰'; }
 export function getPickaxeEmoji(): string { return '⛏️'; }
-export function getTrophyEmoji(): string { return '🏆'; }
+export function getTrophyEmoji(): string { return getEmoji('trophy', '🏆'); }
+export function getGemEmoji(): string { return getEmoji('gem', '💎'); }
 export function getBackpackEmoji(): string { return getEmoji('backpack', '🎒'); }
 export function getBalanceEmoji(): string { return getEmoji('balance', '⚖️'); }
 export function getBankEmoji(): string { return getEmoji('bank', '🏦'); }
