@@ -1,5 +1,6 @@
 import { SlashCommandBuilder, EmbedBuilder, ChatInputCommandInteraction ,MessageFlags} from 'discord.js';
 import { t, getLocale } from '../../utils/i18n';
+import { getCowboyEmoji } from '../../utils/customEmojis';
 
 interface LocaleMessages {
   title: string;
@@ -19,6 +20,7 @@ module.exports = {
   async execute(interaction: ChatInputCommandInteraction): Promise<void> {
     const locale = getLocale(interaction);
     
+    const cowboyEmoji = getCowboyEmoji();
     const messages: Record<string, LocaleMessages> = {
       'pt-BR': {
         title: '🌍 DETECÇÃO DE IDIOMA',
@@ -28,7 +30,7 @@ module.exports = {
         howDesc: 'O Discord informa ao bot qual idioma você usa. O bot detecta automaticamente e responde na sua língua!',
         supported: 'Idiomas Suportados',
         supportedList: '🇧🇷 Português (Brasil)\n🇺🇸 English (USA)\n🇪🇸 Español (España)',
-        footer: '🤠 Olá, parceiro!'
+        footer: `${cowboyEmoji} Olá, parceiro!`
       },
       'en-US': {
         title: '🌍 LANGUAGE DETECTION',
@@ -38,7 +40,7 @@ module.exports = {
         howDesc: 'Discord tells the bot which language you use. The bot automatically detects and responds in your language!',
         supported: 'Supported Languages',
         supportedList: '🇧🇷 Português (Brasil)\n🇺🇸 English (USA)\n🇪🇸 Español (España)',
-        footer: '🤠 Howdy, partner!'
+        footer: `${cowboyEmoji} Howdy, partner!`
       },
       'es-ES': {
         title: '🌍 DETECCIÓN DE IDIOMA',

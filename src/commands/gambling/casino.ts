@@ -1,6 +1,6 @@
 import { SlashCommandBuilder, EmbedBuilder, ChatInputCommandInteraction, ColorResolvable, MessageFlags } from 'discord.js';
 import { isValidBetAmount, MAX_BET_AMOUNT, isSafeMultiplication } from '../../utils/security';
-import { getSaloonTokenEmoji, getSlotMachineEmoji, getCancelEmoji, getMoneybagEmoji, getDartEmoji, getCheckEmoji } from '../../utils/customEmojis';
+import { getSaloonTokenEmoji, getSlotMachineEmoji, getCancelEmoji, getMoneybagEmoji, getDartEmoji, getCheckEmoji, getCowboyEmoji } from '../../utils/customEmojis';
 const { getUserGold, addUserGold, removeUserGold } = require('../../utils/dataManager');
 
 const cooldowns = new Map();
@@ -236,7 +236,7 @@ module.exports = {
         { name: won ? `${getCheckEmoji()} Won` : `${getCancelEmoji()} Lost`, value: won ? `${winAmount} ${tokenEmoji}` : `${bet} ${tokenEmoji}`, inline: true },
         { name: `${getMoneybagEmoji()} New Balance`, value: `**${newGold.toLocaleString()} ${tokenEmoji}** Saloon Tokens`, inline: false }
       )
-      .setFooter({ text: won ? '🤠 The house always wins... except today!' : '🎰 Try again, fortune favors the brave!' })
+      .setFooter({ text: won ? `${getCowboyEmoji()} The house always wins... except today!` : '🎰 Try again, fortune favors the brave!' })
       .setTimestamp();
 
     cooldowns.set(userId, now);

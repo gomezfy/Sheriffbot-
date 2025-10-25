@@ -1,4 +1,5 @@
 import { SlashCommandBuilder, EmbedBuilder, ChatInputCommandInteraction ,MessageFlags} from 'discord.js';
+import { getCowboyEmoji } from '../../utils/customEmojis';
 const { getUserGold, addUserGold, removeUserGold } = require('../../utils/dataManager');
 
 const cooldowns = new Map();
@@ -274,7 +275,7 @@ module.exports = {
         { name: won ? '✅ Won' : (profit === 0 ? '🤝 Tie' : '❌ Lost'), value: won ? `${winAmount} 🎫` : (profit === 0 ? 'Bet returned' : `${bet} 🎫`), inline: true },
         { name: '💼 New Balance', value: `**${newGold.toLocaleString()} 🎫** Saloon Tokens`, inline: false }
       )
-      .setFooter({ text: won ? '🤠 You got a winning hand, partner!' : (profit === 0 ? '🎲 Evenly matched!' : '🃏 The cards weren\'t in your favor this time!') })
+      .setFooter({ text: won ? `${getCowboyEmoji()} You got a winning hand, partner!` : (profit === 0 ? '🎲 Evenly matched!' : '🃏 The cards weren\'t in your favor this time!') })
       .setTimestamp();
 
     cooldowns.set(userId, now);

@@ -1,7 +1,7 @@
 import { SlashCommandBuilder, EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, AttachmentBuilder, ChatInputCommandInteraction ,MessageFlags} from 'discord.js';
 import fs from 'fs';
 import path from 'path';
-import { getSilverCoinEmoji, getGoldBarEmoji } from '../../utils/customEmojis';
+import { getSilverCoinEmoji, getGoldBarEmoji, getCowboyEmoji } from '../../utils/customEmojis';
 import { cleanupOldSessions, getActiveSessions, getUnclaimedSessions, getMiningStats, formatTime as formatMiningTime } from '../../utils/miningTracker';
 const { addItem, getInventory, removeItem, transferItem } = require('../../utils/inventoryManager');
 const { addUserSilver, getUserSilver, removeUserSilver } = require('../../utils/dataManager');
@@ -303,7 +303,7 @@ Pending Gold: ${stats.totalGoldPending} ${goldEmoji}
                   inline: true
                 }
               ],
-              footer: { text: '🤠 Great work, partner! You can mine again now.' },
+              footer: { text: `${getCowboyEmoji()} Great work, partner! You can mine again now.` },
               timestamp: new Date().toISOString()
             }],
             components: []

@@ -1,6 +1,7 @@
 import { SlashCommandBuilder, EmbedBuilder, PermissionFlagsBits, ChannelType, ChatInputCommandInteraction ,MessageFlags} from 'discord.js';
 import { setWelcomeConfig, removeWelcomeConfig, getWelcomeConfig } from '../../utils/dataManager';
 import { buildWelcomeEmbed } from '../../utils/welcomeEmbedBuilder';
+import { getCowboyEmoji } from '../../utils/customEmojis';
 
 function isValidUrl(string: string): boolean {
   try {
@@ -164,9 +165,10 @@ module.exports = {
         '`{guild.size}` - Member count\n' +
         '`{guild.icon}` - Server icon URL';
 
+      const cowboyEmoji = getCowboyEmoji();
       const embed = new EmbedBuilder()
         .setColor(config.enabled ? '#FFD700' : '#808080')
-        .setTitle('🤠 Welcome System Configuration')
+        .setTitle(`${cowboyEmoji} Welcome System Configuration`)
         .addFields(
           { name: '📊 Status', value: config.enabled ? '✅ Enabled' : '❌ Disabled', inline: true },
           { name: '📢 Channel', value: `<#${config.channelId}>`, inline: true },
