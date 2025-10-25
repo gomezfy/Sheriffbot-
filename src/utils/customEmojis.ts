@@ -28,6 +28,7 @@ export const CUSTOM_EMOJIS = {
   INFO: getDataPath('assets', 'custom-emojis', 'info.png'),
   LIGHTNING: getDataPath('assets', 'custom-emojis', 'lightning.png'),
   MONEYBAG: getDataPath('assets', 'custom-emojis', 'moneybag.png'),
+  MUTE: getDataPath('assets', 'custom-emojis', 'mute.png'),
   REVOLVER: getDataPath('assets', 'custom-emojis', 'revolver.png'),
   RUNNING_COWBOY: getDataPath('assets', 'custom-emojis', 'running_cowboy.png'),
   SCROLL: getDataPath('assets', 'custom-emojis', 'scroll.png'),
@@ -65,6 +66,7 @@ export const EMOJI_TEXT = {
   INFO: 'ℹ️',
   LIGHTNING: '⚡',
   MONEYBAG: '💰',
+  MUTE: '🔇',
   REVOLVER: '🔫',
   RUNNING_COWBOY: '🏃',
   SCROLL: '📜',
@@ -118,6 +120,19 @@ export function getSaloonTokenEmoji(): string {
 
 // Funções auxiliares para os novos custom emojis
 export function getAlarmEmoji(): string { return getEmoji('alarm', '🚨'); }
+// Status indicators (mantidos como texto pois são cores de status universal do Discord)
+export function getGreenCircle(): string { return '🟢'; }
+export function getRedCircle(): string { return '🔴'; }
+export function getYellowCircle(): string { return '🟡'; }
+// Emojis comuns (mantidos como texto para compatibilidade universal)
+export function getGiftEmoji(): string { return '🎁'; }
+export function getClipboardEmoji(): string { return '📋'; }
+export function getPartyEmoji(): string { return '🎉'; }
+export function getBuildingEmoji(): string { return '🏛️'; }
+export function getCowboyEmoji(): string { return '🤠'; }
+export function getSlotMachineEmoji(): string { return '🎰'; }
+export function getPickaxeEmoji(): string { return '⛏️'; }
+export function getTrophyEmoji(): string { return '🏆'; }
 export function getBackpackEmoji(): string { return getEmoji('backpack', '🎒'); }
 export function getBalanceEmoji(): string { return getEmoji('balance', '⚖️'); }
 export function getBankEmoji(): string { return getEmoji('bank', '🏦'); }
@@ -138,6 +153,7 @@ export function getGoldMedalEmoji(): string { return getEmoji('gold_medal', '�
 export function getInfoEmoji(): string { return getEmoji('info', 'ℹ️'); }
 export function getLightningEmoji(): string { return getEmoji('lightning', '⚡'); }
 export function getMoneybagEmoji(): string { return getEmoji('moneybag', '💰'); }
+export function getMuteEmoji(): string { return getEmoji('mute', '🔇'); }
 export function getRevolverEmoji(): string { return getEmoji('revolver', '🔫'); }
 export function getRunningCowboyEmoji(): string { return getEmoji('running_cowboy', '🏃'); }
 export function getScrollEmoji(): string { return getEmoji('scroll', '📜'); }

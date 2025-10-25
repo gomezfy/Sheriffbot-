@@ -7,7 +7,13 @@ import {
   getStarEmoji,
   getMoneybagEmoji,
   getLightningEmoji,
-  getSparklesEmoji
+  getSparklesEmoji,
+  getCowboyEmoji,
+  getDartEmoji,
+  getSlotMachineEmoji,
+  getPickaxeEmoji,
+  getTrophyEmoji,
+  getClockEmoji
 } from './customEmojis';
 
 export class EmbedTemplates {
@@ -79,7 +85,7 @@ export class EmbedTemplates {
   static western(title: string, description?: string, color: ColorResolvable = 0x8B4513): EmbedBuilder {
     const embed = new EmbedBuilder()
       .setColor(color)
-      .setTitle(`🤠 ${title}`)
+      .setTitle(`${getCowboyEmoji()} ${title}`)
       .setFooter({ text: 'Sheriff Rex Bot - Western Discord Bot' })
       .setTimestamp();
 
@@ -109,28 +115,28 @@ export class EmbedTemplates {
   static bounty(title: string, color: ColorResolvable = 0xFF0000): EmbedBuilder {
     return new EmbedBuilder()
       .setColor(color)
-      .setTitle(`🎯 ${title}`)
+      .setTitle(`${getDartEmoji()} ${title}`)
       .setTimestamp();
   }
 
   static casino(title: string): EmbedBuilder {
     return new EmbedBuilder()
       .setColor(0x9B59B6)
-      .setTitle(`🎰 ${title}`)
+      .setTitle(`${getSlotMachineEmoji()} ${title}`)
       .setTimestamp();
   }
 
   static mining(title: string): EmbedBuilder {
     return new EmbedBuilder()
       .setColor(0xFFD700)
-      .setTitle(`⛏️ ${title}`)
+      .setTitle(`${getPickaxeEmoji()} ${title}`)
       .setTimestamp();
   }
 
   static leaderboard(title: string, guild?: Guild): EmbedBuilder {
     const embed = new EmbedBuilder()
       .setColor(0xFFD700)
-      .setTitle(`🏆 ${title}`)
+      .setTitle(`${getTrophyEmoji()} ${title}`)
       .setTimestamp();
 
     if (guild) {
@@ -150,7 +156,7 @@ export class EmbedTemplates {
   static cooldown(command: string, timeLeft: number): EmbedBuilder {
     return new EmbedBuilder()
       .setColor(0xFFA500)
-      .setTitle('⏰ Cooldown Active')
+      .setTitle(`${getClockEmoji()} Cooldown Active`)
       .setDescription(`Please wait **${timeLeft.toFixed(1)}s** before using \`/${command}\` again.`)
       .setTimestamp();
   }

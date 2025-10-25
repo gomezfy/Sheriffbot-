@@ -16,13 +16,26 @@ import {
   purchaseTerritory,
   getTerritoryCount
 } from '../../utils/territoryManager';
-import { getSilverCoinEmoji } from '../../utils/customEmojis';
+import { 
+  getSilverCoinEmoji, 
+  getMoneybagEmoji, 
+  getDartEmoji, 
+  getStatsEmoji,
+  getCheckEmoji,
+  getCancelEmoji,
+  getGreenCircle,
+  getRedCircle,
+  getGiftEmoji,
+  getClipboardEmoji,
+  getPartyEmoji,
+  getBuildingEmoji
+} from '../../utils/customEmojis';
 const { getUserSilver, removeUserSilver } = require('../../utils/dataManager');
 
 module.exports = {
   data: new SlashCommandBuilder()
     .setName('territories')
-    .setDescription('🏛️ Browse and purchase valuable territories in the Wild West'),
+    .setDescription(`${getBuildingEmoji()} Browse and purchase valuable territories in the Wild West`),
 
   async execute(interaction: ChatInputCommandInteraction): Promise<void> {
     const userId = interaction.user.id;
@@ -44,22 +57,22 @@ module.exports = {
         .setDescription(territory.description)
         .addFields(
           {
-            name: '💰 Price',
+            name: `${getMoneybagEmoji()} Price`,
             value: `${territory.price.toLocaleString()} ${silverEmoji} Silver Coins`,
             inline: true
           },
           {
-            name: '🎯 Rarity',
+            name: `${getDartEmoji()} Rarity`,
             value: territory.rarity.charAt(0).toUpperCase() + territory.rarity.slice(1),
             inline: true
           },
           {
-            name: '📊 Status',
-            value: owned ? '✅ **OWNED**' : userSilver >= territory.price ? '🟢 **Available**' : '🔴 **Insufficient Funds**',
+            name: `${getStatsEmoji()} Status`,
+            value: owned ? `${getCheckEmoji()} **OWNED**` : userSilver >= territory.price ? `${getGreenCircle()} **Available**` : `${getRedCircle()} **Insufficient Funds**`,
             inline: true
           },
           {
-            name: '🎁 Benefits',
+            name: `${getGiftEmoji()} Benefits`,
             value: territory.benefits.map(b => `• ${b}`).join('\n'),
             inline: false
           }
@@ -94,7 +107,7 @@ module.exports = {
           .setDisabled(index === 0),
         new ButtonBuilder()
           .setCustomId('purchase')
-          .setLabel(owned ? '✅ Owned' : `💰 Buy for ${(territory.price / 1000).toFixed(0)}k`)
+          .setLabel(owned ? `${getCheckEmoji()} Owned` : `${getMoneybagEmoji()} Buy for ${(territory.price / 1000).toFixed(0)}k`)
           .setStyle(owned ? ButtonStyle.Success : canAfford ? ButtonStyle.Primary : ButtonStyle.Danger)
           .setDisabled(owned || !canAfford),
         new ButtonBuilder()
@@ -107,12 +120,12 @@ module.exports = {
       const row2 = new ActionRowBuilder<ButtonBuilder>().addComponents(
         new ButtonBuilder()
           .setCustomId('my_territories')
-          .setLabel('📋 My Territories')
+          .setLabel(`${getClipboardEmoji()} My Territories`)
           .setStyle(ButtonStyle.Success)
           .setDisabled(ownedTerritories.length === 0),
         new ButtonBuilder()
           .setCustomId('close')
-          .setLabel('❌ Close')
+          .setLabel(`${getCancelEmoji()} Close`)
           .setStyle(ButtonStyle.Danger)
       );
 
@@ -138,7 +151,7 @@ module.exports = {
       // Only allow the command user to interact
       if (i.user.id !== userId) {
         return i.reply({
-          content: '❌ This territory browser is not for you!',
+          content: `${getCancelEmoji()} This territory browser is not for you!`,
           flags: MessageFlags.Ephemeral
         });
       }
@@ -164,7 +177,7 @@ module.exports = {
         // Double-check affordability
         if (currentSilver < territory.price) {
           return i.reply({
-            content: `❌ You need ${(territory.price - currentSilver).toLocaleString()} ${silverEmoji} more Silver Coins to purchase this territory!`,
+            content: `${getCancelEmoji()} You need ${(territory.price - currentSilver).toLocaleString()} ${silverEmoji} more Silver Coins to purchase this territory!`,
             flags: MessageFlags.Ephemeral
           });
         }
@@ -172,7 +185,7 @@ module.exports = {
         // Double-check ownership
         if (ownsTerritory(userId, territory.id)) {
           return i.reply({
-            content: '❌ You already own this territory!',
+            content: `${getCancelEmoji()} You already own this territory!`,
             flags: MessageFlags.Ephemeral
           });
         }
@@ -181,7 +194,7 @@ module.exports = {
         const removed = removeUserSilver(userId, territory.price);
         if (!removed) {
           return i.reply({
-            content: '❌ Transaction failed! Please try again.',
+            content: `${getCancelEmoji()} Transaction failed! Please try again.`,
             flags: MessageFlags.Ephemeral
           });
         }
@@ -192,7 +205,7 @@ module.exports = {
           const { addUserSilver } = require('../../utils/dataManager');
           addUserSilver(userId, territory.price);
           return i.reply({
-            content: '❌ Purchase failed! Your silver has been refunded.',
+            content: `${getCancelEmoji()} Purchase failed! Your silver has been refunded.`,
             flags: MessageFlags.Ephemeral
           });
         }
@@ -200,21 +213,21 @@ module.exports = {
         // Success!
         const successEmbed = new EmbedBuilder()
           .setColor(0x00FF00)
-          .setTitle('🎉 TERRITORY PURCHASED!')
+          .setTitle(`${getPartyEmoji()} TERRITORY PURCHASED!`)
           .setDescription(`Congratulations! You are now the proud owner of **${territory.emoji} ${territory.name}**!`)
           .addFields(
             {
-              name: '💰 Amount Paid',
+              name: `${getMoneybagEmoji()} Amount Paid`,
               value: `${territory.price.toLocaleString()} ${silverEmoji} Silver Coins`,
               inline: true
             },
             {
-              name: '💵 Remaining Balance',
+              name: `${getMoneybagEmoji()} Remaining Balance`,
               value: `${(currentSilver - territory.price).toLocaleString()} ${silverEmoji}`,
               inline: true
             },
             {
-              name: '🎁 Benefits Unlocked',
+              name: `${getGiftEmoji()} Benefits Unlocked`,
               value: territory.benefits.map(b => `• ${b}`).join('\n'),
               inline: false
             }
@@ -242,10 +255,10 @@ module.exports = {
 
         const myTerritoriesEmbed = new EmbedBuilder()
           .setColor(0xFFD700)
-          .setTitle('🏛️ YOUR TERRITORIES')
+          .setTitle(`${getBuildingEmoji()} YOUR TERRITORIES`)
           .setDescription(territoriesInfo || 'You don\'t own any territories yet.')
           .addFields({
-            name: '📊 Statistics',
+            name: `${getStatsEmoji()} Statistics`,
             value: `**Owned:** ${owned.length}/${TERRITORIES.length}\n**Completion:** ${Math.round((owned.length / TERRITORIES.length) * 100)}%`,
             inline: false
           })
@@ -256,7 +269,7 @@ module.exports = {
 
       } else if (i.customId === 'close') {
         await i.update({
-          content: '🤠 Territory browser closed. Come back anytime, partner!',
+          content: 'Territory browser closed. Come back anytime, partner!',
           embeds: [],
           components: []
         });
