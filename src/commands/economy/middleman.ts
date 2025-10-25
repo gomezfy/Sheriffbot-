@@ -1,6 +1,6 @@
 import { SlashCommandBuilder, EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, StringSelectMenuBuilder, StringSelectMenuOptionBuilder, ChatInputCommandInteraction, ComponentType, AttachmentBuilder ,MessageFlags} from 'discord.js';
 import path from 'path';
-import { getSilverCoinEmoji, getGoldBarEmoji, getSaloonTokenEmoji, getCurrencyEmoji, getBriefcaseEmoji, getCheckEmoji, getStatsEmoji, getCancelEmoji } from '../../utils/customEmojis';
+import { getSilverCoinEmoji, getGoldBarEmoji, getSaloonTokenEmoji, getCurrencyEmoji, getBriefcaseEmoji, getCheckEmoji, getStatsEmoji, getCancelEmoji, getCowboyEmoji, getMoneybagEmoji } from '../../utils/customEmojis';
 const { getInventory, removeItem } = require('../../utils/inventoryManager');
 const { addUserSilver } = require('../../utils/dataManager');
 
@@ -46,7 +46,7 @@ module.exports = {
           inline: false
         }
       )
-      .setFooter({ text: '🤠 Fair trades guaranteed by the Sheriff!' })
+      .setFooter({ text: `${getCowboyEmoji()} Fair trades guaranteed by the Sheriff!` })
       .setTimestamp();
 
     const buttons = new ActionRowBuilder<ButtonBuilder>()
@@ -128,7 +128,7 @@ module.exports = {
           new StringSelectMenuOptionBuilder()
             .setLabel(`All (${currentTokens} Tokens) → ${TOKEN_TO_SILVER * currentTokens} Silver`)
             .setValue('all')
-            .setEmoji('💰')
+            .setEmoji(getMoneybagEmoji() || '💰')
         );
 
         const selectMenu = new StringSelectMenuBuilder()
@@ -218,7 +218,7 @@ module.exports = {
           new StringSelectMenuOptionBuilder()
             .setLabel(`All (${currentGold} Bars) → ${GOLD_TO_SILVER * currentGold} Silver`)
             .setValue('all')
-            .setEmoji('💰')
+            .setEmoji(getMoneybagEmoji() || '💰')
         );
 
         const selectMenu = new StringSelectMenuBuilder()

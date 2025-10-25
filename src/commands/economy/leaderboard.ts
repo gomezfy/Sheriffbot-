@@ -2,7 +2,7 @@ import { SlashCommandBuilder, ChatInputCommandInteraction, AttachmentBuilder } f
 import { createCanvas, loadImage, GlobalFonts } from '@napi-rs/canvas';
 import * as path from 'path';
 const { getTopUsers, getUserInventory } = require('../../utils/inventoryManager');
-import { getTrophyEmoji, getGoldMedalEmoji, getSilverMedalEmoji, getBronzeMedalEmoji, getStatsEmoji, getSaloonTokenEmoji, getSilverCoinEmoji } from '../../utils/customEmojis';
+import { getTrophyEmoji, getGoldMedalEmoji, getSilverMedalEmoji, getBronzeMedalEmoji, getStatsEmoji, getSaloonTokenEmoji, getSilverCoinEmoji, getCowboyEmoji, getCancelEmoji } from '../../utils/customEmojis';
 
 GlobalFonts.registerFromPath(path.join(process.cwd(), 'assets', 'fonts', 'Nunito-Bold.ttf'), 'Nunito-Bold');
 GlobalFonts.registerFromPath(path.join(process.cwd(), 'assets', 'fonts', 'Nunito-Regular.ttf'), 'Nunito');
@@ -348,10 +348,11 @@ async function createLeaderboardImage(
   // Calculate total wealth
   const totalWealth = topUsers.reduce((sum, user) => sum + user.amount, 0);
   
+  const cowboyEmoji = getCowboyEmoji();
   ctx.fillStyle = '#d4af37';
   ctx.font = '18px Nunito-SemiBold';
   ctx.textAlign = 'left';
-  ctx.fillText(`🤠 Sheriff Rex Bot`, 50, 880);
+  ctx.fillText(`${cowboyEmoji} Sheriff Rex Bot`, 50, 880);
   
   ctx.textAlign = 'center';
   ctx.fillText(`Total Wealth: ${totalWealth.toLocaleString()} ${emoji} • ${topUsers.length} Cowboys`, 700, 880);
@@ -390,8 +391,9 @@ module.exports = {
     const topUsers: UserData[] = getTopUsers(itemType, 10);
 
     if (topUsers.length === 0) {
+      const cancelEmoji = getCancelEmoji();
       await interaction.editReply({
-        content: `❌ No users found on the ${category} leaderboard!`
+        content: `${cancelEmoji} No users found on the ${category} leaderboard!`
       });
       return;
     }
