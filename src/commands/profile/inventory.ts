@@ -1,12 +1,13 @@
 import { SlashCommandBuilder, ChatInputCommandInteraction ,MessageFlags} from 'discord.js';
 import { infoEmbed, warningEmbed, formatCurrency, progressBar } from '../../utils/embeds';
+import { getBackpackEmoji, getMoneybagEmoji, getStatsEmoji, getCrateEmoji, getBalanceEmoji, getWarningEmoji, getAlarmEmoji, getSparklesEmoji } from '../../utils/customEmojis';
 const { getInventory, calculateWeight, ITEMS, getNextUpgrade } = require('../../utils/inventoryManager');
 const { t } = require('../../utils/i18n');
 
 module.exports = {
   data: new SlashCommandBuilder()
     .setName('inventory')
-    .setDescription('🎒 View your backpack inventory')
+    .setDescription(`${getBackpackEmoji()} View your backpack inventory`)
     .setContexts([0, 1, 2]) // Guild, BotDM, PrivateChannel
     .setIntegrationTypes([0, 1]) // Guild Install, User Install
     .addUserOption(option =>
@@ -81,32 +82,32 @@ module.exports = {
     if (nextUpgrade) {
       upgradeInfo = `\n💡 **Next Upgrade:** ${nextUpgrade.capacity}kg for **$${nextUpgrade.price}** at the shop`;
     } else {
-      upgradeInfo = '\n✨ **Maximum capacity reached!**';
+      upgradeInfo = `\n${getSparklesEmoji()} **Maximum capacity reached!**`;
     }
     
     // Create embed
     const embed = infoEmbed(
-      `🎒 ${targetUser.username}'s Backpack`,
+      `${getBackpackEmoji()} ${targetUser.username}'s Backpack`,
       `Manage your items, currency, and inventory space.`
     )
       .addFields(
         {
-          name: '💰 Currency',
+          name: `${getMoneybagEmoji()} Currency`,
           value: `${formatCurrency(saloonTokens, 'tokens')}\n${formatCurrency(silverCoins, 'silver')}`,
           inline: true
         },
         {
-          name: '📊 Inventory Stats',
+          name: `${getStatsEmoji()} Inventory Stats`,
           value: `**Items:** ${totalItems.toLocaleString()}\n**Types:** ${Object.keys(inventory.items).length}/50\n**Weight:** ${currentWeight.toFixed(1)}kg / ${maxWeight}kg`,
           inline: true
         },
         {
-          name: '📦 Items in Backpack',
+          name: `${getCrateEmoji()} Items in Backpack`,
           value: itemsList,
           inline: false
         },
         {
-          name: '⚖️ Weight Capacity',
+          name: `${getBalanceEmoji()} Weight Capacity`,
           value: `${weightBar}\n${currentWeight.toFixed(1)}kg / ${maxWeight}kg (${weightPercentage.toFixed(0)}%)${upgradeInfo}`,
           inline: false
         }
@@ -115,9 +116,9 @@ module.exports = {
     
     // Warning if nearly full
     if (weightPercentage >= 90) {
-      embed.setFooter({ text: '⚠️ Your backpack is nearly full! Use /give to transfer items or upgrade your capacity.' });
+      embed.setFooter({ text: `${getWarningEmoji()} Your backpack is nearly full! Use /give to transfer items or upgrade your capacity.` });
     } else if (weightPercentage >= 100) {
-      embed.setFooter({ text: '🚨 BACKPACK FULL! You cannot collect more items until you free up space.' });
+      embed.setFooter({ text: `${getAlarmEmoji()} BACKPACK FULL! You cannot collect more items until you free up space.` });
     } else {
       embed.setFooter({ text: 'Use /give to transfer items to other players' });
     }
