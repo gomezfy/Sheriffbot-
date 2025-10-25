@@ -183,6 +183,14 @@ export async function removeAllCustomEmojis(guild: Guild): Promise<{ success: nu
     return results;
   }
 
+  // Fetch all emojis from the server to ensure cache is up to date
+  try {
+    await guild.emojis.fetch();
+  } catch (error: any) {
+    results.errors.push(`Failed to fetch server emojis: ${error.message}`);
+    return results;
+  }
+
   for (const emojiName of emojiNames) {
     try {
       const emojiString = mapping[emojiName];
@@ -196,14 +204,18 @@ export async function removeAllCustomEmojis(guild: Guild): Promise<{ success: nu
       }
 
       const emojiId = match[1];
-      const emoji = guild.emojis.cache.get(emojiId);
       
-      if (emoji) {
-        await emoji.delete('Removed via Sheriff Rex Bot');
-        results.success++;
-      } else {
+      // Try to fetch the specific emoji from the server
+      try {
+        const emoji = await guild.emojis.fetch(emojiId);
+        if (emoji) {
+          await emoji.delete('Removed via Sheriff Rex Bot');
+          results.success++;
+        }
+      } catch (fetchError: any) {
+        // Emoji doesn't exist on server anymore, but we'll still remove from mapping
         results.failed++;
-        results.errors.push(`${emojiName}: Emoji not found in server`);
+        results.errors.push(`${emojiName}: ${fetchError.message || 'Emoji not found in server'}`);
       }
 
       // Remove do mapeamento independente do resultado
