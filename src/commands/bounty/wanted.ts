@@ -1,6 +1,7 @@
 import { SlashCommandBuilder, AttachmentBuilder, ChatInputCommandInteraction ,MessageFlags} from 'discord.js';
 import { successEmbed, errorEmbed, warningEmbed, formatCurrency } from '../../utils/embeds';
 import { generateWantedPoster } from '../../utils/wantedPoster';
+import { getDartEmoji, getMoneybagEmoji, getScrollEmoji } from '../../utils/customEmojis';
 const { addBounty, getBountyByTarget } = require('../../utils/dataManager');
 const { getItem, removeItem } = require('../../utils/inventoryManager');
 
@@ -108,13 +109,13 @@ module.exports = {
 
     // Success message
     const embed = successEmbed(
-      '🎯 Bounty Placed!',
+      `${getDartEmoji()} Bounty Placed!`,
       `**${target.tag}** is now WANTED - Dead or Alive!`
     )
       .addFields(
-        { name: '💰 Reward', value: formatCurrency(amount, 'silver'), inline: true },
-        { name: '🔎 Crime', value: reason, inline: true },
-        { name: '📜 Posted By', value: interaction.user.tag, inline: true }
+        { name: `${getMoneybagEmoji()} Reward`, value: formatCurrency(amount, 'silver'), inline: true },
+        { name: 'Crime', value: reason, inline: true },
+        { name: `${getScrollEmoji()} Posted By`, value: interaction.user.tag, inline: true }
       )
       .setImage('attachment://wanted-poster.png')
       .setFooter({ text: 'Good luck catching this outlaw, partner!' });

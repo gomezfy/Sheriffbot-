@@ -1,5 +1,6 @@
 import { SlashCommandBuilder, EmbedBuilder, ChatInputCommandInteraction, ColorResolvable, MessageFlags } from 'discord.js';
 import { isValidBetAmount, MAX_BET_AMOUNT, isSafeMultiplication } from '../../utils/security';
+import { getSaloonTokenEmoji, getSlotMachineEmoji, getCancelEmoji, getMoneybagEmoji, getDartEmoji, getCheckEmoji } from '../../utils/customEmojis';
 const { getUserGold, addUserGold, removeUserGold } = require('../../utils/dataManager');
 
 const cooldowns = new Map();
@@ -48,7 +49,7 @@ module.exports = {
     
     if (!bet) {
       await interaction.reply({
-        content: '❌ Please specify a bet amount!',
+        content: `${getCancelEmoji()} Please specify a bet amount!`,
         flags: [MessageFlags.Ephemeral]
       });
       return;
@@ -57,7 +58,7 @@ module.exports = {
     // Security: Validate bet amount
     if (!isValidBetAmount(bet)) {
       await interaction.reply({
-        content: `❌ Invalid bet amount! Must be between 10 and ${MAX_BET_AMOUNT.toLocaleString()}.`,
+        content: `${getCancelEmoji()} Invalid bet amount! Must be between 10 and ${MAX_BET_AMOUNT.toLocaleString()}.`,
         flags: MessageFlags.Ephemeral
       });
       return;
@@ -81,9 +82,10 @@ module.exports = {
 
     const currentGold = getUserGold(userId);
 
+    const tokenEmoji = getSaloonTokenEmoji();
     if (currentGold < bet) {
       await interaction.reply({
-        content: `❌ You don't have enough tokens! You have ${currentGold} 🎫 but tried to bet ${bet} 🎫.`,
+        content: `${getCancelEmoji()} You don't have enough tokens! You have ${currentGold} ${tokenEmoji} but tried to bet ${bet} ${tokenEmoji}.`,
         flags: [MessageFlags.Ephemeral]
       });
       return;
@@ -210,10 +212,11 @@ module.exports = {
 
     const newGold = getUserGold(userId);
 
+    const slotEmoji = getSlotMachineEmoji();
     // Create spinning animation effect
     const spinningEmbed = new EmbedBuilder()
       .setColor('#FFD700')
-      .setTitle('🎰 SALOON SLOT MACHINE 🎰')
+      .setTitle(`${slotEmoji} SALOON SLOT MACHINE ${slotEmoji}`)
       .setDescription('```\n🎲 ? | ? | ? 🎲\n```\n\n**SPINNING...**')
       .setFooter({ text: 'Good luck, cowboy!' });
 
@@ -225,13 +228,13 @@ module.exports = {
     // Show result
     const embed = new EmbedBuilder()
       .setColor(resultColor)
-      .setTitle('🎰 SALOON SLOT MACHINE 🎰')
+      .setTitle(`${slotEmoji} SALOON SLOT MACHINE ${slotEmoji}`)
       .setDescription(`\`\`\`\n🎲 ${slot1} | ${slot2} | ${slot3} 🎲\n\`\`\`\n\n${result}${finalMessage}`)
       .addFields(
-        { name: '💰 Bet Amount', value: `${bet} 🎫`, inline: true },
-        { name: '🎯 Multiplier', value: `x${multiplier}`, inline: true },
-        { name: won ? '✅ Won' : '❌ Lost', value: won ? `${winAmount} 🎫` : `${bet} 🎫`, inline: true },
-        { name: '💼 New Balance', value: `**${newGold.toLocaleString()} 🎫** Saloon Tokens`, inline: false }
+        { name: `${getMoneybagEmoji()} Bet Amount`, value: `${bet} ${tokenEmoji}`, inline: true },
+        { name: `${getDartEmoji()} Multiplier`, value: `x${multiplier}`, inline: true },
+        { name: won ? `${getCheckEmoji()} Won` : `${getCancelEmoji()} Lost`, value: won ? `${winAmount} ${tokenEmoji}` : `${bet} ${tokenEmoji}`, inline: true },
+        { name: `${getMoneybagEmoji()} New Balance`, value: `**${newGold.toLocaleString()} ${tokenEmoji}** Saloon Tokens`, inline: false }
       )
       .setFooter({ text: won ? '🤠 The house always wins... except today!' : '🎰 Try again, fortune favors the brave!' })
       .setTimestamp();

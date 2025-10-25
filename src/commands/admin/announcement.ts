@@ -101,7 +101,7 @@ const COLOR_PRESETS: Record<string, { name: string; hex: string }> = {
 module.exports = {
   data: new SlashCommandBuilder()
     .setName('announcement')
-    .setDescription(`${getCowboyEmoji()} Advanced announcement system with templates and preview`)
+    .setDescription('🤠 Advanced announcement system with templates and preview')
     .setDefaultMemberPermissions(PermissionFlagsBits.Administrator)
     .addSubcommand(sub =>
       sub
@@ -210,7 +210,7 @@ module.exports = {
     .addSubcommand(sub =>
       sub
         .setName('history')
-        .setDescription(`${getScrollEmoji()} View announcement history`)
+        .setDescription('View announcement history')
         .addIntegerOption(option =>
           option
             .setName('limit')

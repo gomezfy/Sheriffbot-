@@ -35,7 +35,7 @@ const { getUserSilver, removeUserSilver } = require('../../utils/dataManager');
 module.exports = {
   data: new SlashCommandBuilder()
     .setName('territories')
-    .setDescription(`${getBuildingEmoji()} Browse and purchase valuable territories in the Wild West`),
+    .setDescription('🏛️ Browse and purchase valuable territories in the Wild West'),
 
   async execute(interaction: ChatInputCommandInteraction): Promise<void> {
     const userId = interaction.user.id;

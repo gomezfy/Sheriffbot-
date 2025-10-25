@@ -1,6 +1,7 @@
 import { SlashCommandBuilder, ChatInputCommandInteraction ,MessageFlags} from 'discord.js';
 import { addXP } from '../../utils/xpManager';
 import { economyEmbed, errorEmbed, warningEmbed, formatCurrency, formatDuration, field } from '../../utils/embeds';
+import { getSilverCoinEmoji, getSaloonTokenEmoji } from '../../utils/customEmojis';
 const { addItem } = require('../../utils/inventoryManager');
 const { showProgressBar } = require('../../utils/progressBar');
 const { readData, writeData } = require('../../utils/database');
@@ -25,7 +26,7 @@ function saveDailyData(data: DailyData): void {
 module.exports = {
   data: new SlashCommandBuilder()
     .setName('daily')
-    .setDescription('🌅 Claim your daily reward and build a streak!')
+    .setDescription('Claim your daily reward and build a streak!')
     .setContexts([0, 1, 2]) // Guild, BotDM, PrivateChannel
     .setIntegrationTypes([0, 1]), // Guild Install, User Install
   async execute(interaction: ChatInputCommandInteraction): Promise<void> {
@@ -115,12 +116,12 @@ module.exports = {
     const embed = economyEmbed(
       'Daily Reward',
       wasStreakBroken && previousStreak > 1 
-        ? '⚠️ Your streak was broken! Starting fresh.'
-        : '✅ Daily reward claimed successfully!',
+        ? 'Your streak was broken! Starting fresh.'
+        : 'Daily reward claimed successfully!',
       'Come back in 24 hours!'
     ).addFields(
-      field('Silver Coins', `+${formatCurrency(silverAmount, 'silver')}`, true),
-      field('Saloon Tokens', `+${formatCurrency(tokenAmount, 'tokens')}`, true),
+      field(`${getSilverCoinEmoji()} Silver Coins`, `+${formatCurrency(silverAmount, 'silver')}`, true),
+      field(`${getSaloonTokenEmoji()} Saloon Tokens`, `+${formatCurrency(tokenAmount, 'tokens')}`, true),
       field('XP Earned', `+${xpAmount}`, true),
       field('Streak', `${newStreak} day${newStreak !== 1 ? 's' : ''} 🔥`, true),
       field('Bonus', `+${Math.floor(streakBonus * 100)}%`, true),

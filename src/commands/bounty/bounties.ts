@@ -1,5 +1,6 @@
 import { SlashCommandBuilder, ChatInputCommandInteraction } from 'discord.js';
 import { infoEmbed, warningEmbed, formatCurrency } from '../../utils/embeds';
+import { getScrollEmoji, getDartEmoji, getMoneybagEmoji, getCowboysEmoji } from '../../utils/customEmojis';
 const { getAllBounties } = require('../../utils/dataManager');
 
 interface Bounty {
@@ -38,12 +39,15 @@ module.exports = {
 
     let description = '**Most Wanted Outlaws:**\n\n';
 
+    const moneyEmoji = getMoneybagEmoji();
+    const groupEmoji = getCowboysEmoji();
+    
     for (const bounty of sortedBounties.slice(0, 10)) {
       const stars = '⭐'.repeat(Math.min(Math.floor(bounty.totalAmount / 5000), 5)) || '🔸';
       
       description += `${stars} **${bounty.targetTag}**\n`;
-      description += `   💰 Reward: ${formatCurrency(bounty.totalAmount, 'silver')}\n`;
-      description += `   👥 Contributors: ${bounty.contributors.length}\n\n`;
+      description += `   ${moneyEmoji} Reward: ${formatCurrency(bounty.totalAmount, 'silver')}\n`;
+      description += `   ${groupEmoji} Contributors: ${bounty.contributors.length}\n\n`;
     }
 
     if (bounties.length > 10) {
@@ -51,12 +55,12 @@ module.exports = {
     }
 
     const embed = infoEmbed(
-      '📜 Active Bounties',
+      `${getScrollEmoji()} Active Bounties`,
       description
     )
       .addFields(
-        { name: '🎯 Total Bounties', value: bounties.length.toString(), inline: true },
-        { name: '💰 Total Rewards', value: formatCurrency(
+        { name: `${getDartEmoji()} Total Bounties`, value: bounties.length.toString(), inline: true },
+        { name: `${getMoneybagEmoji()} Total Rewards`, value: formatCurrency(
           bounties.reduce((sum, b) => sum + b.totalAmount, 0),
           'silver'
         ), inline: true }

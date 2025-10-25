@@ -52,17 +52,14 @@ module.exports = {
           new ButtonBuilder()
             .setCustomId('edit_bio')
             .setLabel('Edit Bio')
-            .setEmoji('📝')
             .setStyle(ButtonStyle.Primary),
           new ButtonBuilder()
             .setCustomId('change_background')
             .setLabel('Change Background')
-            .setEmoji('🎨')
             .setStyle(ButtonStyle.Secondary),
           new ButtonBuilder()
             .setCustomId('shop_backgrounds')
             .setLabel('Shop Backgrounds')
-            .setEmoji('🛒')
             .setStyle(ButtonStyle.Success)
         );
 
@@ -189,7 +186,7 @@ async function createProfileCard(user: User, stats: any): Promise<AttachmentBuil
   const saloonTokenImg = await loadImage(getCustomEmojiPath('SALOON_TOKEN'));
   await drawCurrencyBoxWithImage(ctx, 50, currencyY, 300, 80, saloonTokenImg, 'Saloon Tokens', stats.gold.toLocaleString(), '#D4AF37');
   
-  // Silver Coins
+  // Silver Coins (using silver coin emoji as fallback since we can't call getCustomEmoji here)
   await drawCurrencyBox(ctx, 50, currencyY + 100, 300, 80, '🪙', 'Silver Coins', stats.silver.toLocaleString(), '#C0C0C0');
 
   // XP/Level section (right side)
