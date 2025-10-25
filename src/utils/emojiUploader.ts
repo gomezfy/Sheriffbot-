@@ -191,39 +191,64 @@ export async function removeAllCustomEmojis(guild: Guild): Promise<{ success: nu
     return results;
   }
 
-  for (const emojiName of emojiNames) {
+  // Process deletions in parallel for better performance
+  const deletePromises = emojiNames.map(async (emojiName) => {
     try {
       const emojiString = mapping[emojiName];
       
       // Extrai o ID do emoji
       const match = emojiString.match(/:(\d+)>/);
       if (!match) {
-        results.failed++;
-        results.errors.push(`${emojiName}: Invalid emoji format`);
-        continue;
+        return {
+          success: false,
+          name: emojiName,
+          error: 'Invalid emoji format'
+        };
       }
 
       const emojiId = match[1];
       
-      // Try to fetch the specific emoji from the server
-      try {
-        const emoji = await guild.emojis.fetch(emojiId);
-        if (emoji) {
-          await emoji.delete('Removed via Sheriff Rex Bot');
-          results.success++;
-        }
-      } catch (fetchError: any) {
-        // Emoji doesn't exist on server anymore, but we'll still remove from mapping
-        results.failed++;
-        results.errors.push(`${emojiName}: ${fetchError.message || 'Emoji not found in server'}`);
+      // Use cache instead of fetching individually (much faster!)
+      const emoji = guild.emojis.cache.get(emojiId);
+      
+      if (emoji) {
+        await emoji.delete('Removed via Sheriff Rex Bot');
+        return { success: true, name: emojiName };
+      } else {
+        return {
+          success: false,
+          name: emojiName,
+          error: 'Emoji not found in server'
+        };
       }
-
-      // Remove do mapeamento independente do resultado
-      delete mapping[emojiName];
       
     } catch (error: any) {
+      return {
+        success: false,
+        name: emojiName,
+        error: error.message
+      };
+    }
+  });
+
+  // Wait for all deletions to complete
+  const deleteResults = await Promise.allSettled(deletePromises);
+
+  // Process results
+  for (const result of deleteResults) {
+    if (result.status === 'fulfilled') {
+      const { success, name, error } = result.value;
+      if (success) {
+        results.success++;
+      } else {
+        results.failed++;
+        results.errors.push(`${name}: ${error}`);
+      }
+      // Remove from mapping regardless of success
+      delete mapping[name];
+    } else {
       results.failed++;
-      results.errors.push(`${emojiName}: ${error.message}`);
+      results.errors.push(`Unknown error: ${result.reason}`);
     }
   }
 
