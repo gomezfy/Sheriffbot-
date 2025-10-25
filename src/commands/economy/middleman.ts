@@ -46,7 +46,7 @@ module.exports = {
           inline: false
         }
       )
-      .setFooter({ text: `${getCowboyEmoji()} Fair trades guaranteed by the Sheriff!` })
+      .setFooter({ text: '🤠 Fair trades guaranteed by the Sheriff!' })
       .setTimestamp();
 
     const buttons = new ActionRowBuilder<ButtonBuilder>()
