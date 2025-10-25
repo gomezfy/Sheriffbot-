@@ -1,10 +1,20 @@
 import { EmbedBuilder, ColorResolvable, User, Guild } from 'discord.js';
+import { 
+  getCheckEmoji, 
+  getCancelEmoji, 
+  getWarningEmoji, 
+  getInfoEmoji,
+  getStarEmoji,
+  getMoneybagEmoji,
+  getLightningEmoji,
+  getSparklesEmoji
+} from './customEmojis';
 
 export class EmbedTemplates {
   static success(title: string, description?: string): EmbedBuilder {
     const embed = new EmbedBuilder()
       .setColor(0x00FF00)
-      .setTitle(`✅ ${title}`)
+      .setTitle(`${getCheckEmoji()} ${title}`)
       .setTimestamp();
 
     if (description) {
@@ -17,7 +27,7 @@ export class EmbedTemplates {
   static error(title: string, description?: string): EmbedBuilder {
     const embed = new EmbedBuilder()
       .setColor(0xFF0000)
-      .setTitle(`❌ ${title}`)
+      .setTitle(`${getCancelEmoji()} ${title}`)
       .setTimestamp();
 
     if (description) {
@@ -30,7 +40,7 @@ export class EmbedTemplates {
   static warning(title: string, description?: string): EmbedBuilder {
     const embed = new EmbedBuilder()
       .setColor(0xFFA500)
-      .setTitle(`⚠️ ${title}`)
+      .setTitle(`${getWarningEmoji()} ${title}`)
       .setTimestamp();
 
     if (description) {
@@ -43,7 +53,7 @@ export class EmbedTemplates {
   static info(title: string, description?: string): EmbedBuilder {
     const embed = new EmbedBuilder()
       .setColor(0x5865F2)
-      .setTitle(`ℹ️ ${title}`)
+      .setTitle(`${getInfoEmoji()} ${title}`)
       .setTimestamp();
 
     if (description) {
