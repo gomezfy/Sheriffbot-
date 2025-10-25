@@ -5,7 +5,8 @@
     "endTime": 1761281196433,
     "claimed": false,
     "goldAmount": 1,
-    "partnerId": null
+    "partnerId": null,
+    "notified": true
   },
   "1082867940501749760": {
     "cooldownEnd": 1760940247285
