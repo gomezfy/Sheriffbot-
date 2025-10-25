@@ -79,6 +79,8 @@ app.use(session({
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname)));
+// Serve bot assets folder for Discord embeds
+app.use('/bot-assets', express.static(path.join(__dirname, '..', 'assets')));
 
 interface Product {
   name: string;

@@ -58,10 +58,10 @@ export interface TerritoryOwnership {
   };
 }
 
-// Get the base URL for assets from environment
+// Get the base URL for bot assets from environment
 const getAssetUrl = (filename: string): string => {
   const domain = process.env.REPLIT_DEV_DOMAIN || process.env.REPLIT_DOMAINS || 'localhost:5000';
-  return `https://${domain}/assets/${filename}`;
+  return `https://${domain}/bot-assets/${filename}`;
 };
 
 // Define all available territories

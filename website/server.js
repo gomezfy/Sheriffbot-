@@ -115,6 +115,8 @@ app.use((0, express_session_1.default)({
 app.use(express_1.default.json());
 app.use(express_1.default.urlencoded({ extended: true }));
 app.use(express_1.default.static(path_1.default.join(__dirname)));
+// Serve bot assets folder for Discord embeds
+app.use('/bot-assets', express_1.default.static(path_1.default.join(__dirname, '..', 'assets')));
 var PRODUCTS = {
     starter: {
         name: 'Starter Pack',
