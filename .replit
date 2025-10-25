@@ -1,4 +1,4 @@
-modules = ["nodejs-18", "web", "bash"]
+modules = ["nodejs-18", "bash"]
 [agent]
 expertMode = true
 
@@ -18,10 +18,6 @@ author = "agent"
 task = "workflow.run"
 args = "Discord Bot"
 
-[[workflows.workflow.tasks]]
-task = "workflow.run"
-args = "Website Server"
-
 [[workflows.workflow]]
 name = "Discord Bot"
 author = "agent"
@@ -32,18 +28,6 @@ outputType = "console"
 [[workflows.workflow.tasks]]
 task = "shell.exec"
 args = "npm start"
-
-[[workflows.workflow]]
-name = "Website Server"
-author = "agent"
-
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "cd website && node server.js"
-waitForPort = 5000
-
-[workflows.workflow.metadata]
-outputType = "webview"
 
 [[ports]]
 localPort = 5000
