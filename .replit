@@ -52,4 +52,5 @@ externalPort = 3003
 
 [deployment]
 deploymentTarget = "vm"
-run = ["node", "src/index.js"]
+run = ["npm", "run", "start:shard"]
+build = ["npm", "run", "build"]
