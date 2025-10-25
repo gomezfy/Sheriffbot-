@@ -164,3 +164,59 @@ export async function removeCustomEmoji(guild: Guild, emojiName: string): Promis
     return false;
   }
 }
+
+/**
+ * Remove todos os emojis customizados do servidor Discord
+ */
+export async function removeAllCustomEmojis(guild: Guild): Promise<{ success: number; failed: number; errors: string[] }> {
+  const results = {
+    success: 0,
+    failed: 0,
+    errors: [] as string[]
+  };
+
+  const mapping = loadEmojiMapping();
+  const emojiNames = Object.keys(mapping);
+
+  if (emojiNames.length === 0) {
+    results.errors.push('No custom emojis found in mapping');
+    return results;
+  }
+
+  for (const emojiName of emojiNames) {
+    try {
+      const emojiString = mapping[emojiName];
+      
+      // Extrai o ID do emoji
+      const match = emojiString.match(/:(\d+)>/);
+      if (!match) {
+        results.failed++;
+        results.errors.push(`${emojiName}: Invalid emoji format`);
+        continue;
+      }
+
+      const emojiId = match[1];
+      const emoji = guild.emojis.cache.get(emojiId);
+      
+      if (emoji) {
+        await emoji.delete('Removed via Sheriff Rex Bot');
+        results.success++;
+      } else {
+        results.failed++;
+        results.errors.push(`${emojiName}: Emoji not found in server`);
+      }
+
+      // Remove do mapeamento independente do resultado
+      delete mapping[emojiName];
+      
+    } catch (error: any) {
+      results.failed++;
+      results.errors.push(`${emojiName}: ${error.message}`);
+    }
+  }
+
+  // Salva o mapeamento atualizado (limpo)
+  saveEmojiMapping(mapping);
+
+  return results;
+}
