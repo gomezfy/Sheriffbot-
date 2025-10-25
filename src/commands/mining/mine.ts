@@ -303,7 +303,7 @@ Pending Gold: ${stats.totalGoldPending} ${goldEmoji}
                   inline: true
                 }
               ],
-              footer: { text: `${getCowboyEmoji()} Great work, partner! You can mine again now.` },
+              footer: { text: '🤠 Great work, partner! You can mine again now.' },
               timestamp: new Date().toISOString()
             }],
             components: []
