@@ -102,17 +102,17 @@ module.exports = {
       const row1 = new ActionRowBuilder<ButtonBuilder>().addComponents(
         new ButtonBuilder()
           .setCustomId('prev')
-          .setLabel('◀ Previous')
+          .setLabel('Previous')
           .setStyle(ButtonStyle.Secondary)
           .setDisabled(index === 0),
         new ButtonBuilder()
           .setCustomId('purchase')
-          .setLabel(owned ? `${getCheckEmoji()} Owned` : `${getMoneybagEmoji()} Buy for ${(territory.price / 1000).toFixed(0)}k`)
+          .setLabel(owned ? 'Owned' : `Buy for ${(territory.price / 1000).toFixed(0)}k`)
           .setStyle(owned ? ButtonStyle.Success : canAfford ? ButtonStyle.Primary : ButtonStyle.Danger)
           .setDisabled(owned || !canAfford),
         new ButtonBuilder()
           .setCustomId('next')
-          .setLabel('Next ▶')
+          .setLabel('Next')
           .setStyle(ButtonStyle.Secondary)
           .setDisabled(index === TERRITORIES.length - 1)
       );
@@ -120,12 +120,12 @@ module.exports = {
       const row2 = new ActionRowBuilder<ButtonBuilder>().addComponents(
         new ButtonBuilder()
           .setCustomId('my_territories')
-          .setLabel(`${getClipboardEmoji()} My Territories`)
+          .setLabel('My Territories')
           .setStyle(ButtonStyle.Success)
           .setDisabled(ownedTerritories.length === 0),
         new ButtonBuilder()
           .setCustomId('close')
-          .setLabel(`${getCancelEmoji()} Close`)
+          .setLabel('Close')
           .setStyle(ButtonStyle.Danger)
       );
 
