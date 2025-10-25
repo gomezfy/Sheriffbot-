@@ -58,6 +58,12 @@ export interface TerritoryOwnership {
   };
 }
 
+// Get the base URL for assets from environment
+const getAssetUrl = (filename: string): string => {
+  const domain = process.env.REPLIT_DEV_DOMAIN || process.env.REPLIT_DOMAINS || 'localhost:5000';
+  return `https://${domain}/assets/${filename}`;
+};
+
 // Define all available territories
 export const TERRITORIES: Territory[] = [
   {
@@ -74,7 +80,7 @@ export const TERRITORIES: Territory[] = [
     ],
     rarity: 'rare',
     color: 0xFF8C00, // Dark orange
-    image: 'https://45ea4734-ba05-4935-a258-2132b2c24194-00-pzkrl0aib0wp.picard.replit.dev/assets/saloon.png'
+    image: getAssetUrl('saloon.png')
   },
   {
     id: 'gold_mine_shares',
@@ -90,7 +96,7 @@ export const TERRITORIES: Territory[] = [
     ],
     rarity: 'epic',
     color: 0xFFD700, // Gold
-    image: 'https://45ea4734-ba05-4935-a258-2132b2c24194-00-pzkrl0aib0wp.picard.replit.dev/assets/mine.png'
+    image: getAssetUrl('mine.png')
   },
   {
     id: 'ranch',
@@ -106,7 +112,7 @@ export const TERRITORIES: Territory[] = [
     ],
     rarity: 'legendary',
     color: 0x8B4513, // Saddle brown
-    image: 'https://45ea4734-ba05-4935-a258-2132b2c24194-00-pzkrl0aib0wp.picard.replit.dev/assets/ranch.png'
+    image: getAssetUrl('ranch.png')
   }
 ];
 
