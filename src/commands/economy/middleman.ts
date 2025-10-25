@@ -1,6 +1,6 @@
 import { SlashCommandBuilder, EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, StringSelectMenuBuilder, StringSelectMenuOptionBuilder, ChatInputCommandInteraction, ComponentType, AttachmentBuilder ,MessageFlags} from 'discord.js';
 import path from 'path';
-import { getSilverCoinEmoji, getGoldBarEmoji, getSaloonTokenEmoji, getCurrencyEmoji, getBriefcaseEmoji, getCheckEmoji } from '../../utils/customEmojis';
+import { getSilverCoinEmoji, getGoldBarEmoji, getSaloonTokenEmoji, getCurrencyEmoji, getBriefcaseEmoji, getCheckEmoji, getStatsEmoji, getCancelEmoji } from '../../utils/customEmojis';
 const { getInventory, removeItem } = require('../../utils/inventoryManager');
 const { addUserSilver } = require('../../utils/dataManager');
 
@@ -10,7 +10,7 @@ const GOLD_TO_SILVER = 13439; // 1 Gold Bar = 13,439 Silver Coins
 module.exports = {
   data: new SlashCommandBuilder()
     .setName('middleman')
-    .setDescription('💱 Convert Saloon Tokens and Gold Bars to Silver Coins'),
+    .setDescription('Convert Saloon Tokens and Gold Bars to Silver Coins'),
   async execute(interaction: ChatInputCommandInteraction): Promise<void> {
     const userId = interaction.user.id;
     const inventory = getInventory(userId);
@@ -27,11 +27,13 @@ module.exports = {
     const currencyEmoji = getCurrencyEmoji();
     const briefcaseEmoji = getBriefcaseEmoji();
 
+    const statsEmoji = getStatsEmoji();
+    
     const embed = new EmbedBuilder()
       .setColor(0xFFD700)
       .setTitle(`${currencyEmoji} MIDDLEMAN - CURRENCY EXCHANGE`)
       .setImage('attachment://black-market.png')
-      .setDescription(`**Welcome to the Middleman, partner!**\n\nExchange your valuable items for Silver Coins at fair rates.\n\n**📊 EXCHANGE RATES**\n${tokenEmoji} 1 Saloon Token = **50** ${silverEmoji} Silver Coins\n${goldEmoji} 1 Gold Bar = **13,439** ${silverEmoji} Silver Coins`)
+      .setDescription(`**Welcome to the Middleman, partner!**\n\nExchange your valuable items for Silver Coins at fair rates.\n\n**${statsEmoji} EXCHANGE RATES**\n${tokenEmoji} 1 Saloon Token = **50** ${silverEmoji} Silver Coins\n${goldEmoji} 1 Gold Bar = **13,439** ${silverEmoji} Silver Coins`)
       .addFields(
         {
           name: `${briefcaseEmoji} Your Inventory`,
@@ -78,8 +80,10 @@ module.exports = {
     });
 
     collector.on('collect', async (i) => {
+      const cancelEmoji = getCancelEmoji();
+      
       if (i.user.id !== userId) {
-        return i.reply({ content: '❌ This exchange is not for you!', flags: MessageFlags.Ephemeral });
+        return i.reply({ content: `${cancelEmoji} This exchange is not for you!`, flags: MessageFlags.Ephemeral });
       }
 
       if (i.customId === 'convert_tokens') {
@@ -87,14 +91,13 @@ module.exports = {
         const currentTokens = currentInventory.items['saloon_token'] || 0;
 
         if (currentTokens === 0) {
-          return i.reply({ content: '❌ You don\'t have any Saloon Tokens to convert!', flags: MessageFlags.Ephemeral });
+          return i.reply({ content: `${cancelEmoji} You don\'t have any Saloon Tokens to convert!`, flags: MessageFlags.Ephemeral });
         }
 
         const options = [
           new StringSelectMenuOptionBuilder()
             .setLabel(`1 Token → ${TOKEN_TO_SILVER} Silver`)
             .setValue('1')
-            .setEmoji('🎫')
         ];
 
         if (currentTokens >= 5) {
@@ -102,7 +105,6 @@ module.exports = {
             new StringSelectMenuOptionBuilder()
               .setLabel(`5 Tokens → ${TOKEN_TO_SILVER * 5} Silver`)
               .setValue('5')
-              .setEmoji('🎫')
           );
         }
 
@@ -111,7 +113,6 @@ module.exports = {
             new StringSelectMenuOptionBuilder()
               .setLabel(`10 Tokens → ${TOKEN_TO_SILVER * 10} Silver`)
               .setValue('10')
-              .setEmoji('🎫')
           );
         }
 
@@ -120,7 +121,6 @@ module.exports = {
             new StringSelectMenuOptionBuilder()
               .setLabel(`25 Tokens → ${TOKEN_TO_SILVER * 25} Silver`)
               .setValue('25')
-              .setEmoji('🎫')
           );
         }
 
@@ -155,13 +155,15 @@ module.exports = {
           const finalInventory = getInventory(userId);
           const finalTokens = finalInventory.items['saloon_token'] || 0;
 
+          const cancelEmoji = getCancelEmoji();
+          
           if (finalTokens < amount) {
-            return si.update({ content: `❌ You don't have enough Saloon Tokens! You only have ${finalTokens}.`, components: [] });
+            return si.update({ content: `${cancelEmoji} You don't have enough Saloon Tokens! You only have ${finalTokens}.`, components: [] });
           }
 
           const removeResult = removeItem(userId, 'saloon_token', amount);
           if (!removeResult.success) {
-            return si.update({ content: `❌ Error: ${removeResult.error}`, components: [] });
+            return si.update({ content: `${cancelEmoji} Error: ${removeResult.error}`, components: [] });
           }
 
           const silverAmount = amount * TOKEN_TO_SILVER;
@@ -187,14 +189,13 @@ module.exports = {
         const currentGold = currentInventory.items['gold'] || 0;
 
         if (currentGold === 0) {
-          return i.reply({ content: '❌ You don\'t have any Gold Bars to convert!', flags: MessageFlags.Ephemeral });
+          return i.reply({ content: `${cancelEmoji} You don\'t have any Gold Bars to convert!`, flags: MessageFlags.Ephemeral });
         }
 
         const goldOptions = [
           new StringSelectMenuOptionBuilder()
             .setLabel(`1 Gold Bar → ${GOLD_TO_SILVER} Silver`)
             .setValue('1')
-            .setEmoji('🥇')
         ];
 
         if (currentGold >= 5) {
@@ -202,7 +203,6 @@ module.exports = {
             new StringSelectMenuOptionBuilder()
               .setLabel(`5 Gold Bars → ${GOLD_TO_SILVER * 5} Silver`)
               .setValue('5')
-              .setEmoji('🥇')
           );
         }
 
@@ -211,7 +211,6 @@ module.exports = {
             new StringSelectMenuOptionBuilder()
               .setLabel(`10 Gold Bars → ${GOLD_TO_SILVER * 10} Silver`)
               .setValue('10')
-              .setEmoji('🥇')
           );
         }
 
@@ -246,13 +245,15 @@ module.exports = {
           const finalInventory = getInventory(userId);
           const finalGold = finalInventory.items['gold'] || 0;
 
+          const cancelEmoji = getCancelEmoji();
+          
           if (finalGold < amount) {
-            return si.update({ content: `❌ You don't have enough Gold Bars! You only have ${finalGold}.`, components: [] });
+            return si.update({ content: `${cancelEmoji} You don't have enough Gold Bars! You only have ${finalGold}.`, components: [] });
           }
 
           const removeResult = removeItem(userId, 'gold', amount);
           if (!removeResult.success) {
-            return si.update({ content: `❌ Error: ${removeResult.error}`, components: [] });
+            return si.update({ content: `${cancelEmoji} Error: ${removeResult.error}`, components: [] });
           }
 
           const silverAmount = amount * GOLD_TO_SILVER;

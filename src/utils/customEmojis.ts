@@ -91,14 +91,12 @@ export const EMOJI_TEXT = {
 };
 
 /**
- * Obtém um emoji customizado do Discord ou retorna o fallback text
+ * Obtém um emoji customizado do Discord (SEM fallback de texto)
  * @param emojiName Nome do emoji (ex: 'gold_bar', 'silver_coin')
- * @param fallback Emoji de texto para usar se não houver customizado
  */
-export function getEmoji(emojiName: string, fallback?: string): string {
-  // Tenta obter o emoji customizado do mapeamento
-  const textFallback = fallback || EMOJI_TEXT[emojiName as keyof typeof EMOJI_TEXT] || '❓';
-  return getCustomEmoji(emojiName, textFallback);
+export function getEmoji(emojiName: string): string {
+  // Retorna APENAS o emoji customizado, sem fallback de texto
+  return getCustomEmoji(emojiName, '');
 }
 
 export function getCustomEmojiPath(emojiType: keyof typeof CUSTOM_EMOJIS): string | null {
@@ -110,70 +108,61 @@ export function getEmojiText(emojiType: keyof typeof EMOJI_TEXT): string {
 }
 
 /**
- * Obtém o emoji de moeda de prata (customizado ou fallback)
+ * Obtém o emoji de moeda de prata (APENAS customizado)
  */
 export function getSilverCoinEmoji(): string {
-  return getEmoji('silver_coin', '🪙');
+  return getEmoji('silver_coin');
 }
 
 /**
- * Obtém o emoji de barra de ouro (customizado ou fallback)
+ * Obtém o emoji de barra de ouro (APENAS customizado)
  */
 export function getGoldBarEmoji(): string {
-  return getEmoji('gold_bar', '🥇');
+  return getEmoji('gold_bar');
 }
 
 /**
- * Obtém o emoji de token do saloon (customizado ou fallback)
+ * Obtém o emoji de token do saloon (APENAS customizado)
  */
 export function getSaloonTokenEmoji(): string {
-  return getEmoji('saloon_token', '🎫');
+  return getEmoji('saloon_token');
 }
 
-// Funções auxiliares para os novos custom emojis
-export function getAlarmEmoji(): string { return getEmoji('alarm', '🚨'); }
-// Status indicators (mantidos como texto pois são cores de status universal do Discord)
-export function getGreenCircle(): string { return '🟢'; }
-export function getRedCircle(): string { return '🔴'; }
-export function getYellowCircle(): string { return '🟡'; }
-// Emojis comuns (mantidos como texto para compatibilidade universal)
-export function getGiftEmoji(): string { return getEmoji('gift', '🎁'); }
-export function getClipboardEmoji(): string { return '📋'; }
-export function getPartyEmoji(): string { return '🎉'; }
-export function getBuildingEmoji(): string { return '🏛️'; }
-export function getCowboyEmoji(): string { return getEmoji('cowboy', '🤠'); }
-export function getSlotMachineEmoji(): string { return '🎰'; }
-export function getPickaxeEmoji(): string { return getEmoji('pickaxe', '⛏️'); }
-export function getTrophyEmoji(): string { return getEmoji('trophy', '🏆'); }
-export function getGemEmoji(): string { return getEmoji('gem', '💎'); }
-export function getBackpackEmoji(): string { return getEmoji('backpack', '🎒'); }
-export function getBalanceEmoji(): string { return getEmoji('balance', '⚖️'); }
-export function getBankEmoji(): string { return getEmoji('bank', '🏦'); }
-export function getBriefcaseEmoji(): string { return getEmoji('briefcase', '💼'); }
-export function getBronzeMedalEmoji(): string { return getEmoji('bronze_medal', '🥉'); }
-export function getCancelEmoji(): string { return getEmoji('cancel', '❌'); }
-export function getCheckEmoji(): string { return getEmoji('check', '✅'); }
-export function getClockEmoji(): string { return getEmoji('clock', '🕐'); }
-export function getCowboyHorseEmoji(): string { return getEmoji('cowboy_horse', '🏇'); }
-export function getCowboysEmoji(): string { return getEmoji('cowboys', '👥'); }
-export function getCrateEmoji(): string { return getEmoji('crate', '📦'); }
-export function getCrossEmoji(): string { return getEmoji('cross', '❌'); }
-export function getCurrencyEmoji(): string { return getEmoji('currency', '💱'); }
-export function getDartEmoji(): string { return getEmoji('dart', '🎯'); }
-export function getDiamondEmoji(): string { return getEmoji('diamond', '💎'); }
-export function getDustEmoji(): string { return getEmoji('dust', '💨'); }
-export function getGoldMedalEmoji(): string { return getEmoji('gold_medal', '🥇'); }
-export function getInfoEmoji(): string { return getEmoji('info', 'ℹ️'); }
-export function getLightningEmoji(): string { return getEmoji('lightning', '⚡'); }
-export function getMoneybagEmoji(): string { return getEmoji('moneybag', '💰'); }
-export function getMuteEmoji(): string { return getEmoji('mute', '🔇'); }
-export function getRevolverEmoji(): string { return getEmoji('revolver', '🔫'); }
-export function getRunningCowboyEmoji(): string { return getEmoji('running_cowboy', '🏃'); }
-export function getScrollEmoji(): string { return getEmoji('scroll', '📜'); }
-export function getSilverMedalEmoji(): string { return getEmoji('silver_medal', '🥈'); }
-export function getSparklesEmoji(): string { return getEmoji('sparkles', '✨'); }
-export function getStarEmoji(): string { return getEmoji('star', '⭐'); }
-export function getStatsEmoji(): string { return getEmoji('stats', '📊'); }
-export function getTimerEmoji(): string { return getEmoji('timer', '⏱️'); }
-export function getWarningEmoji(): string { return getEmoji('warning', '⚠️'); }
-export function getLockEmoji(): string { return getEmoji('lock', '🔒'); }
+// Funções auxiliares para os custom emojis (SEM fallback de texto)
+export function getAlarmEmoji(): string { return getEmoji('alarm'); }
+export function getGiftEmoji(): string { return getEmoji('gift'); }
+export function getCowboyEmoji(): string { return getEmoji('cowboy'); }
+export function getPickaxeEmoji(): string { return getEmoji('pickaxe'); }
+export function getTrophyEmoji(): string { return getEmoji('trophy'); }
+export function getGemEmoji(): string { return getEmoji('gem'); }
+export function getBackpackEmoji(): string { return getEmoji('backpack'); }
+export function getBalanceEmoji(): string { return getEmoji('balance'); }
+export function getBankEmoji(): string { return getEmoji('bank'); }
+export function getBriefcaseEmoji(): string { return getEmoji('briefcase'); }
+export function getBronzeMedalEmoji(): string { return getEmoji('bronze_medal'); }
+export function getCancelEmoji(): string { return getEmoji('cancel'); }
+export function getCheckEmoji(): string { return getEmoji('check'); }
+export function getClockEmoji(): string { return getEmoji('clock'); }
+export function getCowboyHorseEmoji(): string { return getEmoji('cowboy_horse'); }
+export function getCowboysEmoji(): string { return getEmoji('cowboys'); }
+export function getCrateEmoji(): string { return getEmoji('crate'); }
+export function getCrossEmoji(): string { return getEmoji('cross'); }
+export function getCurrencyEmoji(): string { return getEmoji('currency'); }
+export function getDartEmoji(): string { return getEmoji('dart'); }
+export function getDiamondEmoji(): string { return getEmoji('diamond'); }
+export function getDustEmoji(): string { return getEmoji('dust'); }
+export function getGoldMedalEmoji(): string { return getEmoji('gold_medal'); }
+export function getInfoEmoji(): string { return getEmoji('info'); }
+export function getLightningEmoji(): string { return getEmoji('lightning'); }
+export function getMoneybagEmoji(): string { return getEmoji('moneybag'); }
+export function getMuteEmoji(): string { return getEmoji('mute'); }
+export function getRevolverEmoji(): string { return getEmoji('revolver'); }
+export function getRunningCowboyEmoji(): string { return getEmoji('running_cowboy'); }
+export function getScrollEmoji(): string { return getEmoji('scroll'); }
+export function getSilverMedalEmoji(): string { return getEmoji('silver_medal'); }
+export function getSparklesEmoji(): string { return getEmoji('sparkles'); }
+export function getStarEmoji(): string { return getEmoji('star'); }
+export function getStatsEmoji(): string { return getEmoji('stats'); }
+export function getTimerEmoji(): string { return getEmoji('timer'); }
+export function getWarningEmoji(): string { return getEmoji('warning'); }
+export function getLockEmoji(): string { return getEmoji('lock'); }

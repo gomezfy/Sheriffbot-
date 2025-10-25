@@ -131,7 +131,7 @@ async function createLeaderboardImage(
   drawRoundedRect(ctx, 40, 30, 1320, 120, 20);
   ctx.stroke();
 
-  const emoji = category === 'tokens' ? '🎫' : '🪙';
+  const emoji = category === 'tokens' ? getSaloonTokenEmoji() : getSilverCoinEmoji();
   const name = category === 'tokens' ? 'SALOON TOKENS' : 'SILVER COINS';
   const color = category === 'tokens' ? '#FFD700' : '#E8E8E8';
   const secondaryColor = category === 'tokens' ? '#FFA500' : '#C0C0C0';
@@ -182,10 +182,10 @@ async function createLeaderboardImage(
   ctx.fillStyle = '#FFFFFF';
   ctx.font = 'bold 24px Nunito-Bold';
   ctx.textAlign = 'left';
-  ctx.fillText('🏆 TOP COWBOYS', 60, mainY + 35);
+  ctx.fillText('TOP COWBOYS', 60, mainY + 35);
   
   ctx.textAlign = 'center';
-  ctx.fillText('👑 HALL OF FAME', 1140, mainY + 35);
+  ctx.fillText('HALL OF FAME', 1140, mainY + 35);
 
   // Separator line
   ctx.strokeStyle = 'rgba(255, 215, 0, 0.3)';
@@ -238,7 +238,7 @@ async function createLeaderboardImage(
       user = { username: 'Unknown User', discriminator: '0000' };
     }
 
-    const medals = ['🥇', '🥈', '🥉'];
+    const medals = ['1st', '2nd', '3rd'];
     
     // Rank indicator
     if (i < 3) {
@@ -369,7 +369,7 @@ async function createLeaderboardImage(
 module.exports = {
   data: new SlashCommandBuilder()
     .setName('leaderboard')
-    .setDescription('📊 View the top cowboys in the Wild West!')
+    .setDescription('View the top cowboys in the Wild West!')
     .setContexts([0, 1, 2]) // Guild, BotDM, PrivateChannel
     .setIntegrationTypes([0, 1]) // Guild Install, User Install
     .addStringOption(option =>
@@ -378,8 +378,8 @@ module.exports = {
         .setDescription('Leaderboard category')
         .setRequired(false)
         .addChoices(
-          { name: '🎫 Saloon Tokens', value: 'tokens' },
-          { name: '🪙 Silver Coins', value: 'silver' }
+          { name: 'Saloon Tokens', value: 'tokens' },
+          { name: 'Silver Coins', value: 'silver' }
         )
     ),
   async execute(interaction: ChatInputCommandInteraction): Promise<void> {
@@ -404,7 +404,7 @@ module.exports = {
     const statsEmoji = getStatsEmoji();
     
     await interaction.editReply({ 
-      content: `${trophyEmoji} **WILD WEST LEADERBOARD** ${trophyEmoji}\n${statsEmoji} Category: ${categoryEmoji} ${category === 'tokens' ? 'Saloon Tokens' : 'Silver Coins'}`,
+      content: `${trophyEmoji} WILD WEST LEADERBOARD ${trophyEmoji}\n${statsEmoji} Category: ${categoryEmoji} ${category === 'tokens' ? 'Saloon Tokens' : 'Silver Coins'}`,
       files: [attachment] 
     });
   },

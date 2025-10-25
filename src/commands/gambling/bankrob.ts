@@ -3,7 +3,7 @@ const { getUserSilver, addUserSilver } = require('../../utils/dataManager');
 const { addItem } = require('../../utils/inventoryManager');
 const { applyPunishment, isPunished, formatTime, getRemainingTime } = require('../../utils/punishmentManager');
 const { createAutoWanted } = require('../../utils/autoWanted');
-import { getMuteEmoji, getBankEmoji, getMoneybagEmoji, getRevolverEmoji, getCowboysEmoji, getSilverCoinEmoji, getGoldBarEmoji, getClockEmoji } from '../../utils/customEmojis';
+import { getMuteEmoji, getBankEmoji, getMoneybagEmoji, getRevolverEmoji, getCowboysEmoji, getSilverCoinEmoji, getGoldBarEmoji, getClockEmoji, getCancelEmoji, getBalanceEmoji, getAlarmEmoji, getRunningCowboyEmoji, getDartEmoji, getWarningEmoji } from '../../utils/customEmojis';
 import path from 'path';
 
 const activeRobberies = new Map();
@@ -20,8 +20,10 @@ module.exports = {
     const punishment = isPunished(userId);
     if (punishment) {
       const remaining = getRemainingTime(userId);
+      const lockEmoji = getMuteEmoji();
+      const timerEmoji = getClockEmoji();
       await interaction.reply({
-        content: `🔒 **You're in jail!**\n\n${punishment.reason}\n\n⏰ Time remaining: **${formatTime(remaining)}**\n\nYou cannot commit crimes while serving your sentence!`,
+        content: `${lockEmoji} **You're in jail!**\n\n${punishment.reason}\n\n${timerEmoji} Time remaining: **${formatTime(remaining)}**\n\nYou cannot commit crimes while serving your sentence!`,
         flags: [MessageFlags.Ephemeral]
       });
       return;
@@ -35,8 +37,9 @@ module.exports = {
 
       if (now < expirationTime) {
         const timeLeft = Math.ceil((expirationTime - now) / 1000 / 60);
+        const timerEmoji = getClockEmoji();
         await interaction.reply({
-          content: `⏰ The sheriff's watching you closely! Wait ${timeLeft} more minutes before attempting another robbery.`,
+          content: `${timerEmoji} The sheriff's watching you closely! Wait ${timeLeft} more minutes before attempting another robbery.`,
           flags: [MessageFlags.Ephemeral]
         });
         return;
@@ -44,8 +47,9 @@ module.exports = {
     }
 
     if (activeRobberies.has(userId)) {
+      const cancelEmoji = getCancelEmoji();
       await interaction.reply({
-        content: '❌ You already have an active robbery! Wait for it to finish or expire.',
+        content: `${cancelEmoji} You already have an active robbery! Wait for it to finish or expire.`,
         flags: [MessageFlags.Ephemeral]
       });
       return;
@@ -53,7 +57,7 @@ module.exports = {
 
     const joinButton = new ButtonBuilder()
       .setCustomId(`bankrob_join_${userId}`)
-      .setLabel('🤠 Join the Robbery')
+      .setLabel('Join the Robbery')
       .setStyle(ButtonStyle.Danger);
 
     const row = new ActionRowBuilder<ButtonBuilder>().addComponents(joinButton);
@@ -98,8 +102,12 @@ module.exports = {
     });
 
     collector.on('collect', async i => {
+      const cancelEmoji = getCancelEmoji();
+      const lockEmoji = getMuteEmoji();
+      const timerEmoji = getClockEmoji();
+      
       if (i.user.id === userId) {
-        await i.reply({ content: '❌ You can\'t join your own robbery!', flags: [MessageFlags.Ephemeral] });
+        await i.reply({ content: `${cancelEmoji} You can\'t join your own robbery!`, flags: [MessageFlags.Ephemeral] });
         return;
       }
 
@@ -108,7 +116,7 @@ module.exports = {
       if (partnerPunishment) {
         const remaining = getRemainingTime(i.user.id);
         await i.reply({
-          content: `🔒 You're in jail and cannot join robberies!\n\n⏰ Time remaining: **${formatTime(remaining)}**`,
+          content: `${lockEmoji} You're in jail and cannot join robberies!\n\n${timerEmoji} Time remaining: **${formatTime(remaining)}**`,
           flags: [MessageFlags.Ephemeral]
         });
         return;
@@ -116,7 +124,7 @@ module.exports = {
 
       const robbery = activeRobberies.get(userId);
       if (!robbery || robbery.started) {
-        await i.reply({ content: '❌ This robbery has already started or ended!', flags: [MessageFlags.Ephemeral] });
+        await i.reply({ content: `${cancelEmoji} This robbery has already started or ended!`, flags: [MessageFlags.Ephemeral] });
         return;
       }
 
@@ -134,8 +142,8 @@ module.exports = {
         const progressBar = createProgressBar(percent);
         const embed = new EmbedBuilder()
           .setColor(percent < 50 ? '#FFD700' : percent < 80 ? '#FFA500' : '#FF4500')
-          .setTitle('🏦 BANK ROBBERY IN PROGRESS!')
-          .setDescription(`**${interaction.user.username}** and **${i.user.username}** are robbing the bank!\n\n**Progress:**\n\`${progressBar}\` ${percent}%\n\n⏰ Time remaining: **${timeLeft}**\n\n🤫 Keep quiet and don't attract attention!`)
+          .setTitle(`${bankEmoji} BANK ROBBERY IN PROGRESS!`)
+          .setDescription(`${cowboysEmoji} **${interaction.user.username}** and **${i.user.username}** are robbing the bank!\n\n**Progress:**\n\`${progressBar}\` ${percent}%\n\n${clockEmoji} Time remaining: **${timeLeft}**\n\nKeep quiet and don't attract attention!`)
           .setFooter({ text: 'The sheriff might be on patrol...' })
           .setTimestamp();
 
@@ -148,8 +156,8 @@ module.exports = {
 
       const startEmbed = new EmbedBuilder()
         .setColor('#FFD700')
-        .setTitle('🏦 BANK ROBBERY STARTED!')
-        .setDescription(`**${interaction.user.username}** and **${i.user.username}** are robbing the bank!\n\n**Progress:**\n\`${createProgressBar(0)}\` 0%\n\n⏰ Time remaining: **3m 0s**\n\n🤫 Keep quiet and don't attract attention!`)
+        .setTitle(`${bankEmoji} BANK ROBBERY STARTED!`)
+        .setDescription(`${cowboysEmoji} **${interaction.user.username}** and **${i.user.username}** are robbing the bank!\n\n**Progress:**\n\`${createProgressBar(0)}\` 0%\n\n${clockEmoji} Time remaining: **3m 0s**\n\nKeep quiet and don't attract attention!`)
         .setFooter({ text: 'The sheriff might be on patrol...' })
         .setTimestamp();
 
@@ -213,33 +221,35 @@ module.exports = {
             let initiatorLoot: string[] = [];
             let partnerLoot: string[] = [];
             let warnings: string[] = [];
+            const warningEmoji = getWarningEmoji();
             
-            if (initiatorSilverResult.success) initiatorLoot.push(`${silverPerPerson} 🪙`);
-            else warnings.push(`⚠️ ${interaction.user.username}'s bag too heavy for Silver!`);
+            if (initiatorSilverResult.success) initiatorLoot.push(`${silverPerPerson} ${silverEmoji}`);
+            else warnings.push(`${warningEmoji} ${interaction.user.username}'s bag too heavy for Silver!`);
             
-            if (initiatorGoldResult.success) initiatorLoot.push(`${goldPerPerson} 🥇`);
-            else warnings.push(`⚠️ ${interaction.user.username}'s bag too heavy for Gold!`);
+            if (initiatorGoldResult.success) initiatorLoot.push(`${goldPerPerson} ${goldEmoji}`);
+            else warnings.push(`${warningEmoji} ${interaction.user.username}'s bag too heavy for Gold!`);
             
-            if (partnerSilverResult.success) partnerLoot.push(`${silverPerPerson} 🪙`);
-            else warnings.push(`⚠️ ${i.user.username}'s bag too heavy for Silver!`);
+            if (partnerSilverResult.success) partnerLoot.push(`${silverPerPerson} ${silverEmoji}`);
+            else warnings.push(`${warningEmoji} ${i.user.username}'s bag too heavy for Silver!`);
             
-            if (partnerGoldResult.success) partnerLoot.push(`${goldPerPerson + extraGold} 🥇`);
-            else warnings.push(`⚠️ ${i.user.username}'s bag too heavy for Gold!`);
+            if (partnerGoldResult.success) partnerLoot.push(`${goldPerPerson + extraGold} ${goldEmoji}`);
+            else warnings.push(`${warningEmoji} ${i.user.username}'s bag too heavy for Gold!`);
 
+            const moneybagEmoji = getMoneybagEmoji();
             const successEmbed = new EmbedBuilder()
               .setColor(warnings.length > 0 ? '#FFA500' : '#00FF00')
-              .setTitle('🎉 ROBBERY SUCCESSFUL!')
+              .setTitle('ROBBERY SUCCESSFUL!')
               .setDescription(`**${interaction.user.username}** and **${i.user.username}** successfully robbed the bank and escaped!\n\nYou managed to escape with the loot!`)
               .addFields(
-                { name: '💰 Total Haul', value: `${silverReward} 🪙 Silver Coins\n${goldBars} 🥇 Gold Bars`, inline: false },
-                { name: `${interaction.user.username}'s Share`, value: initiatorLoot.length > 0 ? initiatorLoot.join(' + ') : '❌ Nothing (inventory full)', inline: true },
-                { name: `${i.user.username}'s Share`, value: partnerLoot.length > 0 ? partnerLoot.join(' + ') : '❌ Nothing (inventory full)', inline: true }
+                { name: `${moneybagEmoji} Total Haul`, value: `${silverReward} ${silverEmoji} Silver Coins\n${goldBars} ${goldEmoji} Gold Bars`, inline: false },
+                { name: `${interaction.user.username}'s Share`, value: initiatorLoot.length > 0 ? initiatorLoot.join(' + ') : `${cancelEmoji} Nothing (inventory full)`, inline: true },
+                { name: `${i.user.username}'s Share`, value: partnerLoot.length > 0 ? partnerLoot.join(' + ') : `${cancelEmoji} Nothing (inventory full)`, inline: true }
               )
               .setFooter({ text: warnings.length > 0 ? 'Some loot was lost! Clean your inventory!' : 'Spend it wisely before the law catches up!' })
               .setTimestamp();
             
             if (warnings.length > 0) {
-              successEmbed.addFields({ name: '⚠️ Warnings', value: warnings.join('\n'), inline: false });
+              successEmbed.addFields({ name: `${warningEmoji} Warnings`, value: warnings.join('\n'), inline: false });
             }
 
             if (interaction.channel && 'send' in interaction.channel) {
@@ -258,8 +268,8 @@ module.exports = {
             const goldResult = addItem(escapeeId, 'gold', goldBars);
             
             let loot: string[] = [];
-            if (silverResult.success) loot.push(`${silverReward} 🪙`);
-            if (goldResult.success) loot.push(`${goldBars} 🥇`);
+            if (silverResult.success) loot.push(`${silverReward} ${silverEmoji}`);
+            if (goldResult.success) loot.push(`${goldBars} ${goldEmoji}`);
             
             // Apply punishment to captured person (30 min jail)
             applyPunishment(captured.id, 'Captured during bank robbery');
@@ -282,15 +292,22 @@ module.exports = {
             // Create automatic wanted poster ONLY for ESCAPEE
             const wantedResult = await createAutoWanted(interaction.client, interaction.guildId, escapee, silverReward);
 
+            const balanceEmoji = getBalanceEmoji();
+            const alarmEmoji = getAlarmEmoji();
+            const runningEmoji = getRunningCowboyEmoji();
+            const lockEmoji = getMuteEmoji();
+            const dartEmoji = getDartEmoji();
+            const moneybagEmoji = getMoneybagEmoji();
+            
             const partialEmbed = new EmbedBuilder()
               .setColor('#FFA500')
-              .setTitle('⚖️ PARTIAL ESCAPE!')
-              .setDescription(`**${escapee.username}** managed to escape, but **${captured.username}** was captured by the Sheriff!\n\n🚨 The escapee is now WANTED!\n${getMuteEmoji()} **${captured.username} cannot send messages for 30 minutes!**`)
+              .setTitle(`${balanceEmoji} PARTIAL ESCAPE!`)
+              .setDescription(`**${escapee.username}** managed to escape, but **${captured.username}** was captured by the Sheriff!\n\n${alarmEmoji} The escapee is now WANTED!\n${lockEmoji} **${captured.username} cannot send messages for 30 minutes!**`)
               .addFields(
-                { name: '💰 Total Haul', value: `${silverReward} 🪙 + ${goldBars} 🥇`, inline: false },
-                { name: '🏃 Escaped', value: `${escapee.username}\n${loot.length > 0 ? loot.join(' + ') : '(inventory full)'}`, inline: true },
-                { name: '🔒 Captured', value: `${captured.username}\n**30 min timeout**`, inline: true },
-                { name: '🎯 Bounty Placed', value: `${wantedResult.success ? `🪙 ${wantedResult.amount.toLocaleString()} Silver Coins` : 'System error'}`, inline: false }
+                { name: `${moneybagEmoji} Total Haul`, value: `${silverReward} ${silverEmoji} + ${goldBars} ${goldEmoji}`, inline: false },
+                { name: `${runningEmoji} Escaped`, value: `${escapee.username}\n${loot.length > 0 ? loot.join(' + ') : '(inventory full)'}`, inline: true },
+                { name: `${lockEmoji} Captured`, value: `${captured.username}\n**30 min timeout**`, inline: true },
+                { name: `${dartEmoji} Bounty Placed`, value: `${wantedResult.success ? `${silverEmoji} ${wantedResult.amount.toLocaleString()} Silver Coins` : 'System error'}`, inline: false }
               )
               .setFooter({ text: `${escapee.username} is now wanted! Use /claim to capture them!` })
               .setTimestamp();
@@ -321,13 +338,16 @@ module.exports = {
               // Silently fail - timeout is optional bonus feature
             }
 
+            const alarmEmoji = getAlarmEmoji();
+            const lockEmoji = getMuteEmoji();
+            
             const failEmbed = new EmbedBuilder()
               .setColor('#FF0000')
-              .setTitle('🚨 BOTH CAPTURED!')
-              .setDescription(`**${interaction.user.username}** and **${i.user.username}** were both caught by the Sheriff!\n\nNo loot was stolen, and both outlaws are now in jail!\n\n${getMuteEmoji()} **You cannot send messages for 30 minutes!**`)
+              .setTitle(`${alarmEmoji} BOTH CAPTURED!`)
+              .setDescription(`**${interaction.user.username}** and **${i.user.username}** were both caught by the Sheriff!\n\nNo loot was stolen, and both outlaws are now in jail!\n\n${lockEmoji} **You cannot send messages for 30 minutes!**`)
               .addFields(
-                { name: '🔒 Punishment', value: '**30 minutes timeout**', inline: true },
-                { name: '💸 Lost', value: 'All potential loot', inline: true }
+                { name: `${lockEmoji} Punishment`, value: '**30 minutes timeout**', inline: true },
+                { name: 'Lost', value: 'All potential loot', inline: true }
               )
               .setFooter({ text: 'Crime doesn\'t pay when the Sheriff is on duty!' })
               .setTimestamp();
@@ -356,9 +376,10 @@ module.exports = {
 
     collector.on('end', collected => {
       if (collected.size === 0) {
+        const cancelEmoji = getCancelEmoji();
         const failEmbed = new EmbedBuilder()
           .setColor('#808080')
-          .setTitle('❌ Robbery Cancelled')
+          .setTitle(`${cancelEmoji} Robbery Cancelled`)
           .setDescription('No partner joined the robbery. The plan was abandoned.')
           .setFooter({ text: 'Better luck next time, partner!' })
           .setTimestamp();
