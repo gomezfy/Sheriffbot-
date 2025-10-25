@@ -80,7 +80,7 @@ module.exports = {
         { name: `${silverEmoji} Silver Reward`, value: '800-2000 Coins (split)', inline: true },
         { name: `${goldEmoji} Gold Bonus`, value: '2-4 Gold Bars (split)', inline: true },
         { name: `${clockEmoji} Duration`, value: '3 minutes', inline: true },
-        { name: `${revolverEmoji} Risk`, value: '30% chance of capture!', inline: true }
+        { name: `${getWarningEmoji()} Risk`, value: '30% chance of capture!', inline: true }
       )
       .setFooter({ text: 'Click the button to join!' })
       .setTimestamp();
