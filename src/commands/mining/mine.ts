@@ -1,7 +1,7 @@
 import { SlashCommandBuilder, EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, AttachmentBuilder, ChatInputCommandInteraction ,MessageFlags} from 'discord.js';
 import fs from 'fs';
 import path from 'path';
-import { getSilverCoinEmoji, getGoldBarEmoji, getCowboyEmoji, getPickaxeEmoji } from '../../utils/customEmojis';
+import { getSilverCoinEmoji, getGoldBarEmoji, getCowboyEmoji, getPickaxeEmoji, getCheckEmoji, getSparklesEmoji, getMoneybagEmoji, getBackpackEmoji } from '../../utils/customEmojis';
 import { cleanupOldSessions, getActiveSessions, getUnclaimedSessions, getMiningStats, formatTime as formatMiningTime } from '../../utils/miningTracker';
 const { addItem, getInventory, removeItem, transferItem } = require('../../utils/inventoryManager');
 const { addUserSilver, getUserSilver, removeUserSilver } = require('../../utils/dataManager');
@@ -290,20 +290,24 @@ Pending Gold: ${stats.totalGoldPending} ${goldEmoji}
           
           const userInventory = getInventory(userId);
           const silverEmoji = getSilverCoinEmoji();
+          const checkEmoji = getCheckEmoji();
+          const sparklesEmoji = getSparklesEmoji();
+          const moneybagEmoji = getMoneybagEmoji();
+          const backpackEmoji = getBackpackEmoji();
           
           await i.editReply({
             embeds: [{
               color: 0xFFD700,
-              title: `${getPickaxeEmoji()} GOLD COLLECTED!`,
-              description: `\`\`\`diff\n+ You collected ${activeMining.goldAmount} ${goldEmoji} Gold Bar${activeMining.goldAmount > 1 ? 's' : ''}!\n\`\`\`\n💼 Weight: **${addResult.newWeight.toFixed(2)}kg / ${userInventory.maxWeight}kg**`,
+              title: `${checkEmoji} ${getPickaxeEmoji()} GOLD COLLECTED! ${sparklesEmoji}`,
+              description: `\`\`\`diff\n+ You collected ${activeMining.goldAmount} ${goldEmoji} Gold Bar${activeMining.goldAmount > 1 ? 's' : ''}!\n\`\`\`\n${backpackEmoji} **Weight:** ${addResult.newWeight.toFixed(2)}kg / ${userInventory.maxWeight}kg`,
               fields: [
                 {
-                  name: '💰 Value',
+                  name: `${moneybagEmoji} Value`,
                   value: `\`${activeMining.goldAmount * GOLD_VALUE} ${silverEmoji} Silver Coins\``,
                   inline: true
                 }
               ],
-              footer: { text: '🤠 Great work, partner! You can mine again now.' },
+              footer: { text: `${getCowboyEmoji()} Great work, partner! You can mine again now.` },
               timestamp: new Date().toISOString()
             }],
             components: []
