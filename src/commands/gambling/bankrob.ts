@@ -3,7 +3,7 @@ const { getUserSilver, addUserSilver } = require('../../utils/dataManager');
 const { addItem } = require('../../utils/inventoryManager');
 const { applyPunishment, isPunished, formatTime, getRemainingTime } = require('../../utils/punishmentManager');
 const { createAutoWanted } = require('../../utils/autoWanted');
-import { getMuteEmoji } from '../../utils/customEmojis';
+import { getMuteEmoji, getBankEmoji, getMoneybagEmoji, getRevolverEmoji, getCowboysEmoji, getSilverCoinEmoji, getGoldBarEmoji, getClockEmoji } from '../../utils/customEmojis';
 import path from 'path';
 
 const activeRobberies = new Map();
@@ -60,16 +60,23 @@ module.exports = {
 
     const bankRobberyImage = new AttachmentBuilder(path.join(process.cwd(), 'assets/bank-robbery.png'));
 
+    const bankEmoji = getBankEmoji();
+    const clockEmoji = getClockEmoji();
+    const silverEmoji = getSilverCoinEmoji();
+    const goldEmoji = getGoldBarEmoji();
+    const revolverEmoji = getRevolverEmoji();
+    const cowboysEmoji = getCowboysEmoji();
+
     const embed = new EmbedBuilder()
       .setColor('#FF0000')
-      .setTitle('🏦 BANK ROBBERY IN PROGRESS!')
-      .setDescription(`**${interaction.user.username}** is planning a bank robbery!\n\nThis is a dangerous job, partner. We need one more outlaw to pull this off!\n\n⏰ You have **60 seconds** to find a partner!`)
+      .setTitle(`${bankEmoji} BANK ROBBERY IN PROGRESS!`)
+      .setDescription(`${cowboysEmoji} **${interaction.user.username}** is planning a bank robbery!\n\nThis is a dangerous job, partner. We need one more outlaw to pull this off!\n\n${clockEmoji} You have **60 seconds** to find a partner!`)
       .setImage('attachment://bank-robbery.png')
       .addFields(
-        { name: '🪙 Silver Reward', value: '800-2000 Coins (split)', inline: true },
-        { name: '🥇 Gold Bonus', value: '2-4 Gold Bars (split)', inline: true },
-        { name: '⏱️ Duration', value: '3 minutes', inline: true },
-        { name: '⚠️ Risk', value: '30% chance of capture!', inline: true }
+        { name: `${silverEmoji} Silver Reward`, value: '800-2000 Coins (split)', inline: true },
+        { name: `${goldEmoji} Gold Bonus`, value: '2-4 Gold Bars (split)', inline: true },
+        { name: `${clockEmoji} Duration`, value: '3 minutes', inline: true },
+        { name: `${revolverEmoji} Risk`, value: '30% chance of capture!', inline: true }
       )
       .setFooter({ text: 'Click the button to join!' })
       .setTimestamp();

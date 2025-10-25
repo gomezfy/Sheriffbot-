@@ -1,6 +1,6 @@
 import { SlashCommandBuilder, EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, StringSelectMenuBuilder, StringSelectMenuOptionBuilder, ChatInputCommandInteraction, ComponentType, AttachmentBuilder ,MessageFlags} from 'discord.js';
 import path from 'path';
-import { getSilverCoinEmoji, getGoldBarEmoji, getSaloonTokenEmoji } from '../../utils/customEmojis';
+import { getSilverCoinEmoji, getGoldBarEmoji, getSaloonTokenEmoji, getCurrencyEmoji, getBriefcaseEmoji, getCheckEmoji } from '../../utils/customEmojis';
 const { getInventory, removeItem } = require('../../utils/inventoryManager');
 const { addUserSilver } = require('../../utils/dataManager');
 
@@ -24,20 +24,22 @@ module.exports = {
     const tokenEmoji = getSaloonTokenEmoji();
     const silverEmoji = getSilverCoinEmoji();
     const goldEmoji = getGoldBarEmoji();
+    const currencyEmoji = getCurrencyEmoji();
+    const briefcaseEmoji = getBriefcaseEmoji();
 
     const embed = new EmbedBuilder()
       .setColor(0xFFD700)
-      .setTitle('💱 MIDDLEMAN - CURRENCY EXCHANGE')
+      .setTitle(`${currencyEmoji} MIDDLEMAN - CURRENCY EXCHANGE`)
       .setImage('attachment://black-market.png')
       .setDescription(`**Welcome to the Middleman, partner!**\n\nExchange your valuable items for Silver Coins at fair rates.\n\n**📊 EXCHANGE RATES**\n${tokenEmoji} 1 Saloon Token = **50** ${silverEmoji} Silver Coins\n${goldEmoji} 1 Gold Bar = **13,439** ${silverEmoji} Silver Coins`)
       .addFields(
         {
-          name: '💼 Your Inventory',
+          name: `${briefcaseEmoji} Your Inventory`,
           value: `\`\`\`yaml\nSaloon Tokens: ${saloonTokens.toLocaleString()}\nGold Bars: ${goldBars.toLocaleString()}\n\`\`\``,
           inline: false
         },
         {
-          name: '💱 How to Exchange',
+          name: `${currencyEmoji} How to Exchange`,
           value: '1. Click a button below to select what to convert\n2. Choose how many items to exchange\n3. Receive Silver Coins instantly!',
           inline: false
         }
@@ -165,9 +167,10 @@ module.exports = {
           const silverAmount = amount * TOKEN_TO_SILVER;
           addUserSilver(userId, silverAmount);
 
+          const checkEmoji = getCheckEmoji();
           const successEmbed = new EmbedBuilder()
             .setColor(0x00FF00)
-            .setTitle('✅ EXCHANGE SUCCESSFUL!')
+            .setTitle(`${checkEmoji} EXCHANGE SUCCESSFUL!`)
             .setDescription(`You converted **${amount}** ${tokenEmoji} Saloon Tokens into **${silverAmount.toLocaleString()}** ${silverEmoji} Silver Coins!`)
             .addFields(
               { name: 'Tokens Converted', value: `${amount} ${tokenEmoji}`, inline: true },
@@ -255,9 +258,10 @@ module.exports = {
           const silverAmount = amount * GOLD_TO_SILVER;
           addUserSilver(userId, silverAmount);
 
+          const checkEmoji = getCheckEmoji();
           const successEmbed = new EmbedBuilder()
             .setColor(0x00FF00)
-            .setTitle('✅ EXCHANGE SUCCESSFUL!')
+            .setTitle(`${checkEmoji} EXCHANGE SUCCESSFUL!`)
             .setDescription(`You converted **${amount}** ${goldEmoji} Gold Bars into **${silverAmount.toLocaleString()}** ${silverEmoji} Silver Coins!`)
             .addFields(
               { name: 'Gold Converted', value: `${amount} ${goldEmoji}`, inline: true },

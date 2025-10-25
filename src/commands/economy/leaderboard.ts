@@ -2,6 +2,7 @@ import { SlashCommandBuilder, ChatInputCommandInteraction, AttachmentBuilder } f
 import { createCanvas, loadImage, GlobalFonts } from '@napi-rs/canvas';
 import * as path from 'path';
 const { getTopUsers, getUserInventory } = require('../../utils/inventoryManager');
+import { getTrophyEmoji, getGoldMedalEmoji, getSilverMedalEmoji, getBronzeMedalEmoji, getStatsEmoji, getSaloonTokenEmoji, getSilverCoinEmoji } from '../../utils/customEmojis';
 
 GlobalFonts.registerFromPath(path.join(process.cwd(), 'assets', 'fonts', 'Nunito-Bold.ttf'), 'Nunito-Bold');
 GlobalFonts.registerFromPath(path.join(process.cwd(), 'assets', 'fonts', 'Nunito-Regular.ttf'), 'Nunito');
@@ -398,8 +399,12 @@ module.exports = {
     const imageBuffer = await createLeaderboardImage(topUsers, category, interaction);
     const attachment = new AttachmentBuilder(imageBuffer, { name: 'leaderboard.png' });
 
+    const trophyEmoji = getTrophyEmoji();
+    const categoryEmoji = category === 'tokens' ? getSaloonTokenEmoji() : getSilverCoinEmoji();
+    const statsEmoji = getStatsEmoji();
+    
     await interaction.editReply({ 
-      content: '🏆 **WILD WEST LEADERBOARD** 🏆',
+      content: `${trophyEmoji} **WILD WEST LEADERBOARD** ${trophyEmoji}\n${statsEmoji} Category: ${categoryEmoji} ${category === 'tokens' ? 'Saloon Tokens' : 'Silver Coins'}`,
       files: [attachment] 
     });
   },
