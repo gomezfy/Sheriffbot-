@@ -3,6 +3,7 @@ const { getUserSilver, addUserSilver } = require('../../utils/dataManager');
 const { addItem } = require('../../utils/inventoryManager');
 const { applyPunishment, isPunished, formatTime, getRemainingTime } = require('../../utils/punishmentManager');
 const { createAutoWanted } = require('../../utils/autoWanted');
+import { getMuteEmoji } from '../../utils/customEmojis';
 import path from 'path';
 
 const activeRobberies = new Map();
@@ -277,7 +278,7 @@ module.exports = {
             const partialEmbed = new EmbedBuilder()
               .setColor('#FFA500')
               .setTitle('⚖️ PARTIAL ESCAPE!')
-              .setDescription(`**${escapee.username}** managed to escape, but **${captured.username}** was captured by the Sheriff!\n\n🚨 The escapee is now WANTED!\n🔇 **${captured.username} cannot send messages for 30 minutes!**`)
+              .setDescription(`**${escapee.username}** managed to escape, but **${captured.username}** was captured by the Sheriff!\n\n🚨 The escapee is now WANTED!\n${getMuteEmoji()} **${captured.username} cannot send messages for 30 minutes!**`)
               .addFields(
                 { name: '💰 Total Haul', value: `${silverReward} 🪙 + ${goldBars} 🥇`, inline: false },
                 { name: '🏃 Escaped', value: `${escapee.username}\n${loot.length > 0 ? loot.join(' + ') : '(inventory full)'}`, inline: true },
@@ -316,7 +317,7 @@ module.exports = {
             const failEmbed = new EmbedBuilder()
               .setColor('#FF0000')
               .setTitle('🚨 BOTH CAPTURED!')
-              .setDescription(`**${interaction.user.username}** and **${i.user.username}** were both caught by the Sheriff!\n\nNo loot was stolen, and both outlaws are now in jail!\n\n🔇 **You cannot send messages for 30 minutes!**`)
+              .setDescription(`**${interaction.user.username}** and **${i.user.username}** were both caught by the Sheriff!\n\nNo loot was stolen, and both outlaws are now in jail!\n\n${getMuteEmoji()} **You cannot send messages for 30 minutes!**`)
               .addFields(
                 { name: '🔒 Punishment', value: '**30 minutes timeout**', inline: true },
                 { name: '💸 Lost', value: 'All potential loot', inline: true }
