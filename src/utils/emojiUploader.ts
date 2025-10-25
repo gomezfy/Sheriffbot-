@@ -207,6 +207,7 @@ export async function removeCustomEmoji(guild: Guild, emojiName: string): Promis
 
 /**
  * Remove todos os emojis customizados do servidor Discord
+ * Remove TODOS os emojis do servidor, independente do mapeamento
  */
 export async function removeAllCustomEmojis(guild: Guild): Promise<{ success: number; failed: number; errors: string[] }> {
   const results = {
@@ -215,57 +216,29 @@ export async function removeAllCustomEmojis(guild: Guild): Promise<{ success: nu
     errors: [] as string[]
   };
 
-  const mapping = loadEmojiMapping();
-  const emojiNames = Object.keys(mapping);
-
-  if (emojiNames.length === 0) {
-    results.errors.push('No custom emojis found in mapping');
-    return results;
-  }
-
-  // Fetch all emojis from the server to ensure cache is up to date
+  // Fetch all emojis from the server
+  let serverEmojis;
   try {
-    await guild.emojis.fetch();
+    serverEmojis = await guild.emojis.fetch();
   } catch (error: any) {
     results.errors.push(`Failed to fetch server emojis: ${error.message}`);
     return results;
   }
 
-  // Process deletions in parallel for better performance
-  const deletePromises = emojiNames.map(async (emojiName) => {
-    try {
-      const emojiString = mapping[emojiName];
-      
-      // Extrai o ID do emoji
-      const match = emojiString.match(/:(\d+)>/);
-      if (!match) {
-        return {
-          success: false,
-          name: emojiName,
-          error: 'Invalid emoji format'
-        };
-      }
+  if (serverEmojis.size === 0) {
+    results.errors.push('No emojis found on server');
+    return results;
+  }
 
-      const emojiId = match[1];
-      
-      // Use cache instead of fetching individually (much faster!)
-      const emoji = guild.emojis.cache.get(emojiId);
-      
-      if (emoji) {
-        await emoji.delete('Removed via Sheriff Rex Bot');
-        return { success: true, name: emojiName };
-      } else {
-        return {
-          success: false,
-          name: emojiName,
-          error: 'Emoji not found in server'
-        };
-      }
-      
+  // Remove ALL emojis from the server (not just from mapping)
+  const deletePromises = serverEmojis.map(async (emoji) => {
+    try {
+      await emoji.delete('Removed via Sheriff Rex Bot');
+      return { success: true, name: emoji.name || emoji.id };
     } catch (error: any) {
       return {
         success: false,
-        name: emojiName,
+        name: emoji.name || emoji.id,
         error: error.message
       };
     }
@@ -284,16 +257,14 @@ export async function removeAllCustomEmojis(guild: Guild): Promise<{ success: nu
         results.failed++;
         results.errors.push(`${name}: ${error}`);
       }
-      // Remove from mapping regardless of success
-      delete mapping[name];
     } else {
       results.failed++;
       results.errors.push(`Unknown error: ${result.reason}`);
     }
   }
 
-  // Salva o mapeamento atualizado (limpo)
-  saveEmojiMapping(mapping);
+  // Clear the mapping file completely
+  saveEmojiMapping({});
 
   return results;
 }
