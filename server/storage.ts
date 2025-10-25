@@ -22,7 +22,7 @@ export class DatabaseStorage {
       .onConflictDoUpdate({
         target: users.userId,
         set: {
-          username: insertUser.username,
+          ...insertUser,
           updatedAt: new Date(),
         }
       })
@@ -48,7 +48,7 @@ export class DatabaseStorage {
     return await db.select().from(inventory).where(eq(inventory.userId, userId));
   }
 
-  async addInventoryItem(item: InsertInventory): Promise<Inventory> {
+  async addInventoryItem(item: InsertInventory, mode: 'add' | 'set' = 'add'): Promise<Inventory> {
     const existing = await db
       .select()
       .from(inventory)
@@ -58,9 +58,13 @@ export class DatabaseStorage {
       ));
 
     if (existing.length > 0) {
+      const newQuantity = mode === 'add' 
+        ? sql`${inventory.quantity} + ${item.quantity || 1}`
+        : item.quantity || 1;
+      
       const [updated] = await db
         .update(inventory)
-        .set({ quantity: sql`${inventory.quantity} + ${item.quantity || 1}` })
+        .set({ quantity: newQuantity })
         .where(eq(inventory.id, existing[0].id))
         .returning();
       return updated;

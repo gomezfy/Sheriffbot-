@@ -55,7 +55,7 @@ async function migrateData() {
               userId,
               itemId,
               quantity: Number(quantity) || 1,
-            });
+            }, 'set'); // Use 'set' mode to replace instead of add during migration
             itemCount++;
           } catch (error: any) {
             console.error(`Error migrating inventory for ${userId}:`, error.message);
