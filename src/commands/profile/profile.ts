@@ -208,8 +208,8 @@ async function createProfileCard(user: User, stats: any): Promise<AttachmentBuil
     statsY += statSpacing;
   }
 
-  // Saloon Tokens (Gold) - usando emoji customizado GEM
-  await drawCompactStat(CUSTOM_EMOJIS.GEM, '💎', stats.gold.toLocaleString(), '#FFD700');
+  // Saloon Tokens (Gold) - usando emoji customizado SALOON_TOKEN
+  await drawCompactStat(CUSTOM_EMOJIS.SALOON_TOKEN, '🎫', stats.gold.toLocaleString(), '#FFD700');
 
   // Silver Coins - usando emoji customizado SILVER_COIN
   await drawCompactStat(CUSTOM_EMOJIS.SILVER_COIN, '🪙', stats.silver.toLocaleString(), '#C0C0C0');
