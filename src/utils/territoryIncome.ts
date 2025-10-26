@@ -1,7 +1,6 @@
 import { Client, EmbedBuilder } from 'discord.js';
 import { getUserTerritories, getTerritory } from './territoryManager';
 import { readData, writeData } from './database';
-import { t } from './i18n';
 import { getSilverCoinEmoji, getGoldBarEmoji } from './customEmojis';
 
 const { addItem } = require('./inventoryManager');
@@ -97,24 +96,21 @@ export async function processTerritoryIncome(client: Client, userId: string): Pr
       const territory = getTerritory(territoryId);
       if (!territory) continue;
       
-      // Get user for locale
-      const user = await client.users.fetch(userId);
-
       if (territoryId === 'saloon_business') {
         totalSilver += 5000;
-        incomeDetails.push(`🍺 **${t(user, 'territory_saloon')}:** +5,000 ${t(user, 'silver_coins')}`);
+        incomeDetails.push('🍺 **Saloon Business:** +5,000 Silver Coins');
       } else if (territoryId === 'gold_mine_shares') {
         totalSilver += 12000;
-        incomeDetails.push(`⛏️ **${t(user, 'territory_mine')}:** +12,000 ${t(user, 'silver_coins')}`);
+        incomeDetails.push('⛏️ **Gold Mine Shares:** +12,000 Silver Coins');
         
         // Add weekly Gold Bars if it's time
         if (shouldPayGold) {
           totalGold += 2;
-          incomeDetails.push(`🥇 **${t(user, 'territory_dm_weekly_bonus')}:** +2 ${t(user, 'gold_bars')}`);
+          incomeDetails.push('🥇 **Weekly Bonus:** +2 Gold Bars');
         }
       } else if (territoryId === 'ranch') {
         totalSilver += 15000;
-        incomeDetails.push(`🐴 **${t(user, 'territory_ranch')}:** +15,000 ${t(user, 'silver_coins')}`);
+        incomeDetails.push('🐴 **Ranch:** +15,000 Silver Coins');
       }
     }
     
@@ -149,21 +145,21 @@ export async function processTerritoryIncome(client: Client, userId: string): Pr
       
       const embed = new EmbedBuilder()
         .setColor(0xFFD700) // Gold color
-        .setTitle(t(user, 'territory_dm_title'))
-        .setDescription(t(user, 'territory_dm_description'))
+        .setTitle('🏛️ Territory Income Received!')
+        .setDescription('Your territories have generated profits!')
         .addFields(
           {
-            name: t(user, 'territory_dm_breakdown'),
+            name: '💰 Daily Income Breakdown',
             value: incomeDetails.join('\n'),
             inline: false
           },
           {
-            name: t(user, 'territory_dm_total'),
-            value: `${totalSilver.toLocaleString()} ${silverEmoji} ${t(user, 'silver_coins')}${totalGold > 0 ? `\n${totalGold} ${goldEmoji} ${t(user, 'gold_bars')}` : ''}`,
+            name: '📊 Total Received',
+            value: `${totalSilver.toLocaleString()} ${silverEmoji} Silver Coins${totalGold > 0 ? `\n${totalGold} ${goldEmoji} Gold Bars` : ''}`,
             inline: false
           }
         )
-        .setFooter({ text: t(user, 'territory_dm_footer') })
+        .setFooter({ text: '🤠 Keep investing in your empire!' })
         .setTimestamp();
       
       await user.send({ embeds: [embed] });

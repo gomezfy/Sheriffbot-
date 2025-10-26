@@ -105,26 +105,18 @@ function getCategoryEmbed(interaction: ChatInputCommandInteraction, category: st
     case 'gambling': {
       const slotEmoji = getSlotMachineEmoji();
       const gamblingCommands = locale === 'pt-BR'
-        ? `\`/casino\` ${dmText[locale]} - Slot machine
 \`/dice\` ${serverText[locale]} - Duelo de dados
-\`/poker\` ${serverText[locale]} - Texas Hold'em
 \`/bankrob\` ${serverText[locale]} - Assalto cooperativo
 \`/duel\` ${serverText[locale]} - Duelo PvP (HP system)`
         : locale === 'es-ES'
-        ? `\`/casino\` ${dmText[locale]} - Tragamonedas
 \`/dice\` ${serverText[locale]} - Duelo de dados
-\`/poker\` ${serverText[locale]} - Texas Hold'em
 \`/bankrob\` ${serverText[locale]} - Asalto cooperativo
 \`/duel\` ${serverText[locale]} - Duelo PvP (HP system)`
         : locale === 'fr'
-        ? `\`/casino\` ${dmText[locale]} - Machine à sous
 \`/dice\` ${serverText[locale]} - Duel de dés
-\`/poker\` ${serverText[locale]} - Texas Hold'em
 \`/bankrob\` ${serverText[locale]} - Braquage coopératif
 \`/duel\` ${serverText[locale]} - Duel PvP (HP system)`
-        : `\`/casino\` ${dmText[locale]} - Slot machine
 \`/dice\` ${serverText[locale]} - Dice duel
-\`/poker\` ${serverText[locale]} - Texas Hold'em
 \`/bankrob\` ${serverText[locale]} - Cooperative heist
 \`/duel\` ${serverText[locale]} - PvP duel (HP system)`;
 
