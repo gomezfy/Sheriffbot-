@@ -157,7 +157,8 @@ async function createProfileCard(user: User, stats: any): Promise<AttachmentBuil
   ctx.shadowColor = 'rgba(0, 0, 0, 0.7)';
   ctx.shadowBlur = 15;
   
-  const displayName = user.displayName || user.username;
+  // Use globalName (display name) if available, otherwise use username
+  const displayName = (user as any).globalName || user.username;
   ctx.fillText(displayName, usernameX, usernameY);
   const displayNameWidth = ctx.measureText(displayName).width;
   
