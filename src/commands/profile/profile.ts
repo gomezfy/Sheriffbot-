@@ -32,13 +32,13 @@ module.exports = {
 
     const inventory = getInventory(targetUser.id);
     const silver = inventory.items['silver'] || 0;
-    const gold = inventory.items['saloon_token'] || 0;
+    const goldBars = inventory.items['gold'] || 0;
     const xpData = getUserXP(targetUser.id);
     const profile = getUserProfile(targetUser.id);
 
     const card = await createProfileCard(targetUser, {
       silver,
-      gold,
+      goldBars,
       xp: xpData.xp,
       level: xpData.level,
       bio: profile.bio,
@@ -105,34 +105,34 @@ async function createProfileCard(user: User, stats: any): Promise<AttachmentBuil
   ctx.fillStyle = 'rgba(0, 0, 0, 0.2)';
   ctx.fillRect(0, 0, 1536, 1024);
 
-  // "Rex" signature in top right (like in the image)
+  // "Rex" signature in top right (stylized handwriting)
   ctx.save();
-  ctx.font = 'italic bold 150px Nunito';
-  ctx.fillStyle = 'rgba(255, 255, 255, 0.4)';
+  ctx.font = 'italic bold 120px Nunito';
+  ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
   ctx.textAlign = 'right';
-  ctx.fillText('Rex', 1480, 150);
+  ctx.fillText('Rex', 1450, 130);
   ctx.restore();
 
-  // Avatar circle (top left, large)
-  const avatarX = 230;
-  const avatarY = 256;
-  const avatarRadius = 180;
+  // Avatar circle (top left corner)
+  const avatarX = 180;
+  const avatarY = 180;
+  const avatarRadius = 130;
 
   try {
-    const avatarURL = user.displayAvatarURL({ extension: 'png', size: 256 });
+    const avatarURL = user.displayAvatarURL({ extension: 'png', size: 512 });
     const avatar = await loadImage(avatarURL);
     
     // Black circle background
     ctx.fillStyle = '#000000';
     ctx.beginPath();
-    ctx.arc(avatarX, avatarY, avatarRadius + 5, 0, Math.PI * 2);
+    ctx.arc(avatarX, avatarY, avatarRadius + 8, 0, Math.PI * 2);
     ctx.fill();
 
     // White inner border
     ctx.strokeStyle = '#FFFFFF';
-    ctx.lineWidth = 3;
+    ctx.lineWidth = 4;
     ctx.beginPath();
-    ctx.arc(avatarX, avatarY, avatarRadius + 2, 0, Math.PI * 2);
+    ctx.arc(avatarX, avatarY, avatarRadius + 4, 0, Math.PI * 2);
     ctx.stroke();
 
     // Draw avatar (circular)
@@ -147,157 +147,171 @@ async function createProfileCard(user: User, stats: any): Promise<AttachmentBuil
     console.error('Error loading avatar:', error);
   }
 
-  // Username with lightning emoji customizado
+  // Username next to avatar (horizontal)
   ctx.save();
-  ctx.font = 'bold 140px Nunito';
+  ctx.font = 'bold 100px Nunito';
   ctx.fillStyle = '#FFFFFF';
-  ctx.shadowColor = 'rgba(0, 0, 0, 0.5)';
-  ctx.shadowBlur = 20;
+  ctx.shadowColor = 'rgba(0, 0, 0, 0.7)';
+  ctx.shadowBlur = 15;
   
-  // Draw username
-  ctx.fillText(user.username, 530, 280);
+  const usernameX = 350;
+  const usernameY = 195;
+  ctx.fillText(user.username, usernameX, usernameY);
   
   // Draw custom lightning emoji next to username
   try {
     const lightningImg = await loadImage(CUSTOM_EMOJIS.LIGHTNING);
     const usernameWidth = ctx.measureText(user.username).width;
-    ctx.drawImage(lightningImg, 530 + usernameWidth + 20, 280 - 100, 100, 100);
+    ctx.drawImage(lightningImg, usernameX + usernameWidth + 15, usernameY - 70, 70, 70);
   } catch (error) {
     // Fallback to Unicode emoji if custom emoji fails
     const usernameWidth = ctx.measureText(user.username).width;
-    ctx.fillText('⚡', 530 + usernameWidth + 20, 280);
+    ctx.font = 'bold 70px Nunito';
+    ctx.fillText('⚡', usernameX + usernameWidth + 15, usernameY);
   }
   
   ctx.restore();
 
-  // Stats section (left side, stacked vertically)
-  const statsX = 130;
-  let statsY = 512;
-  const statSpacing = 140;
+  // Stats section (left side, below avatar, stacked vertically)
+  const statsX = 80;
+  let statsY = 420;
+  const statSpacing = 120;
 
-  // Helper function to draw compact stat with custom emoji
-  async function drawCompactStat(emojiPath: string | null, fallbackEmoji: string, value: string, color: string) {
+  // Helper function to draw stat with emoji and value
+  async function drawStat(emoji: string, emojiPath: string | null, value: string, label: string = '') {
     ctx.save();
+    
+    const emojiSize = 60;
+    const emojiY = statsY - 40;
     
     // Try to load custom emoji image
     if (emojiPath) {
       try {
         const emojiImg = await loadImage(emojiPath);
-        ctx.drawImage(emojiImg, statsX, statsY - 28, 32, 32);
+        ctx.drawImage(emojiImg, statsX, emojiY, emojiSize, emojiSize);
       } catch (error) {
-        // Fallback to Unicode emoji if custom emoji fails
-        ctx.font = 'bold 32px Nunito';
-        ctx.fillStyle = color;
-        ctx.fillText(fallbackEmoji, statsX, statsY);
+        // Fallback to Unicode emoji
+        ctx.font = 'bold 50px Nunito';
+        ctx.fillText(emoji, statsX, statsY);
       }
     } else {
       // Use Unicode emoji
-      ctx.font = 'bold 32px Nunito';
-      ctx.fillStyle = color;
-      ctx.fillText(fallbackEmoji, statsX, statsY);
+      ctx.font = 'bold 50px Nunito';
+      ctx.fillText(emoji, statsX, statsY);
     }
     
-    // Value
-    ctx.font = 'bold 32px Nunito';
+    // Value text
+    ctx.font = 'bold 48px Nunito';
     ctx.fillStyle = '#FFFFFF';
-    ctx.shadowColor = 'rgba(0, 0, 0, 0.6)';
-    ctx.shadowBlur = 4;
-    ctx.fillText(value, statsX + 50, statsY);
+    ctx.shadowColor = 'rgba(0, 0, 0, 0.7)';
+    ctx.shadowBlur = 8;
+    
+    if (label) {
+      ctx.fillText(label + ' ' + value, statsX + 80, statsY);
+    } else {
+      ctx.fillText(value, statsX + 80, statsY);
+    }
     
     ctx.restore();
     statsY += statSpacing;
   }
 
-  // Saloon Tokens (Gold) - usando emoji customizado SALOON_TOKEN
-  await drawCompactStat(CUSTOM_EMOJIS.SALOON_TOKEN, '🎫', stats.gold.toLocaleString(), '#FFD700');
+  // Get Gold Bars count
+  const inventory = { items: { 'gold': stats.goldBars || 0 } };
+  const goldBars = stats.goldBars || 0;
 
-  // Silver Coins - usando emoji customizado SILVER_COIN
-  await drawCompactStat(CUSTOM_EMOJIS.SILVER_COIN, '🪙', stats.silver.toLocaleString(), '#C0C0C0');
+  // Stats in order as shown in image:
+  // 1. Gold Bars (💎)
+  await drawStat('💎', CUSTOM_EMOJIS.GOLD_BAR, goldBars.toLocaleString(), '');
 
-  // Level & XP - usando emoji customizado STAR
+  // 2. Silver Coins with RC prefix (🪙)
+  await drawStat('🪙', CUSTOM_EMOJIS.SILVER_COIN, stats.silver.toLocaleString(), 'RC');
+
+  // 3. Level with XP (⭐)
   const currentXP = stats.xp;
   const xpForCurrentLevel = getXPForLevel(stats.level);
   const xpForNextLevel = getXPForNextLevel(stats.level);
   const xpInCurrentLevel = currentXP - xpForCurrentLevel;
   
   ctx.save();
+  const starEmojiSize = 60;
+  const starY = statsY - 40;
   
-  // Draw custom star emoji
   try {
     const starImg = await loadImage(CUSTOM_EMOJIS.STAR);
-    ctx.drawImage(starImg, statsX, statsY - 28, 32, 32);
+    ctx.drawImage(starImg, statsX, starY, starEmojiSize, starEmojiSize);
   } catch (error) {
-    // Fallback to Unicode emoji
-    ctx.font = 'bold 32px Nunito';
-    ctx.fillStyle = '#FFD700';
+    ctx.font = 'bold 50px Nunito';
     ctx.fillText('⭐', statsX, statsY);
   }
   
-  ctx.font = 'bold 32px Nunito';
+  ctx.font = 'bold 48px Nunito';
   ctx.fillStyle = '#FFFFFF';
-  ctx.shadowColor = 'rgba(0, 0, 0, 0.6)';
-  ctx.shadowBlur = 4;
-  ctx.fillText(`Nível ${stats.level}`, statsX + 50, statsY);
+  ctx.shadowColor = 'rgba(0, 0, 0, 0.7)';
+  ctx.shadowBlur = 8;
+  ctx.fillText(`Nível ${stats.level}`, statsX + 80, statsY);
   
-  // XP next to level
-  ctx.font = 'bold 20px Nunito';
+  // XP in smaller text
+  ctx.font = 'bold 28px Nunito';
   ctx.fillStyle = '#CCCCCC';
-  ctx.fillText(`${xpInCurrentLevel} XP`, statsX + 200, statsY);
+  ctx.fillText(`${xpInCurrentLevel} XP`, statsX + 80, statsY + 35);
   ctx.restore();
   statsY += statSpacing;
 
-  // Reps - usando emoji customizado CHECK
-  await drawCompactStat(CUSTOM_EMOJIS.CHECK, '👍', `${stats.reps || 0} Reps`, '#4A9EFF');
+  // 4. Reps (👍)
+  await drawStat('👍', CUSTOM_EMOJIS.LIKE, `${stats.reps || 0} Reps`, '');
 
-  // "Sobre Mim" section (center-right, like in the image)
-  const bioX = 380;
-  const bioY = 200;
-  const bioWidth = 380;
-  const bioHeight = 140;
+  // "Sobre Mim" section (center-right area)
+  const bioX = 580;
+  const bioY = 380;
+  const bioWidth = 550;
+  const bioHeight = 200;
 
   // Semi-transparent dark box for bio
-  ctx.fillStyle = 'rgba(0, 30, 60, 0.7)';
-  roundRect(ctx, bioX, bioY, bioWidth, bioHeight, 12);
+  ctx.fillStyle = 'rgba(0, 30, 60, 0.75)';
+  roundRect(ctx, bioX, bioY, bioWidth, bioHeight, 15);
   ctx.fill();
 
   // Border
   ctx.strokeStyle = 'rgba(255, 255, 255, 0.3)';
-  ctx.lineWidth = 2;
-  roundRect(ctx, bioX, bioY, bioWidth, bioHeight, 12);
+  ctx.lineWidth = 3;
+  roundRect(ctx, bioX, bioY, bioWidth, bioHeight, 15);
   ctx.stroke();
 
   // "Sobre Mim" title
   ctx.save();
-  ctx.font = 'bold 24px Nunito';
+  ctx.font = 'bold 32px Nunito';
   ctx.fillStyle = '#FFFFFF';
-  ctx.fillText('Sobre Mim', bioX + 20, bioY + 35);
+  ctx.fillText('Sobre Mim', bioX + 25, bioY + 45);
   ctx.restore();
 
   // Bio text
   ctx.save();
-  ctx.font = '16px Nunito Regular';
-  ctx.fillStyle = '#E0E0E0';
-  await wrapTextWithEmojis(ctx, stats.bio || 'No bio set...', bioX + 20, bioY + 65, bioWidth - 40, 22);
+  ctx.font = '24px Nunito Regular';
+  ctx.fillStyle = '#E5E5E5';
+  await wrapTextWithEmojis(ctx, stats.bio || 'No bio set yet...', bioX + 25, bioY + 90, bioWidth - 50, 32);
   ctx.restore();
 
-  // Dropdown button icon (bottom right, like in the image)
-  const buttonX = 720;
-  const buttonY = 350;
+  // Dropdown button icon (bottom right of bio box)
+  const buttonX = bioX + bioWidth - 70;
+  const buttonY = bioY + bioHeight - 60;
+  const buttonSize = 50;
+  
   ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
-  roundRect(ctx, buttonX, buttonY, 50, 40, 8);
+  roundRect(ctx, buttonX, buttonY, buttonSize, buttonSize, 10);
   ctx.fill();
   
   ctx.strokeStyle = 'rgba(255, 255, 255, 0.5)';
   ctx.lineWidth = 2;
-  roundRect(ctx, buttonX, buttonY, 50, 40, 8);
+  roundRect(ctx, buttonX, buttonY, buttonSize, buttonSize, 10);
   ctx.stroke();
   
   // Dropdown icon (chevron down)
   ctx.save();
-  ctx.font = 'bold 28px Nunito';
+  ctx.font = 'bold 32px Nunito';
   ctx.fillStyle = '#FFFFFF';
   ctx.textAlign = 'center';
-  ctx.fillText('▼', buttonX + 25, buttonY + 28);
+  ctx.fillText('▼', buttonX + buttonSize / 2, buttonY + 35);
   ctx.restore();
 
   return new AttachmentBuilder(canvas.toBuffer('image/png'), { name: 'profile.png' });
