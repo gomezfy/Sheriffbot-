@@ -1,67 +1,79 @@
-import fs from 'fs';
-import path from 'path';
-import { getDataPath } from './database';
-
-const dataDir = getDataPath('data');
-const xpFile = path.join(dataDir, 'xp.json');
-
-// Ensure data directory exists
-if (!fs.existsSync(dataDir)) {
-  fs.mkdirSync(dataDir, { recursive: true });
-}
-
-// Ensure xp file exists
-if (!fs.existsSync(xpFile)) {
-  fs.writeFileSync(xpFile, JSON.stringify({}, null, 2));
-}
+import { writeData, readData } from './database';
 
 interface UserXP {
-  xp: number;
-  level: number;
+    xp: number;
+    level: number;
+    lastMessageTimestamp: number;
 }
 
-export function getUserXP(userId: string): UserXP {
-  const data = fs.readFileSync(xpFile, 'utf8');
-  const xpData = JSON.parse(data);
-  
-  if (!xpData[userId]) {
-    xpData[userId] = {
-      xp: 0,
-      level: 1
-    };
-    fs.writeFileSync(xpFile, JSON.stringify(xpData, null, 2));
-  }
-  
-  return xpData[userId];
+const COOLDOWN = 60 * 1000; // 60 seconds
+
+function getXpData(): Record<string, UserXP> {
+    try {
+        return readData('xp.json');
+    } catch (error) {
+        return {};
+    }
 }
 
-export function addXP(userId: string, amount: number): { leveledUp: boolean; newLevel: number; currentXP: number } {
-  const data = fs.readFileSync(xpFile, 'utf8');
-  const xpData = JSON.parse(data);
-  
-  if (!xpData[userId]) {
-    xpData[userId] = { xp: 0, level: 1 };
-  }
-  
-  xpData[userId].xp += amount;
-  
-  const newLevel = calculateLevel(xpData[userId].xp);
-  const leveledUp = newLevel > xpData[userId].level;
-  xpData[userId].level = newLevel;
-  
-  fs.writeFileSync(xpFile, JSON.stringify(xpData, null, 2));
-  
-  return { leveledUp, newLevel, currentXP: xpData[userId].xp };
+function saveXpData(data: Record<string, UserXP>): void {
+    writeData('xp.json', data);
 }
 
-export function calculateLevel(xp: number): number {
-  return Math.floor(Math.sqrt(xp / 100)) + 1;
+export function getXpForLevel(level: number): number {
+    return 5 * (level ** 2) + 50 * level + 100;
 }
 
-export function getXPForLevel(level: number): number {
-  return Math.pow(level - 1, 2) * 100;
+export function getUserXp(userId: string): UserXP {
+    const xpData = getXpData();
+    if (!xpData[userId]) {
+        return { xp: 0, level: 0, lastMessageTimestamp: 0 };
+    }
+    return xpData[userId];
 }
 
-export function getXPForNextLevel(currentLevel: number): number {
-  return getXPForLevel(currentLevel + 1);
+export function addXp(userId: string, amount: number): { leveledUp: boolean; oldLevel: number; newLevel: number } {
+    const xpData = getXpData();
+    const userData = getUserXp(userId);
+
+    const now = Date.now();
+    if (now - userData.lastMessageTimestamp < COOLDOWN) {
+        return { leveledUp: false, oldLevel: userData.level, newLevel: userData.level };
+    }
+
+    userData.xp += amount;
+    userData.lastMessageTimestamp = now;
+    const oldLevel = userData.level;
+
+    let xpForNextLevel = getXpForLevel(userData.level);
+    let leveledUp = false;
+
+    while (userData.xp >= xpForNextLevel) {
+        userData.level++;
+        userData.xp -= xpForNextLevel;
+        xpForNextLevel = getXpForLevel(userData.level);
+        leveledUp = true;
+    }
+
+    xpData[userId] = userData;
+    saveXpData(xpData);
+
+    return { leveledUp, oldLevel, newLevel: userData.level };
+}
+
+export function getXpLeaderboard(limit: number = 10): { userId: string; xp: number; level: number }[] {
+    const xpData = getXpData();
+    const users = Object.entries(xpData).map(([userId, data]) => ({
+        userId,
+        ...data
+    }));
+
+    users.sort((a, b) => {
+        if (a.level !== b.level) {
+            return b.level - a.level;
+        }
+        return b.xp - a.xp;
+    });
+
+    return users.slice(0, limit);
 }

@@ -1,8 +1,9 @@
 import { SlashCommandBuilder, ChatInputCommandInteraction, AttachmentBuilder } from 'discord.js';
 import { createCanvas, loadImage, GlobalFonts } from '@napi-rs/canvas';
 import * as path from 'path';
-const { getTopUsers, getUserInventory } = require('../../utils/inventoryManager');
-import { getTrophyEmoji, getGoldMedalEmoji, getSilverMedalEmoji, getBronzeMedalEmoji, getStatsEmoji, getSaloonTokenEmoji, getSilverCoinEmoji, getCowboyEmoji, getCancelEmoji } from '../../utils/customEmojis';
+const { getTopUsers } = require('../../utils/inventoryManager');
+import { getXpLeaderboard } from '../../utils/xpManager';
+import { getTrophyEmoji, getStatsEmoji, getSaloonTokenEmoji, getSilverCoinEmoji, getCowboyEmoji, getCancelEmoji } from '../../utils/customEmojis';
 
 GlobalFonts.registerFromPath(path.join(process.cwd(), 'assets', 'fonts', 'Nunito-Bold.ttf'), 'Nunito-Bold');
 GlobalFonts.registerFromPath(path.join(process.cwd(), 'assets', 'fonts', 'Nunito-Regular.ttf'), 'Nunito');
@@ -11,6 +12,7 @@ GlobalFonts.registerFromPath(path.join(process.cwd(), 'assets', 'fonts', 'Nunito
 interface UserData {
   userId: string;
   amount: number;
+  level?: number;
 }
 
 function drawRoundedRect(ctx: any, x: number, y: number, width: number, height: number, radius: number) {
@@ -131,10 +133,11 @@ async function createLeaderboardImage(
   drawRoundedRect(ctx, 40, 30, 1320, 120, 20);
   ctx.stroke();
 
-  const emojiFileName = category === 'tokens' ? 'saloon_token.png' : 'silver_coin.png';
-  const name = category === 'tokens' ? 'SALOON TOKENS' : 'SILVER COINS';
-  const color = category === 'tokens' ? '#FFD700' : '#E8E8E8';
-  const secondaryColor = category === 'tokens' ? '#FFA500' : '#C0C0C0';
+  const isXp = category === 'xp';
+  const emojiFileName = isXp ? 'xp.png' : category === 'tokens' ? 'saloon_token.png' : 'silver_coin.png';
+  const name = isXp ? 'XP' : category === 'tokens' ? 'SALOON TOKENS' : 'SILVER COINS';
+  const color = isXp ? '#3498DB' : category === 'tokens' ? '#FFD700' : '#E8E8E8';
+  const secondaryColor = isXp ? '#2980B9' : category === 'tokens' ? '#FFA500' : '#C0C0C0';
   
   // Load emoji image
   let emojiImage;
@@ -276,14 +279,14 @@ async function createLeaderboardImage(
     ctx.fillText(displayName, 150, y);
     
     // Amount with icon
-    const amountText = `${userData.amount.toLocaleString()}`;
+    const amountText = isXp ? `Level ${userData.level} (${userData.amount.toLocaleString()} XP)` : `${userData.amount.toLocaleString()}`;
     ctx.fillStyle = i < 3 ? (i === 0 ? '#FFD700' : i === 1 ? '#E8E8E8' : '#CD7F32') : (isCurrentUser ? color : secondaryColor);
     ctx.font = i < 3 ? 'bold 28px Nunito-Bold' : '24px Nunito-SemiBold';
     ctx.textAlign = 'right';
     ctx.fillText(amountText, 820, y);
     
     // Draw emoji image
-    if (emojiImage) {
+    if (emojiImage && !isXp) {
       ctx.drawImage(emojiImage, 835, y - 14, 24, 24);
     }
   }
@@ -348,12 +351,12 @@ async function createLeaderboardImage(
       ctx.fillStyle = borderColor;
       ctx.font = 'bold 20px Nunito-Bold';
       ctx.textAlign = 'center';
-      const amountStr = `${userData.amount.toLocaleString()}`;
+      const amountStr = isXp ? `Level ${userData.level}` : `${userData.amount.toLocaleString()}`;
       const textWidth = ctx.measureText(amountStr).width;
-      ctx.fillText(amountStr, pos.x - 10, pos.y + avatarSize / 2 + 55);
+      ctx.fillText(amountStr, pos.x - (isXp ? 0 : 10), pos.y + avatarSize / 2 + 55);
       
       // Draw emoji image
-      if (emojiImage) {
+      if (emojiImage && !isXp) {
         ctx.drawImage(emojiImage, pos.x + textWidth / 2 - 5, pos.y + avatarSize / 2 + 40, 20, 20);
       }
       
@@ -369,8 +372,8 @@ async function createLeaderboardImage(
   ctx.fillStyle = footerGradient;
   ctx.fillRect(0, 850, 1400, 50);
   
-  // Calculate total wealth
-  const totalWealth = topUsers.reduce((sum, user) => sum + user.amount, 0);
+  // Calculate total
+  const total = isXp ? topUsers.length : topUsers.reduce((sum, user) => sum + user.amount, 0);
   
   // Load and draw cowboy emoji image
   try {
@@ -387,18 +390,18 @@ async function createLeaderboardImage(
   ctx.fillText(`Sheriff Rex Bot`, 75, 880);
   
   ctx.textAlign = 'center';
-  const totalWealthText = `Total Wealth: ${totalWealth.toLocaleString()}`;
-  ctx.fillText(totalWealthText, 650, 880);
-  if (emojiImage) {
+  const totalText = isXp ? `${total} Active Cowboys` : `Total Wealth: ${total.toLocaleString()}`;
+  ctx.fillText(totalText, 650, 880);
+  if (emojiImage && !isXp) {
     ctx.drawImage(emojiImage, 730, 866, 18, 18);
   }
   ctx.fillText(`• ${topUsers.length} Cowboys`, 800, 880);
   
   ctx.textAlign = 'right';
   if (currentUserRank !== -1) {
-    const yourRankText = `Your Rank: #${currentUserRank + 1} • ${currentUserAmount.toLocaleString()}`;
+    const yourRankText = isXp ? `Your Rank: #${currentUserRank + 1} (Level ${topUsers[currentUserRank].level})` : `Your Rank: #${currentUserRank + 1} • ${currentUserAmount.toLocaleString()}`;
     ctx.fillText(yourRankText, 1330, 880);
-    if (emojiImage) {
+    if (emojiImage && !isXp) {
       ctx.drawImage(emojiImage, 1335, 866, 18, 18);
     }
   } else {
@@ -421,15 +424,23 @@ module.exports = {
         .setRequired(false)
         .addChoices(
           { name: 'Saloon Tokens', value: 'tokens' },
-          { name: 'Silver Coins', value: 'silver' }
+          { name: 'Silver Coins', value: 'silver' },
+          { name: 'XP', value: 'xp' }
         )
     ),
   async execute(interaction: ChatInputCommandInteraction): Promise<void> {
     await interaction.deferReply();
     
     const category = interaction.options.getString('category') || 'tokens';
-    const itemType = category === 'tokens' ? 'saloon_token' : 'silver';
-    const topUsers: UserData[] = getTopUsers(itemType, 10);
+    let topUsers: UserData[];
+
+    if (category === 'xp') {
+        const xpUsers = getXpLeaderboard(10);
+        topUsers = xpUsers.map(u => ({ userId: u.userId, amount: u.xp, level: u.level }));
+    } else {
+        const itemType = category === 'tokens' ? 'saloon_token' : 'silver';
+        topUsers = getTopUsers(itemType, 10);
+    }
 
     if (topUsers.length === 0) {
       const cancelEmoji = getCancelEmoji();
@@ -443,11 +454,12 @@ module.exports = {
     const attachment = new AttachmentBuilder(imageBuffer, { name: 'leaderboard.png' });
 
     const trophyEmoji = getTrophyEmoji();
-    const categoryEmoji = category === 'tokens' ? getSaloonTokenEmoji() : getSilverCoinEmoji();
+    const categoryEmoji = category === 'xp' ? '⭐' : category === 'tokens' ? getSaloonTokenEmoji() : getSilverCoinEmoji();
+    const categoryName = category === 'xp' ? 'XP' : category === 'tokens' ? 'Saloon Tokens' : 'Silver Coins';
     const statsEmoji = getStatsEmoji();
     
     await interaction.editReply({ 
-      content: `${trophyEmoji} WILD WEST LEADERBOARD ${trophyEmoji}\n${statsEmoji} Category: ${categoryEmoji} ${category === 'tokens' ? 'Saloon Tokens' : 'Silver Coins'}`,
+      content: `${trophyEmoji} WILD WEST LEADERBOARD ${trophyEmoji}\n${statsEmoji} Category: ${categoryEmoji} ${categoryName}`,
       files: [attachment] 
     });
   },

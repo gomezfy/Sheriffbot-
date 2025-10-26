@@ -18,6 +18,7 @@ import {
 } from './utils/performance';
 import { startAutomaticTerritoryIncome } from './utils/territoryIncome';
 import { startMiningNotifications } from './utils/miningTracker';
+import { addXp } from './utils/xpManager';
 
 // Validate environment variables before starting
 console.log('🔐 Validating environment variables...');
@@ -242,6 +243,13 @@ client.on(Events.InteractionCreate, async interaction => {
 
 client.on(Events.MessageCreate, async message => {
   if (message.author.bot) return;
+
+  const xpAmount = Math.floor(Math.random() * 11) + 15; // 15-25 XP
+  const xpResult = addXp(message.author.id, xpAmount);
+
+  if (xpResult.leveledUp) {
+    console.log(`${message.author.tag} has leveled up to level ${xpResult.newLevel}!`);
+  }
   
   const prefix = '!';
   if (!message.content.startsWith(prefix)) return;
