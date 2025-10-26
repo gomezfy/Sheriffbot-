@@ -146,27 +146,35 @@ async function createProfileCard(user: User, stats: any): Promise<AttachmentBuil
     console.error('Error loading avatar:', error);
   }
 
-  // Username next to avatar (horizontal)
+  // Username next to avatar (horizontal) - Display Name@username format
   ctx.save();
+  const usernameX = 350;
+  const usernameY = 195;
+  
+  // Display name in large font
   ctx.font = 'bold 100px Nunito';
   ctx.fillStyle = '#FFFFFF';
   ctx.shadowColor = 'rgba(0, 0, 0, 0.7)';
   ctx.shadowBlur = 15;
   
-  const usernameX = 350;
-  const usernameY = 195;
-  ctx.fillText(user.username, usernameX, usernameY);
+  const displayName = user.displayName || user.username;
+  ctx.fillText(displayName, usernameX, usernameY);
+  const displayNameWidth = ctx.measureText(displayName).width;
   
-  // Draw custom lightning emoji next to username
+  // @username in smaller font
+  ctx.font = 'bold 60px Nunito';
+  ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
+  ctx.fillText(`@${user.username}`, usernameX + displayNameWidth + 15, usernameY);
+  const atUsernameWidth = ctx.measureText(`@${user.username}`).width;
+  
+  // Draw custom lightning emoji next to @username
   try {
     const lightningImg = await loadImage(CUSTOM_EMOJIS.LIGHTNING);
-    const usernameWidth = ctx.measureText(user.username).width;
-    ctx.drawImage(lightningImg, usernameX + usernameWidth + 15, usernameY - 70, 70, 70);
+    ctx.drawImage(lightningImg, usernameX + displayNameWidth + atUsernameWidth + 30, usernameY - 50, 60, 60);
   } catch (error) {
     // Fallback to Unicode emoji if custom emoji fails
-    const usernameWidth = ctx.measureText(user.username).width;
-    ctx.font = 'bold 70px Nunito';
-    ctx.fillText('⚡', usernameX + usernameWidth + 15, usernameY);
+    ctx.font = 'bold 60px Nunito';
+    ctx.fillText('⚡', usernameX + displayNameWidth + atUsernameWidth + 30, usernameY);
   }
   
   ctx.restore();
@@ -253,11 +261,11 @@ async function createProfileCard(user: User, stats: any): Promise<AttachmentBuil
   ctx.restore();
   statsY += statSpacing;
 
-  // "Sobre Mim" section (mais pro canto direito)
-  const bioX = 720;
-  const bioY = 380;
-  const bioWidth = 550;
-  const bioHeight = 200;
+  // "Sobre Mim" section (mais pro canto direito) - increased size
+  const bioX = 700;
+  const bioY = 360;
+  const bioWidth = 700;
+  const bioHeight = 280;
 
   // Semi-transparent dark box for bio
   ctx.fillStyle = 'rgba(0, 30, 60, 0.75)';
@@ -279,9 +287,9 @@ async function createProfileCard(user: User, stats: any): Promise<AttachmentBuil
 
   // Bio text
   ctx.save();
-  ctx.font = '24px Nunito Regular';
+  ctx.font = '28px Nunito Regular';
   ctx.fillStyle = '#E5E5E5';
-  await wrapTextWithEmojis(ctx, stats.bio || 'No bio set yet...', bioX + 25, bioY + 90, bioWidth - 50, 32);
+  await wrapTextWithEmojis(ctx, stats.bio || 'No bio set yet...', bioX + 25, bioY + 90, bioWidth - 50, 38);
   ctx.restore();
 
   // Dropdown button icon (bottom right of bio box)
@@ -330,8 +338,8 @@ async function wrapTextWithEmojis(ctx: any, text: string, x: number, y: number, 
   }
 
   const parts = parseTextWithEmojis(text);
-  const emojiSize = 16;
-  const maxLines = 3;
+  const emojiSize = 20;
+  const maxLines = 5;
   let currentLine: any[] = [];
   let currentWidth = 0;
   let lineCount = 0;
