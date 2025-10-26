@@ -120,6 +120,22 @@ export function calculateWeight(inventory: Inventory): number {
   return Math.round(totalWeight * 1000) / 1000;
 }
 
+export function checkCapacity(inventory: Inventory, itemId: string, quantity: number): { hasCapacity: boolean; required: number } {
+  const itemInfo = ITEMS[itemId];
+  if (!itemInfo) {
+    // Or handle as an error, depending on desired behavior for unknown items
+    return { hasCapacity: false, required: 0 };
+  }
+
+  const additionalWeight = itemInfo.weight * quantity;
+  const currentWeight = calculateWeight(inventory);
+
+  return {
+    hasCapacity: currentWeight + additionalWeight <= inventory.maxWeight,
+    required: additionalWeight,
+  };
+}
+
 export function addItem(userId: string, itemId: string, quantity: number = 1): any {
   const inventory = getInventory(userId);
   
@@ -127,18 +143,14 @@ export function addItem(userId: string, itemId: string, quantity: number = 1): a
     return { success: false, error: 'Item not found!' };
   }
   
-  const additionalWeight = ITEMS[itemId].weight * quantity;
-  const currentWeight = calculateWeight(inventory);
-  const newWeight = currentWeight + additionalWeight;
-  const userMaxWeight = inventory.maxWeight;
-  
-  if (newWeight > userMaxWeight) {
-    return { 
-      success: false, 
+  const capacityResult = checkCapacity(inventory, itemId, quantity);
+  if (!capacityResult.hasCapacity) {
+    return {
+      success: false,
       error: '🚫 You\'re carrying too much weight!',
-      currentWeight: currentWeight,
-      maxWeight: userMaxWeight,
-      additionalWeight: additionalWeight
+      currentWeight: calculateWeight(inventory),
+      maxWeight: inventory.maxWeight,
+      additionalWeight: capacityResult.required,
     };
   }
   
@@ -192,20 +204,46 @@ export function getItem(userId: string, itemId: string): number {
 }
 
 export function transferItem(fromUserId: string, toUserId: string, itemId: string, quantity: number): any {
-  const removeResult = removeItem(fromUserId, itemId, quantity);
-  
-  if (!removeResult.success) {
-    return removeResult;
+  const fromInventory = getInventory(fromUserId);
+  const toInventory = getInventory(toUserId);
+
+  // Check sender's balance
+  if (!fromInventory.items[itemId] || fromInventory.items[itemId] < quantity) {
+    return { success: false, error: "You don't have enough items!" };
   }
-  
-  const addResult = addItem(toUserId, itemId, quantity);
-  
-  if (!addResult.success) {
-    addItem(fromUserId, itemId, quantity);
-    return addResult;
+
+  // Check recipient's capacity
+  const capacityResult = checkCapacity(toInventory, itemId, quantity);
+  if (!capacityResult.hasCapacity) {
+    return {
+      success: false,
+      error: "The recipient does not have enough space in their inventory.",
+    };
   }
-  
-  return { success: true, item: ITEMS[itemId], quantity: quantity };
+
+  const itemInfo = ITEMS[itemId];
+  if (!itemInfo) {
+    return { success: false, error: 'Item not found!' };
+  }
+
+  // All checks passed, now perform the state changes in memory
+  fromInventory.items[itemId] -= quantity;
+  if (fromInventory.items[itemId] <= 0) {
+    delete fromInventory.items[itemId];
+  }
+  fromInventory.weight = calculateWeight(fromInventory);
+
+  if (!toInventory.items[itemId]) {
+    toInventory.items[itemId] = 0;
+  }
+  toInventory.items[itemId] += quantity;
+  toInventory.weight = calculateWeight(toInventory);
+
+  // Now, save both inventories.
+  saveInventory(fromUserId, fromInventory);
+  saveInventory(toUserId, toInventory);
+
+  return { success: true, item: itemInfo, quantity: quantity };
 }
 
 export const UPGRADE_TIERS = [
