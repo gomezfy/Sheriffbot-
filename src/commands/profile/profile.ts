@@ -3,7 +3,7 @@ import { getInventory } from '../../utils/inventoryManager';
 const { getUserXP, getXPForLevel, getXPForNextLevel } = require('../../utils/xpManager');
 const { getUserProfile } = require('../../utils/profileManager');
 const { parseTextWithEmojis } = require('../../utils/emojiMapper');
-const { getCustomEmojiPath } = require('../../utils/customEmojis');
+const { getCustomEmojiPath, CUSTOM_EMOJIS } = require('../../utils/customEmojis');
 import { createCanvas, loadImage, GlobalFonts } from '@napi-rs/canvas';
 import fs from 'fs';
 import path from 'path';
@@ -147,13 +147,27 @@ async function createProfileCard(user: User, stats: any): Promise<AttachmentBuil
     console.error('Error loading avatar:', error);
   }
 
-  // Username with bolt emoji (like "Farley ⚡" in image)
+  // Username with lightning emoji customizado
   ctx.save();
   ctx.font = 'bold 56px Nunito';
   ctx.fillStyle = '#FFFFFF';
   ctx.shadowColor = 'rgba(0, 0, 0, 0.5)';
   ctx.shadowBlur = 8;
-  ctx.fillText(`${user.username} ⚡`, 220, 110);
+  
+  // Draw username
+  ctx.fillText(user.username, 220, 110);
+  
+  // Draw custom lightning emoji next to username
+  try {
+    const lightningImg = await loadImage(CUSTOM_EMOJIS.LIGHTNING);
+    const usernameWidth = ctx.measureText(user.username).width;
+    ctx.drawImage(lightningImg, 220 + usernameWidth + 10, 110 - 40, 40, 40);
+  } catch (error) {
+    // Fallback to Unicode emoji if custom emoji fails
+    const usernameWidth = ctx.measureText(user.username).width;
+    ctx.fillText('⚡', 220 + usernameWidth + 10, 110);
+  }
+  
   ctx.restore();
 
   // Stats section (left side, stacked vertically)
@@ -161,14 +175,27 @@ async function createProfileCard(user: User, stats: any): Promise<AttachmentBuil
   let statsY = 200;
   const statSpacing = 55;
 
-  // Helper function to draw compact stat
-  function drawCompactStat(emoji: string, value: string, color: string) {
+  // Helper function to draw compact stat with custom emoji
+  async function drawCompactStat(emojiPath: string | null, fallbackEmoji: string, value: string, color: string) {
     ctx.save();
     
-    // Emoji
-    ctx.font = 'bold 32px Nunito';
-    ctx.fillStyle = color;
-    ctx.fillText(emoji, statsX, statsY);
+    // Try to load custom emoji image
+    if (emojiPath) {
+      try {
+        const emojiImg = await loadImage(emojiPath);
+        ctx.drawImage(emojiImg, statsX, statsY - 28, 32, 32);
+      } catch (error) {
+        // Fallback to Unicode emoji if custom emoji fails
+        ctx.font = 'bold 32px Nunito';
+        ctx.fillStyle = color;
+        ctx.fillText(fallbackEmoji, statsX, statsY);
+      }
+    } else {
+      // Use Unicode emoji
+      ctx.font = 'bold 32px Nunito';
+      ctx.fillStyle = color;
+      ctx.fillText(fallbackEmoji, statsX, statsY);
+    }
     
     // Value
     ctx.font = 'bold 32px Nunito';
@@ -181,39 +208,32 @@ async function createProfileCard(user: User, stats: any): Promise<AttachmentBuil
     statsY += statSpacing;
   }
 
-  // Saloon Tokens (Gold)
-  drawCompactStat('💎', stats.gold.toLocaleString(), '#FFD700');
+  // Saloon Tokens (Gold) - usando emoji customizado GEM
+  await drawCompactStat(CUSTOM_EMOJIS.GEM, '💎', stats.gold.toLocaleString(), '#FFD700');
 
-  // Silver Coins with RC badge
-  ctx.save();
-  ctx.font = 'bold 20px Nunito';
-  ctx.fillStyle = '#FFA500';
-  ctx.fillRect(statsX, statsY - 25, 35, 28);
-  ctx.fillStyle = '#000000';
-  ctx.textAlign = 'center';
-  ctx.fillText('RC', statsX + 17.5, statsY - 5);
-  ctx.restore();
-  
-  ctx.save();
-  ctx.font = 'bold 32px Nunito';
-  ctx.fillStyle = '#FFFFFF';
-  ctx.shadowColor = 'rgba(0, 0, 0, 0.6)';
-  ctx.shadowBlur = 4;
-  ctx.fillText(stats.silver.toLocaleString(), statsX + 50, statsY);
-  ctx.restore();
-  statsY += statSpacing;
+  // Silver Coins - usando emoji customizado SILVER_COIN
+  await drawCompactStat(CUSTOM_EMOJIS.SILVER_COIN, '🪙', stats.silver.toLocaleString(), '#C0C0C0');
 
-  // Level & XP
+  // Level & XP - usando emoji customizado STAR
   const currentXP = stats.xp;
   const xpForCurrentLevel = getXPForLevel(stats.level);
   const xpForNextLevel = getXPForNextLevel(stats.level);
   const xpInCurrentLevel = currentXP - xpForCurrentLevel;
   
   ctx.save();
-  ctx.font = 'bold 32px Nunito';
-  ctx.fillStyle = '#FFD700';
-  ctx.fillText('⭐', statsX, statsY);
   
+  // Draw custom star emoji
+  try {
+    const starImg = await loadImage(CUSTOM_EMOJIS.STAR);
+    ctx.drawImage(starImg, statsX, statsY - 28, 32, 32);
+  } catch (error) {
+    // Fallback to Unicode emoji
+    ctx.font = 'bold 32px Nunito';
+    ctx.fillStyle = '#FFD700';
+    ctx.fillText('⭐', statsX, statsY);
+  }
+  
+  ctx.font = 'bold 32px Nunito';
   ctx.fillStyle = '#FFFFFF';
   ctx.shadowColor = 'rgba(0, 0, 0, 0.6)';
   ctx.shadowBlur = 4;
@@ -226,8 +246,8 @@ async function createProfileCard(user: User, stats: any): Promise<AttachmentBuil
   ctx.restore();
   statsY += statSpacing;
 
-  // Reps
-  drawCompactStat('👍', `${stats.reps || 0} Reps`, '#4A9EFF');
+  // Reps - usando emoji customizado CHECK
+  await drawCompactStat(CUSTOM_EMOJIS.CHECK, '👍', `${stats.reps || 0} Reps`, '#4A9EFF');
 
   // "Sobre Mim" section (center-right, like in the image)
   const bioX = 380;
