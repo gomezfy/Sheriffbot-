@@ -1,5 +1,5 @@
 import { SlashCommandBuilder, EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, AttachmentBuilder, ChatInputCommandInteraction, MessageFlags } from 'discord.js';
-const { getUserGold, addUserGold, removeUserGold, setUserGold } = require('../../utils/dataManager');
+const { getUserGold, addUserGold, removeUserGold, setUserGold, transferGold } = require('../../utils/dataManager');
 import path from 'path';
 
 const cooldowns = new Map();
@@ -181,78 +181,15 @@ module.exports = {
         winnerGuess = challengerGuess;
         loserGuess = opponentGuess;
         
-        const challengerBalanceBefore = getUserGold(challenger.id);
-        const opponentBalanceBefore = getUserGold(opponent.id);
-        
-        removeUserGold(challenger.id, bet);
-        removeUserGold(opponent.id, bet);
-        const winResult = addUserGold(challenger.id, bet * 2);
-        
-        if (!winResult.success) {
-          setUserGold(challenger.id, challengerBalanceBefore);
-          setUserGold(opponent.id, opponentBalanceBefore);
-          
-          const fullInventoryEmbed = new EmbedBuilder()
-            .setColor('#FF0000')
-            .setTitle('🎲 DICE DUEL - INVENTORY FULL!')
-            .setDescription(`**${challenger.tag}** won but their inventory is too heavy!\n\n🎲 Dice: ${dice1} + ${dice2} = **${total}**\n\n🚫 ${challenger.tag} couldn't carry the prize! Both bets are returned.`)
-            .addFields(
-              { name: `🎯 ${challenger.tag}'s Guess`, value: `${challengerGuess} (diff: ${challengerDiff})`, inline: true },
-              { name: `❌ ${opponent.tag}'s Guess`, value: `${opponentGuess} (diff: ${opponentDiff})`, inline: true }
-            )
-            .setFooter({ text: 'Clean out your inventory before dueling!' })
-            .setTimestamp();
-
-          await i.update({ embeds: [fullInventoryEmbed], components: [] });
-          activeGames.delete(challenger.id);
-          activeGames.delete(opponent.id);
-          cooldowns.set(challenger.id, Date.now());
-          cooldowns.set(opponent.id, Date.now());
-          setTimeout(() => {
-            cooldowns.delete(challenger.id);
-            cooldowns.delete(opponent.id);
-          }, cooldownAmount);
-          return;
-        }
+        winner = challenger;
+        loser = opponent;
+        winnerGuess = challengerGuess;
+        loserGuess = opponentGuess;
       } else if (opponentDiff < challengerDiff) {
         winner = opponent;
         loser = challenger;
         winnerGuess = opponentGuess;
         loserGuess = challengerGuess;
-        
-        const challengerBalanceBefore = getUserGold(challenger.id);
-        const opponentBalanceBefore = getUserGold(opponent.id);
-        
-        removeUserGold(challenger.id, bet);
-        removeUserGold(opponent.id, bet);
-        const winResult = addUserGold(opponent.id, bet * 2);
-        
-        if (!winResult.success) {
-          setUserGold(challenger.id, challengerBalanceBefore);
-          setUserGold(opponent.id, opponentBalanceBefore);
-          
-          const fullInventoryEmbed = new EmbedBuilder()
-            .setColor('#FF0000')
-            .setTitle('🎲 DICE DUEL - INVENTORY FULL!')
-            .setDescription(`**${opponent.tag}** won but their inventory is too heavy!\n\n🎲 Dice: ${dice1} + ${dice2} = **${total}**\n\n🚫 ${opponent.tag} couldn't carry the prize! Both bets are returned.`)
-            .addFields(
-              { name: `🎯 ${opponent.tag}'s Guess`, value: `${opponentGuess} (diff: ${opponentDiff})`, inline: true },
-              { name: `❌ ${challenger.tag}'s Guess`, value: `${challengerGuess} (diff: ${challengerDiff})`, inline: true }
-            )
-            .setFooter({ text: 'Clean out your inventory before dueling!' })
-            .setTimestamp();
-
-          await i.update({ embeds: [fullInventoryEmbed], components: [] });
-          activeGames.delete(challenger.id);
-          activeGames.delete(opponent.id);
-          cooldowns.set(challenger.id, Date.now());
-          cooldowns.set(opponent.id, Date.now());
-          setTimeout(() => {
-            cooldowns.delete(challenger.id);
-            cooldowns.delete(opponent.id);
-          }, cooldownAmount);
-          return;
-        }
       } else {
         const tieEmbed = new EmbedBuilder()
           .setColor('#FFD700')
@@ -278,10 +215,26 @@ module.exports = {
         return;
       }
 
-      const winnerNewGold = getUserGold(winner.id);
-      const loserNewGold = getUserGold(loser.id);
+      const transferResult = transferGold(loser.id, winner.id, bet);
 
-      const resultEmbed = new EmbedBuilder()
+      if (!transferResult.success) {
+        const fullInventoryEmbed = new EmbedBuilder()
+          .setColor('#FF0000')
+          .setTitle('🎲 DICE DUEL - INVENTORY FULL!')
+          .setDescription(`**${winner.tag}** won but their inventory is too heavy!\n\n🎲 Dice: ${dice1} + ${dice2} = **${total}**\n\n🚫 ${winner.tag} couldn't carry the prize! The bet is returned to ${loser.tag}.`)
+          .addFields(
+            { name: `🎯 ${winner.tag}'s Guess`, value: `${winnerGuess} (diff: ${Math.abs(total - winnerGuess)})`, inline: true },
+            { name: `❌ ${loser.tag}'s Guess`, value: `${loserGuess} (diff: ${Math.abs(total - loserGuess)})`, inline: true }
+          )
+          .setFooter({ text: 'Clean out your inventory before dueling!' })
+          .setTimestamp();
+
+        await i.update({ embeds: [fullInventoryEmbed], components: [] });
+      } else {
+        const winnerNewGold = getUserGold(winner.id);
+        const loserNewGold = getUserGold(loser.id);
+
+        const resultEmbed = new EmbedBuilder()
         .setColor('#00FF00')
         .setTitle('🎲 DICE DUEL RESULTS!')
         .setDescription(`🎲 The dice showed: ${dice1} + ${dice2} = **${total}**\n\n🏆 **${winner.tag} wins ${bet * 2} Saloon Tokens!**`)
@@ -295,7 +248,8 @@ module.exports = {
         .setFooter({ text: `${winner.tag} called it closest!` })
         .setTimestamp();
 
-      await i.update({ embeds: [resultEmbed], components: [] });
+        await i.update({ embeds: [resultEmbed], components: [] });
+      }
 
       activeGames.delete(challenger.id);
       activeGames.delete(opponent.id);

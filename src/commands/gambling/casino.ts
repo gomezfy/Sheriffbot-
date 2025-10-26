@@ -91,16 +91,6 @@ module.exports = {
       return;
     }
 
-    // Remove bet first
-    const removeResult = removeUserGold(userId, bet);
-    
-    if (!removeResult.success) {
-      await interaction.reply({
-        content: `❌ Error removing bet: ${removeResult.error}`,
-        flags: [MessageFlags.Ephemeral]
-      });
-      return;
-    }
 
     // Generate weighted random symbols
     const slot1 = getWeightedSymbol();
@@ -189,24 +179,22 @@ module.exports = {
     
     const winAmount = won ? Math.floor(bet * multiplier) : 0;
 
-    // If won, add winnings
     let finalMessage = '';
     if (won) {
-      const addResult = addUserGold(userId, winAmount);
-      
+      const netWinnings = winAmount - bet;
+      const addResult = addUserGold(userId, netWinnings);
+
       if (!addResult.success) {
-        // Couldn't add winnings due to weight! Return the bet
-        addUserGold(userId, bet);
-        
         await interaction.reply({
-          content: `🚫 **You won but your inventory is full!**\n\n${addResult.error}\n\nYour bet was returned. Free up space and try again!`,
-          flags: [MessageFlags.Ephemeral]
+          content: `🚫 **You won but your inventory is full!**\n\n${addResult.error}\n\nYour bet was not deducted. Free up space and try again!`,
+          flags: [MessageFlags.Ephemeral],
         });
         return;
       }
-      
-      finalMessage = `\n\n💵 **Profit: +${winAmount - bet} tokens**`;
+
+      finalMessage = `\n\n💵 **Profit: +${netWinnings} tokens**`;
     } else {
+      removeUserGold(userId, bet);
       finalMessage = `\n\n💸 **Lost: -${bet} tokens**`;
     }
 

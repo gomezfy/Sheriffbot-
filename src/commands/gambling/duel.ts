@@ -9,6 +9,7 @@ import {
   ComponentType
 } from 'discord.js';
 import { addItem, removeItem, getInventory } from '../../utils/inventoryManager';
+const { transferSilver } = require('../../utils/dataManager');
 import { 
   getRevolverEmoji, 
   getDartEmoji, 
@@ -252,29 +253,6 @@ module.exports = {
         return;
       }
 
-      // Deduct bets BEFORE marking duel as active
-      const challengerRemove = removeItem(challenger.id, 'silver', bet);
-      const opponentRemove = removeItem(opponent.id, 'silver', bet);
-
-      if (!challengerRemove.success || !opponentRemove.success) {
-        // Rollback if one succeeded but the other failed
-        if (challengerRemove.success) {
-          addItem(challenger.id, 'silver', bet);
-        }
-        if (opponentRemove.success) {
-          addItem(opponent.id, 'silver', bet);
-        }
-
-        const errorEmbed = new EmbedBuilder()
-          .setColor('#FF0000')
-          .setTitle(`${getCancelEmoji()} Transaction Failed`)
-          .setDescription('Failed to process bets. Duel cancelled.')
-          .setFooter({ text: 'Your silver has been refunded' });
-
-        await i.update({ embeds: [errorEmbed], components: [] });
-        return;
-      }
-
       // Only mark as active after successful transaction
       activeDuels.set(challenger.id, true);
       activeDuels.set(opponent.id, true);
@@ -466,14 +444,11 @@ async function endDuel(message: any, state: any) {
     winner = state.opponent.user;
     loser = state.challenger.user;
   } else {
-    // Draw - refund both
-    const refundChallengerResult = addItem(state.challenger.user.id, 'silver', state.bet);
-    const refundOpponentResult = addItem(state.opponent.user.id, 'silver', state.bet);
-
+    // Draw - no transaction needed
     const drawEmbed = new EmbedBuilder()
       .setColor('#808080')
       .setTitle('🤝 Duel Draw!')
-      .setDescription(`Both outlaws are equally matched! The duel ends in a draw.\n\n💰 Both players get their ${getSilverCoinEmoji()} ${state.bet.toLocaleString()} Silver Coins back.`)
+      .setDescription(`Both outlaws are equally matched! The duel ends in a draw.\n\nNo Silver Coins were exchanged.`)
       .setFooter({ text: 'Rematch anytime!' })
       .setTimestamp();
 
@@ -485,19 +460,15 @@ async function endDuel(message: any, state: any) {
     return message.edit({ embeds: [drawEmbed], components: [] });
   }
 
-  // Winner gets double the bet
-  const winnings = state.bet * 2;
-  const addResult = addItem(winner.id, 'silver', winnings);
+  // Transfer bet from loser to winner
+  const transferResult = transferSilver(loser.id, winner.id, state.bet);
 
-  if (!addResult.success) {
-    // Refund both if winner's inventory is full
-    addItem(state.challenger.user.id, 'silver', state.bet);
-    addItem(state.opponent.user.id, 'silver', state.bet);
-
+  if (!transferResult.success) {
+    // This will only fail if the winner's inventory is full
     const errorEmbed = new EmbedBuilder()
       .setColor('#FF0000')
       .setTitle(`${getCancelEmoji()} Duel Error`)
-      .setDescription(`${winner.username}'s inventory is too full! Both players refunded.`)
+      .setDescription(`${winner.username}'s inventory is too full to receive the prize! The duel is a draw and no silver was exchanged.`)
       .setTimestamp();
 
     activeDuels.delete(state.challenger.user.id);
@@ -516,7 +487,7 @@ async function endDuel(message: any, state: any) {
     .addFields(
       { 
         name: '💰 Prize', 
-        value: `${getSilverCoinEmoji()} **${winnings.toLocaleString()}** Silver Coins`, 
+        value: `${getSilverCoinEmoji()} **${state.bet.toLocaleString()}** Silver Coins`,
         inline: true 
       },
       { 
