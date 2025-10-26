@@ -100,8 +100,8 @@ async function createProfileCard(user: User, stats: any): Promise<AttachmentBuil
     ctx.fillRect(0, 0, 1536, 1024);
   }
 
-  // Semi-transparent overlay
-  ctx.fillStyle = 'rgba(0, 0, 0, 0.2)';
+  // Semi-transparent overlay (darker to improve readability)
+  ctx.fillStyle = 'rgba(0, 0, 0, 0.45)';
   ctx.fillRect(0, 0, 1536, 1024);
 
   // "Rex" signature in top right (stylized handwriting)
