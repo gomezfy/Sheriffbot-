@@ -105,18 +105,18 @@ function getCategoryEmbed(interaction: ChatInputCommandInteraction, category: st
     case 'gambling': {
       const slotEmoji = getSlotMachineEmoji();
       const gamblingCommands = locale === 'pt-BR'
-\`/dice\` ${serverText[locale]} - Duelo de dados
+        ? `\`/dice\` ${serverText[locale]} - Duelo de dados
 \`/bankrob\` ${serverText[locale]} - Assalto cooperativo
 \`/duel\` ${serverText[locale]} - Duelo PvP (HP system)`
         : locale === 'es-ES'
-\`/dice\` ${serverText[locale]} - Duelo de dados
+        ? `\`/dice\` ${serverText[locale]} - Duelo de dados
 \`/bankrob\` ${serverText[locale]} - Asalto cooperativo
 \`/duel\` ${serverText[locale]} - Duelo PvP (HP system)`
         : locale === 'fr'
-\`/dice\` ${serverText[locale]} - Duel de dés
+        ? `\`/dice\` ${serverText[locale]} - Duel de dés
 \`/bankrob\` ${serverText[locale]} - Braquage coopératif
 \`/duel\` ${serverText[locale]} - Duel PvP (HP system)`
-\`/dice\` ${serverText[locale]} - Dice duel
+        : `\`/dice\` ${serverText[locale]} - Dice duel
 \`/bankrob\` ${serverText[locale]} - Cooperative heist
 \`/duel\` ${serverText[locale]} - PvP duel (HP system)`;
 
