@@ -1,6 +1,6 @@
 import { SlashCommandBuilder, AttachmentBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, ChatInputCommandInteraction, User } from 'discord.js';
 import { getInventory } from '../../utils/inventoryManager';
-const { getUserXP, getXPForLevel, getXPForNextLevel } = require('../../utils/xpManager');
+const { getUserXp, getXpForLevel } = require('../../utils/xpManager');
 const { getUserProfile } = require('../../utils/profileManager');
 const { parseTextWithEmojis } = require('../../utils/emojiMapper');
 const { getCustomEmojiPath, CUSTOM_EMOJIS } = require('../../utils/customEmojis');
@@ -33,7 +33,7 @@ module.exports = {
     const inventory = getInventory(targetUser.id);
     const silver = inventory.items['silver'] || 0;
     const saloonTokens = inventory.items['saloon_token'] || 0;
-    const xpData = getUserXP(targetUser.id);
+    const xpData = getUserXp(targetUser.id);
     const profile = getUserProfile(targetUser.id);
 
     const card = await createProfileCard(targetUser, {
@@ -222,9 +222,9 @@ async function createProfileCard(user: User, stats: any): Promise<AttachmentBuil
 
   // 3. Level with XP (⭐)
   const currentXP = stats.xp;
-  const xpForCurrentLevel = getXPForLevel(stats.level);
-  const xpForNextLevel = getXPForNextLevel(stats.level);
-  const xpInCurrentLevel = currentXP - xpForCurrentLevel;
+  const xpForCurrentLevel = getXpForLevel(stats.level);
+  const xpForNextLevel = getXpForLevel(stats.level + 1);
+  const xpInCurrentLevel = currentXP;
   
   ctx.save();
   const starEmojiSize = 60;
