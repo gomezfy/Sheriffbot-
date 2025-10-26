@@ -31,8 +31,8 @@ module.exports = {
     const targetUser = interaction.options.getUser('user') || interaction.user;
 
     const inventory = getInventory(targetUser.id);
-    const silver = inventory.items['Silver Coin'] || 0;
-    const gold = inventory.items['Saloon Token'] || 0;
+    const silver = inventory.items['silver'] || 0;
+    const gold = inventory.items['saloon_token'] || 0;
     const xpData = getUserXP(targetUser.id);
     const profile = getUserProfile(targetUser.id);
 
