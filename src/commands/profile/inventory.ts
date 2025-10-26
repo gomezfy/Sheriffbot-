@@ -31,7 +31,7 @@ module.exports = {
       return;
     }
     
-    await interaction.deferReply();
+    await interaction.deferReply({ flags: MessageFlags.Ephemeral });
     
     const inventory = getInventory(targetUser.id);
     const currentWeight = calculateWeight(inventory);
