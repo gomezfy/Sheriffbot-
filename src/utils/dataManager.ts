@@ -1,6 +1,6 @@
 import fs from 'fs';
 import path from 'path';
-import { getItem, addItem, removeItem } from './inventoryManager';
+import { getItem, addItem, removeItem, transferItem } from './inventoryManager';
 import { getDataPath } from './database';
 
 const dataDir = getDataPath('data');
@@ -59,6 +59,10 @@ export function removeUserGold(userId: string, amount: number): any {
   return removeItem(userId, 'saloon_token', amount);
 }
 
+export function transferGold(fromUserId: string, toUserId: string, amount: number): any {
+  return transferItem(fromUserId, toUserId, 'saloon_token', amount);
+}
+
 export function getUserSilver(userId: string): number {
   return getItem(userId, 'silver');
 }
@@ -82,6 +86,10 @@ export function addUserSilver(userId: string, amount: number): any {
 
 export function removeUserSilver(userId: string, amount: number): any {
   return removeItem(userId, 'silver', amount);
+}
+
+export function transferSilver(fromUserId: string, toUserId: string, amount: number): any {
+  return transferItem(fromUserId, toUserId, 'silver', amount);
 }
 
 function getBounties(): any[] {

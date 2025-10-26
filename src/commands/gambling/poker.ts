@@ -193,16 +193,6 @@ module.exports = {
     dealerHand = dealerStrategy(dealerHand, playerResult.rank);
     const dealerResult = getHandValue(dealerHand);
 
-    // Remove bet first
-    const removeResult = removeUserGold(userId, bet);
-    
-    if (!removeResult.success) {
-      await interaction.reply({
-        content: `❌ Error removing bet: ${removeResult.error}`,
-        flags: MessageFlags.Ephemeral
-      });
-      return;
-    }
 
     let won = false;
     let winAmount = 0;
@@ -211,48 +201,47 @@ module.exports = {
 
     // Determine winner
     if (playerResult.rank > dealerResult.rank) {
-      won = true;
-      winAmount = Math.floor(bet * playerResult.multiplier);
-      resultText = `🎉 **YOU WIN!** 🎉\n\nYour ${playerResult.name} beats dealer's ${dealerResult.name}!`;
-      resultColor = '#00FF00';
-      
-      const addResult = addUserGold(userId, winAmount);
-      
-      if (!addResult.success) {
-        // Return bet if can't add winnings
-        addUserGold(userId, bet);
-        
-        await interaction.reply({
-          content: `🚫 **You won but your inventory is full!**\n\n${addResult.error}\n\nYour bet was returned. Free up space and try again!`,
-          flags: MessageFlags.Ephemeral
-        });
-        return;
-      }
-    } else if (playerResult.rank === dealerResult.rank) {
-      // Same hand rank - compare high cards
-      if (playerResult.highCard > dealerResult.highCard) {
         won = true;
-        winAmount = bet * 2; // Lower multiplier for kicker win
-        resultText = `😊 **YOU WIN BY KICKER!** 😊\n\nBoth have ${playerResult.name}, but your high card (${values[playerResult.highCard - 2]}) wins!`;
-        resultColor = '#FFFF00';
-        
-        addUserGold(userId, winAmount);
-      } else if (playerResult.highCard === dealerResult.highCard) {
-        won = false;
-        winAmount = bet; // Return bet
-        resultText = `🤝 **PERFECT TIE!** 🤝\n\nBoth have ${playerResult.name} with same high card. Bet returned!`;
-        resultColor = '#FFD700';
-        
-        addUserGold(userId, bet); // Return bet
-      } else {
-        won = false;
-        resultText = `😔 **DEALER WINS BY KICKER** 😔\n\nBoth have ${playerResult.name}, but dealer's high card wins.`;
-        resultColor = '#FF0000';
-      }
+        winAmount = Math.floor(bet * playerResult.multiplier);
+        resultText = `🎉 **YOU WIN!** 🎉\n\nYour ${playerResult.name} beats dealer's ${dealerResult.name}!`;
+        resultColor = '#00FF00';
+
+        const netWinnings = winAmount - bet;
+        const addResult = addUserGold(userId, netWinnings);
+
+        if (!addResult.success) {
+            await interaction.reply({
+                content: `🚫 **You won but your inventory is full!**\n\n${addResult.error}\n\nYour bet was not deducted. Free up space and try again!`,
+                flags: MessageFlags.Ephemeral,
+            });
+            return;
+        }
+    } else if (playerResult.rank === dealerResult.rank) {
+        // Same hand rank - compare high cards
+        if (playerResult.highCard > dealerResult.highCard) {
+            won = true;
+            winAmount = bet * 2; // Lower multiplier for kicker win
+            resultText = `😊 **YOU WIN BY KICKER!** 😊\n\nBoth have ${playerResult.name}, but your high card (${values[playerResult.highCard - 2]}) wins!`;
+            resultColor = '#FFFF00';
+
+            addUserGold(userId, bet); // Just add the bet amount
+        } else if (playerResult.highCard === dealerResult.highCard) {
+            won = false;
+            winAmount = bet; // Return bet
+            resultText = `🤝 **PERFECT TIE!** 🤝\n\nBoth have ${playerResult.name} with same high card. No tokens exchanged.`;
+            resultColor = '#FFD700';
+            // No transaction
+        } else {
+            won = false;
+            resultText = `😔 **DEALER WINS BY KICKER** 😔\n\nBoth have ${playerResult.name}, but dealer's high card wins.`;
+            resultColor = '#FF0000';
+            removeUserGold(userId, bet);
+        }
     } else {
-      won = false;
-      resultText = `😔 **DEALER WINS** 😔\n\nDealer's ${dealerResult.name} beats your ${playerResult.name}.`;
-      resultColor = '#FF0000';
+        won = false;
+        resultText = `😔 **DEALER WINS** 😔\n\nDealer's ${dealerResult.name} beats your ${playerResult.name}.`;
+        resultColor = '#FF0000';
+        removeUserGold(userId, bet);
     }
 
     const newGold = getUserGold(userId);
