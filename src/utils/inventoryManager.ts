@@ -35,6 +35,7 @@ export const ITEMS: Record<string, Item> = {
   gold: {
     name: 'Gold Bar',
     emoji: EMOJI_TEXT.GOLD_BAR,
+    customEmoji: 'gold_bar',
     weight: 1,
     stackable: true,
     description: 'Precious gold bar obtained through mining'

@@ -1,6 +1,7 @@
 import { SlashCommandBuilder, ChatInputCommandInteraction ,MessageFlags} from 'discord.js';
 import { infoEmbed, warningEmbed, formatCurrency, progressBar } from '../../utils/embeds';
 import { getBackpackEmoji, getMoneybagEmoji, getStatsEmoji, getCrateEmoji, getBalanceEmoji, getWarningEmoji, getAlarmEmoji, getSparklesEmoji } from '../../utils/customEmojis';
+import { getCustomEmoji } from '../../utils/emojiUploader';
 const { getInventory, calculateWeight, ITEMS, getNextUpgrade } = require('../../utils/inventoryManager');
 const { t } = require('../../utils/i18n');
 
@@ -65,7 +66,9 @@ module.exports = {
         if (item) {
           const itemWeight = item.weight * quantity;
           const weightDisplay = itemWeight >= 0.1 ? ` • ${itemWeight.toFixed(1)}kg` : '';
-          itemsList += `${item.emoji} **${item.name}** ×${quantity.toLocaleString()}${weightDisplay}\n`;
+          // Use custom emoji if available, otherwise fallback to text emoji
+          const itemEmoji = item.customEmoji ? getCustomEmoji(item.customEmoji, item.emoji) : item.emoji;
+          itemsList += `${itemEmoji} **${item.name}** ×${quantity.toLocaleString()}${weightDisplay}\n`;
         }
       }
     }
