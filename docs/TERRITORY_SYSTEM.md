@@ -10,6 +10,7 @@ The territory system allows users to purchase valuable properties in the Wild We
 - 💰 5,000 Silver Coins automatically every 23 hours
 - 🎰 Unlock exclusive gambling events
 - 👥 Host private poker tournaments
+- 🍻 50% discount on casino games
 
 ### ⛏️ Gold Mine Shares (699,000 Silver Coins)
 **Daily Benefits:**

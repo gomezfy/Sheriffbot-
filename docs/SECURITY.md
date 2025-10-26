@@ -50,6 +50,7 @@ Este documento descreve as medidas de segurança implementadas no Sheriff Bot pa
 - ✅ Limpeza automática de entradas antigas (5 minutos)
 
 #### Rate Limiting de Jogos
+- **Casino**: 10 segundos
 - **Poker**: 15 segundos
 - **Dice**: 30 segundos
 - **Duel**: 30 segundos
@@ -73,6 +74,7 @@ Este documento descreve as medidas de segurança implementadas no Sheriff Bot pa
 **Comandos com Validação:**
 - `/addgold` - Máximo 1 bilhão
 - `/addsilver` - Máximo 1 bilhão
+- `/casino` - Aposta máxima 10 milhões
 - `/poker` - Aposta máxima 10 milhões
 - `/dice` - Aposta máxima 10 milhões
 - `/duel` - Aposta máxima 10 milhões
@@ -125,6 +127,16 @@ Este documento descreve as medidas de segurança implementadas no Sheriff Bot pa
 #### Verificação de Multiplicação Segura
 - **Função**: `isSafeMultiplication()`
 - **Uso**: Antes de calcular ganhos em jogos
+
+**Exemplo (Casino):**
+```typescript
+// Antes de calcular ganhos
+if (won && !isSafeMultiplication(bet, multiplier)) {
+  // Reembolsa aposta se overflow ocorreria
+  addUserGold(userId, bet);
+  return;
+}
+```
 
 **Proteções:**
 - ✅ Previne overflow em cálculos de ganhos

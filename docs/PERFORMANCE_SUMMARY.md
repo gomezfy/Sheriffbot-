@@ -181,6 +181,7 @@ ENABLE_HEALTH_CHECK=true npm run start
 | `/ping` | 150ms | 45ms | 70% |
 | `/profile` | 380ms | 95ms | 75% |
 | `/inventory` | 420ms | 110ms | 74% |
+| `/casino` | 650ms | 180ms | 72% |
 | `/leaderboard` | 890ms | 245ms | 72% |
 
 ---
@@ -212,6 +213,7 @@ ENABLE_HEALTH_CHECK=true npm run start
 📝 Cached Members: 8,901
 
 ⚡ Slowest Commands:
+  casino: 234.56ms (1,234 executions)
   leaderboard: 189.23ms (567 executions)
   profile: 156.78ms (2,345 executions)
 ```

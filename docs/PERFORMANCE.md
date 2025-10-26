@@ -141,7 +141,7 @@ const embed = EmbedTemplates.success('Success', message);
 - `warning()` - Orange warning embeds
 - `gold()` - Gold economy embeds
 - `western()` - Themed Western embeds
-- `mining()`, `bounty()` - Specialized embeds
+- `mining()`, `casino()`, `bounty()` - Specialized embeds
 
 #### Utility Functions:
 - `formatNumber()` - 1,234 → 1.23K, 1,234,567 → 1.23M
