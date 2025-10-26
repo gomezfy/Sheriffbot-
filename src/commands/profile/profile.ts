@@ -166,17 +166,6 @@ async function createProfileCard(user: User, stats: any): Promise<AttachmentBuil
   ctx.font = 'bold 60px Nunito';
   ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
   ctx.fillText(`@${user.username}`, usernameX + displayNameWidth + 15, usernameY);
-  const atUsernameWidth = ctx.measureText(`@${user.username}`).width;
-  
-  // Draw custom lightning emoji next to @username
-  try {
-    const lightningImg = await loadImage(CUSTOM_EMOJIS.LIGHTNING);
-    ctx.drawImage(lightningImg, usernameX + displayNameWidth + atUsernameWidth + 30, usernameY - 50, 60, 60);
-  } catch (error) {
-    // Fallback to Unicode emoji if custom emoji fails
-    ctx.font = 'bold 60px Nunito';
-    ctx.fillText('⚡', usernameX + displayNameWidth + atUsernameWidth + 30, usernameY);
-  }
   
   ctx.restore();
 
