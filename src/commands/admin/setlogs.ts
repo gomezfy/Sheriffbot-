@@ -88,7 +88,7 @@ module.exports = {
               '✅ **Economy** - Currency transactions\n' +
               '✅ **Bounty** - Bounty placements and claims\n' +
               '✅ **Mining** - Gold mining activities\n' +
-              '✅ **Gambling** - Dice, poker, casino games\n' +
+              '✅ **Gambling** - Dice, poker games\n' +
               '✅ **Admin** - Administrative actions',
             inline: false 
           }

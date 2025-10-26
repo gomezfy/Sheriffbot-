@@ -31,7 +31,7 @@ None specified yet.
 ### Feature Specifications
 - **Bounty System:** Set, view, and capture bounties with a success rate and cooldown.
 - **Mining System:** Includes solo and co-op mining modes.
-- **Gambling Games:** Features Bank Robbery, Casino, Dice, and Poker.
+- **Gambling Games:** Features Bank Robbery, Dice, and Poker.
 - **PvP Duels:** A system for player-versus-player combat.
 - **E-commerce Shop:** Offers backpack upgrade tiers and coin packs via the web dashboard.
 - **Discord Permissions:** Requires specific bot permissions including "Moderate Members."
@@ -59,38 +59,6 @@ None specified yet.
 
 ## Recent Changes
 - **October 26, 2025:**
-  - **Casino Interface Complete Redesign:** Completely modernized the `/casino` web interface
-    - **Modern HTML5/CSS3:** Implemented advanced CSS with CSS custom properties (variables), 3D transforms, and modern animations
-    - **Professional Design:**
-      - Radial gradients and ambient lighting effects
-      - Animated star field background with 100 twinkling stars
-      - Floating header animation
-      - 3D card transformations on hover
-      - Shimmer effects on balance and stat cards
-      - Rotating golden star decoration on slot machine
-      - Smooth gradient animations on text and backgrounds
-    - **Advanced Animations:**
-      - 3D spinning reels with blur effects and realistic physics
-      - Explosion animation for winning combinations
-      - Particle system with 80+ particles for jackpots
-      - Pulsing win effects with scale and glow
-      - Button ripple effects on interaction
-      - Message slide-in animations
-    - **TypeScript Implementation:**
-      - Converted JavaScript to TypeScript with full type safety
-      - Proper interfaces for API responses (SpinResponse, SessionResponse, GameStats)
-      - Class-based architecture (CasinoGame class)
-      - Async/await for all API calls
-      - Better error handling and state management
-      - Haptic feedback support (vibration on mobile devices)
-    - **Enhanced UX Features:**
-      - Smooth reel animations that stop one-by-one
-      - Visual feedback for all interactions
-      - Mobile-optimized with responsive design
-      - Better color scheme with CSS variables for easy theming
-      - Improved accessibility and loading states
-    - All changes compiled successfully and server tested with 200 OK response
-- **October 26, 2025:**
   - **Profile Card Complete Redesign:** Completely redesigned the `/profile` command visual layout
     - Canvas size confirmed at 1536x1024px for high-quality display
     - Repositioned avatar to top-left corner (180x, 180y, radius 130px)
@@ -108,7 +76,7 @@ None specified yet.
     - Layout now matches modern profile card design standards
 - **October 25, 2025:**
   - **Custom Emoji Integration in Core Commands:** Replaced Unicode emojis with custom emoji functions
-    - Updated 7 high-traffic commands: announcement, daily, casino, profile, wanted, bounties, help
+    - Updated 6 high-traffic commands: announcement, daily, profile, wanted, bounties, help
     - Custom emojis now used in embeds and message content for better branding
     - Maintained Unicode emojis in slash command descriptions (Discord API requirement)
     - All changes compiled successfully with TypeScript

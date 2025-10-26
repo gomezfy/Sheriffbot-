@@ -119,7 +119,6 @@ Sistema completo de métricas:
 📝 Cached Members: 8,901
 
 ⚡ Slowest Commands:
-  casino: 234.56ms (1,234 executions)
   leaderboard: 189.23ms (567 executions)
 ```
 
