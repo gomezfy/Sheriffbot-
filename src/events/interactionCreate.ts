@@ -209,6 +209,15 @@ export = {
     
     // Select Menu Handler
     if (interaction.isStringSelectMenu()) {
+      // Help Category Select Menu
+      if (interaction.customId === 'help_category_select') {
+        const helpCommand = require('../commands/utility/help');
+        if (helpCommand.handleSelectMenu) {
+          await helpCommand.handleSelectMenu(interaction);
+        }
+        return;
+      }
+      
       if (interaction.customId === 'select_background') {
         const selectedBgId = interaction.values[0];
         const background = getBackgroundById(selectedBgId);
