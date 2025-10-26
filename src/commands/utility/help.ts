@@ -22,12 +22,12 @@ function getMainEmbed(interaction: ChatInputCommandInteraction): EmbedBuilder {
   const cowboyEmoji = getCowboyEmoji();
   
   const description = locale === 'pt-BR'
-    ? '🤠 **Bem-vindo ao Sheriff Bot!**\n\nSelecione uma categoria no menu abaixo para ver os comandos disponíveis.'
+    ? '**Bem-vindo ao Sheriff Bot!**\n\nSelecione uma categoria no menu abaixo para ver os comandos disponíveis.'
     : locale === 'es-ES'
-    ? '🤠 **¡Bienvenido a Sheriff Bot!**\n\nSelecciona una categoría en el menú de abajo para ver los comandos disponibles.'
+    ? '**¡Bienvenido a Sheriff Bot!**\n\nSelecciona una categoría en el menú de abajo para ver los comandos disponibles.'
     : locale === 'fr'
-    ? '🤠 **Bienvenue sur Sheriff Bot!**\n\nSélectionnez une catégorie dans le menu ci-dessous pour voir les commandes disponibles.'
-    : '🤠 **Welcome to Sheriff Bot!**\n\nSelect a category from the menu below to view available commands.';
+    ? '**Bienvenue sur Sheriff Bot!**\n\nSélectionnez une catégorie dans le menu ci-dessous pour voir les commandes disponibles.'
+    : '**Welcome to Sheriff Bot!**\n\nSelect a category from the menu below to view available commands.';
   
   return new EmbedBuilder()
     .setColor(0xFFD700)
@@ -309,12 +309,12 @@ function getCategorySelectMenu(interaction: ChatInputCommandInteraction, isAdmin
   }
 
   const placeholder = locale === 'pt-BR' 
-    ? '📚 Selecione uma categoria...' 
+    ? 'Selecione uma categoria...' 
     : locale === 'es-ES'
-    ? '📚 Selecciona una categoría...'
+    ? 'Selecciona una categoría...'
     : locale === 'fr'
-    ? '📚 Sélectionnez une catégorie...'
-    : '📚 Select a category...';
+    ? 'Sélectionnez une catégorie...'
+    : 'Select a category...';
 
   const selectMenu = new StringSelectMenuBuilder()
     .setCustomId('help_category_select')
