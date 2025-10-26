@@ -6,6 +6,7 @@
   "scripts": {
     "start": "node --expose-gc --max-old-space-size=1800 dist/src/index.js",
     "start:shard": "node --expose-gc --max-old-space-size=1800 dist/src/shard.js",
+    "start:all": "node dist/src/linked-roles-server.js & node --expose-gc --max-old-space-size=1800 dist/src/shard.js & wait",
     "start:light": "node dist/src/index.js",
     "start:low-memory": "LOW_MEMORY=true node --expose-gc --max-old-space-size=64 dist/src/index.js",
     "dev": "NODE_OPTIONS='--max-old-space-size=1800' ts-node src/index.ts",

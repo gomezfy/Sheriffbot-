@@ -13,7 +13,7 @@ import crypto from 'crypto';
 import { readData } from './utils/database';
 
 const app = express();
-const PORT = parseInt(process.env.LINKED_ROLES_PORT || '3000');
+const PORT = parseInt(process.env.LINKED_ROLES_PORT || '5000');
 
 // Discord OAuth2 Configuration
 const DISCORD_CONFIG = {
@@ -37,6 +37,9 @@ app.use(session({
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+// Serve static files from public directory
+app.use(express.static('public'));
 
 // Extend session type
 declare module 'express-session' {
@@ -474,6 +477,193 @@ app.post('/api/update-metadata/:userId', async (req: Request, res: Response) => 
       message: error.message
     });
   }
+});
+
+// ==================== CASINO GAME ROUTES ====================
+
+// Casino game sessions
+const casinoSessions = new Map<string, { userId: string; createdAt: number; expiresAt: number }>();
+const { getUserGold, addUserGold, removeUserGold } = require('./utils/dataManager');
+
+// Casino statistics storage
+const casinoStats = new Map<string, { wins: number; losses: number; biggestWin: number; currentStreak: number; bestStreak: number }>();
+
+// Weighted slot symbols
+const slotSymbols = [
+  { symbol: '🍒', weight: 30 },
+  { symbol: '🍋', weight: 25 },
+  { symbol: '🍊', weight: 20 },
+  { symbol: '🔔', weight: 15 },
+  { symbol: '⭐', weight: 8 },
+  { symbol: '💎', weight: 2 }
+];
+
+function getWeightedSymbol() {
+  const totalWeight = slotSymbols.reduce((sum, s) => sum + s.weight, 0);
+  let random = Math.random() * totalWeight;
+  
+  for (const item of slotSymbols) {
+    random -= item.weight;
+    if (random <= 0) return item.symbol;
+  }
+  return slotSymbols[0].symbol;
+}
+
+function getCasinoStats(userId: string) {
+  if (!casinoStats.has(userId)) {
+    casinoStats.set(userId, {
+      wins: 0,
+      losses: 0,
+      biggestWin: 0,
+      currentStreak: 0,
+      bestStreak: 0
+    });
+  }
+  return casinoStats.get(userId)!;
+}
+
+// Create new casino game session
+app.post('/api/casino/create-session', (req: Request, res: Response) => {
+  const { userId } = req.body;
+  
+  if (!userId) {
+    return res.status(400).json({ error: 'User ID required' });
+  }
+
+  const sessionId = crypto.randomBytes(16).toString('hex');
+  const now = Date.now();
+  
+  casinoSessions.set(sessionId, {
+    userId,
+    createdAt: now,
+    expiresAt: now + (30 * 60 * 1000) // 30 minutes
+  });
+
+  // Clean up expired sessions
+  for (const [key, value] of casinoSessions.entries()) {
+    if (value.expiresAt < now) {
+      casinoSessions.delete(key);
+    }
+  }
+
+  res.json({ success: true, sessionId });
+});
+
+// Get casino session data
+app.get('/api/casino/session/:sessionId', (req: Request, res: Response) => {
+  const { sessionId } = req.params;
+  const session = casinoSessions.get(sessionId);
+
+  if (!session || session.expiresAt < Date.now()) {
+    return res.status(404).json({ success: false, error: 'Session not found or expired' });
+  }
+
+  const balance = getUserGold(session.userId);
+  const stats = getCasinoStats(session.userId);
+
+  res.json({
+    success: true,
+    balance,
+    stats
+  });
+});
+
+// Handle spin request
+app.post('/api/casino/spin', async (req: Request, res: Response) => {
+  const { userId, sessionId, bet } = req.body;
+
+  const session = casinoSessions.get(sessionId);
+  if (!session || session.userId !== userId || session.expiresAt < Date.now()) {
+    return res.status(403).json({ success: false, error: 'Invalid or expired session' });
+  }
+
+  if (!bet || bet < 10) {
+    return res.status(400).json({ success: false, error: 'Invalid bet amount' });
+  }
+
+  const currentGold = getUserGold(userId);
+  if (currentGold < bet) {
+    return res.status(400).json({ success: false, error: 'Insufficient balance' });
+  }
+
+  // Generate symbols
+  const symbols = [getWeightedSymbol(), getWeightedSymbol(), getWeightedSymbol()];
+  const [slot1, slot2, slot3] = symbols;
+
+  // Calculate multiplier
+  let multiplier = 0;
+  let result = '';
+
+  if (slot1 === slot2 && slot2 === slot3) {
+    // All three match
+    if (slot1 === '💎') {
+      multiplier = 50;
+      result = '💰 MEGA JACKPOT! 💰 Triple Diamonds!';
+    } else if (slot1 === '⭐') {
+      multiplier = 20;
+      result = '⭐ SUPER WIN! ⭐ Triple Stars!';
+    } else if (slot1 === '🔔') {
+      multiplier = 10;
+      result = '🔔 BIG WIN! 🔔 Triple Bells!';
+    } else if (slot1 === '🍊') {
+      multiplier = 5;
+      result = '🍊 GREAT WIN! 🍊 Triple Oranges!';
+    } else if (slot1 === '🍋') {
+      multiplier = 3;
+      result = '🍋 NICE WIN! 🍋 Triple Lemons!';
+    } else {
+      multiplier = 2.5;
+      result = '🍒 WIN! 🍒 Triple Cherries!';
+    }
+  } else if ((slot1 === '💎' && slot2 === '💎') || (slot2 === '💎' && slot3 === '💎') || (slot1 === '💎' && slot3 === '💎')) {
+    multiplier = 5;
+    result = '💎 DIAMOND BONUS! 💎 Two Diamonds!';
+  } else if (slot1 === slot2 || slot2 === slot3 || slot1 === slot3) {
+    const matchSymbol = slot1 === slot2 ? slot1 : (slot2 === slot3 ? slot2 : slot1);
+    if (matchSymbol === '⭐') {
+      multiplier = 2;
+      result = '⭐ Small win! Two Stars!';
+    } else if (matchSymbol === '🔔') {
+      multiplier = 1.5;
+      result = '🔔 Small win! Two Bells!';
+    } else {
+      multiplier = 1.2;
+      result = '😊 Small win!';
+    }
+  } else {
+    multiplier = 0;
+    result = '😔 No match... Better luck next time!';
+  }
+
+  const won = multiplier > 0;
+  const winAmount = won ? Math.floor(bet * multiplier) : 0;
+  const stats = getCasinoStats(userId);
+
+  if (won) {
+    const netWinnings = winAmount - bet;
+    addUserGold(userId, netWinnings);
+    stats.wins++;
+    stats.currentStreak++;
+    stats.bestStreak = Math.max(stats.bestStreak, stats.currentStreak);
+    stats.biggestWin = Math.max(stats.biggestWin, winAmount);
+  } else {
+    removeUserGold(userId, bet);
+    stats.losses++;
+    stats.currentStreak = 0;
+  }
+
+  const newBalance = getUserGold(userId);
+
+  res.json({
+    success: true,
+    symbols,
+    multiplier,
+    won,
+    winAmount,
+    result,
+    newBalance,
+    stats
+  });
 });
 
 // Start server
