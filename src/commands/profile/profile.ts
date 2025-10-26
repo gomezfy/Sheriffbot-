@@ -219,8 +219,8 @@ async function createProfileCard(user: User, stats: any): Promise<AttachmentBuil
   // 1. Saloon Tokens (🎫) - sem RC
   await drawStat('🎫', CUSTOM_EMOJIS.SALOON_TOKEN, stats.saloonTokens.toLocaleString(), '');
 
-  // 2. Silver Coins with RC prefix (🪙)
-  await drawStat('🪙', CUSTOM_EMOJIS.SILVER_COIN, stats.silver.toLocaleString(), 'RC');
+  // 2. Silver Coins (🪙)
+  await drawStat('🪙', CUSTOM_EMOJIS.SILVER_COIN, stats.silver.toLocaleString(), '');
 
   // 3. Level with XP (⭐)
   const currentXP = stats.xp;
