@@ -1,5 +1,5 @@
 import { SlashCommandBuilder, AttachmentBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, ChatInputCommandInteraction, User } from 'discord.js';
-const { getUserSilver, getUserGold } = require('../../utils/dataManager');
+import { getInventory } from '../../utils/inventoryManager';
 const { getUserXP, getXPForLevel, getXPForNextLevel } = require('../../utils/xpManager');
 const { getUserProfile } = require('../../utils/profileManager');
 const { parseTextWithEmojis } = require('../../utils/emojiMapper');
@@ -30,8 +30,9 @@ module.exports = {
 
     const targetUser = interaction.options.getUser('user') || interaction.user;
 
-    const silver = getUserSilver(targetUser.id);
-    const gold = getUserGold(targetUser.id);
+    const inventory = getInventory(targetUser.id);
+    const silver = inventory.items['Silver Coin'] || 0;
+    const gold = inventory.items['Saloon Token'] || 0;
     const xpData = getUserXP(targetUser.id);
     const profile = getUserProfile(targetUser.id);
 
@@ -41,7 +42,8 @@ module.exports = {
       xp: xpData.xp,
       level: xpData.level,
       bio: profile.bio,
-      background: profile.background
+      background: profile.background,
+      reps: profile.reps || 0
     });
 
     const isOwnProfile = targetUser.id === interaction.user.id;
@@ -71,7 +73,7 @@ module.exports = {
 };
 
 async function createProfileCard(user: User, stats: any): Promise<AttachmentBuilder> {
-  const canvas = createCanvas(800, 550);
+  const canvas = createCanvas(800, 400);
   const ctx = canvas.getContext('2d');
 
   // Load custom background or use default gradient
@@ -81,7 +83,7 @@ async function createProfileCard(user: User, stats: any): Promise<AttachmentBuil
       const bgPath = path.join(process.cwd(), 'assets', 'profile-backgrounds', stats.background);
       if (fs.existsSync(bgPath)) {
         const bgImage = await loadImage(bgPath);
-        ctx.drawImage(bgImage, 0, 0, 800, 550);
+        ctx.drawImage(bgImage, 0, 0, 800, 400);
         backgroundLoaded = true;
       }
     } catch (error) {
@@ -89,272 +91,196 @@ async function createProfileCard(user: User, stats: any): Promise<AttachmentBuil
     }
   }
 
-  // Default gradient background
+  // Default gradient background (modern teal/cyan theme like in the image)
   if (!backgroundLoaded) {
-    const gradient = ctx.createLinearGradient(0, 0, 800, 550);
-    gradient.addColorStop(0, '#1a1a2e');
-    gradient.addColorStop(0.5, '#16213e');
-    gradient.addColorStop(1, '#0f3460');
+    const gradient = ctx.createLinearGradient(0, 0, 800, 400);
+    gradient.addColorStop(0, '#0a7ea4');
+    gradient.addColorStop(0.5, '#1d8fb5');
+    gradient.addColorStop(1, '#2ba5c9');
     ctx.fillStyle = gradient;
-    ctx.fillRect(0, 0, 800, 550);
+    ctx.fillRect(0, 0, 800, 400);
   }
 
-  // Light overlay for text readability (mais transparente para destacar o fundo)
-  ctx.fillStyle = 'rgba(0, 0, 0, 0.25)';
-  ctx.fillRect(0, 0, 800, 550);
+  // Semi-transparent overlay
+  ctx.fillStyle = 'rgba(0, 0, 0, 0.2)';
+  ctx.fillRect(0, 0, 800, 400);
 
-  // Top accent bar (level color)
-  const levelColor = getLevelColor(stats.level);
-  const topGradient = ctx.createLinearGradient(0, 0, 800, 0);
-  topGradient.addColorStop(0, levelColor);
-  topGradient.addColorStop(1, 'rgba(0, 0, 0, 0.3)');
-  ctx.fillStyle = topGradient;
-  ctx.fillRect(0, 0, 800, 6);
+  // "Rex" signature in top right (like in the image)
+  ctx.save();
+  ctx.font = 'italic bold 60px Nunito';
+  ctx.fillStyle = 'rgba(255, 255, 255, 0.4)';
+  ctx.textAlign = 'right';
+  ctx.fillText('Rex', 770, 60);
+  ctx.restore();
 
-  // Avatar (top left)
+  // Avatar circle (top left, large)
+  const avatarX = 120;
+  const avatarY = 100;
+  const avatarRadius = 70;
+
   try {
     const avatarURL = user.displayAvatarURL({ extension: 'png', size: 256 });
     const avatar = await loadImage(avatarURL);
     
-    // Avatar background com efeito de brilho
-    ctx.fillStyle = 'rgba(0, 0, 0, 0.6)';
+    // Black circle background
+    ctx.fillStyle = '#000000';
     ctx.beginPath();
-    ctx.arc(120, 120, 88, 0, Math.PI * 2);
+    ctx.arc(avatarX, avatarY, avatarRadius + 5, 0, Math.PI * 2);
     ctx.fill();
 
-    // Avatar border dupla para efeito elegante
-    ctx.strokeStyle = levelColor;
-    ctx.lineWidth = 4;
+    // White inner border
+    ctx.strokeStyle = '#FFFFFF';
+    ctx.lineWidth = 3;
     ctx.beginPath();
-    ctx.arc(120, 120, 82, 0, Math.PI * 2);
-    ctx.stroke();
-    
-    ctx.strokeStyle = 'rgba(255, 255, 255, 0.3)';
-    ctx.lineWidth = 2;
-    ctx.beginPath();
-    ctx.arc(120, 120, 76, 0, Math.PI * 2);
+    ctx.arc(avatarX, avatarY, avatarRadius + 2, 0, Math.PI * 2);
     ctx.stroke();
 
     // Draw avatar (circular)
     ctx.save();
     ctx.beginPath();
-    ctx.arc(120, 120, 72, 0, Math.PI * 2);
+    ctx.arc(avatarX, avatarY, avatarRadius, 0, Math.PI * 2);
     ctx.closePath();
     ctx.clip();
-    ctx.drawImage(avatar, 48, 48, 144, 144);
+    ctx.drawImage(avatar, avatarX - avatarRadius, avatarY - avatarRadius, avatarRadius * 2, avatarRadius * 2);
     ctx.restore();
   } catch (error) {
     console.error('Error loading avatar:', error);
   }
 
-  // Username box com fundo elegante
-  ctx.font = 'bold 48px Nunito';
-  const nameWidth = ctx.measureText(user.username).width;
-  ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
-  roundRect(ctx, 240, 50, nameWidth + 120, 90, 15);
-  ctx.fill();
-  
-  ctx.strokeStyle = levelColor;
-  ctx.lineWidth = 2;
-  roundRect(ctx, 240, 50, nameWidth + 120, 90, 15);
-  ctx.stroke();
-  
-  // Borda interna
-  ctx.strokeStyle = 'rgba(255, 255, 255, 0.15)';
-  ctx.lineWidth = 1;
-  roundRect(ctx, 242, 52, nameWidth + 116, 86, 14);
-  ctx.stroke();
-  
-  // Username com sombra
-  ctx.shadowColor = 'rgba(0, 0, 0, 0.8)';
-  ctx.shadowBlur = 10;
+  // Username with bolt emoji (like "Farley ⚡" in image)
+  ctx.save();
+  ctx.font = 'bold 56px Nunito';
   ctx.fillStyle = '#FFFFFF';
-  ctx.font = 'bold 48px Nunito';
-  ctx.fillText(user.username, 260, 95);
+  ctx.shadowColor = 'rgba(0, 0, 0, 0.5)';
+  ctx.shadowBlur = 8;
+  ctx.fillText(`${user.username} ⚡`, 220, 110);
+  ctx.restore();
+
+  // Stats section (left side, stacked vertically)
+  const statsX = 50;
+  let statsY = 200;
+  const statSpacing = 55;
+
+  // Helper function to draw compact stat
+  function drawCompactStat(emoji: string, value: string, color: string) {
+    ctx.save();
+    
+    // Emoji
+    ctx.font = 'bold 32px Nunito';
+    ctx.fillStyle = color;
+    ctx.fillText(emoji, statsX, statsY);
+    
+    // Value
+    ctx.font = 'bold 32px Nunito';
+    ctx.fillStyle = '#FFFFFF';
+    ctx.shadowColor = 'rgba(0, 0, 0, 0.6)';
+    ctx.shadowBlur = 4;
+    ctx.fillText(value, statsX + 50, statsY);
+    
+    ctx.restore();
+    statsY += statSpacing;
+  }
+
+  // Saloon Tokens (Gold)
+  drawCompactStat('💎', stats.gold.toLocaleString(), '#FFD700');
+
+  // Silver Coins with RC badge
+  ctx.save();
+  ctx.font = 'bold 20px Nunito';
+  ctx.fillStyle = '#FFA500';
+  ctx.fillRect(statsX, statsY - 25, 35, 28);
+  ctx.fillStyle = '#000000';
+  ctx.textAlign = 'center';
+  ctx.fillText('RC', statsX + 17.5, statsY - 5);
+  ctx.restore();
   
-  ctx.shadowBlur = 0;
-
-  // Tag
-  ctx.fillStyle = '#D0D0D0';
-  ctx.font = '22px Nunito Regular';
-  ctx.fillText(`#${user.discriminator}`, 260, 125);
-
-  // Currency section (below avatar)
-  const currencyY = 280;
-  
-  // Saloon Tokens (custom image)
-  const saloonTokenImg = await loadImage(getCustomEmojiPath('SALOON_TOKEN'));
-  await drawCurrencyBoxWithImage(ctx, 50, currencyY, 300, 80, saloonTokenImg, 'Saloon Tokens', stats.gold.toLocaleString(), '#D4AF37');
-  
-  // Silver Coins (using silver coin emoji as fallback since we can't call getCustomEmoji here)
-  await drawCurrencyBox(ctx, 50, currencyY + 100, 300, 80, '🪙', 'Silver Coins', stats.silver.toLocaleString(), '#C0C0C0');
-
-  // XP/Level section (right side)
-  const xpPanelX = 400;
-  const xpPanelY = 250;
-
-  // Level display com efeito de vidro
-  ctx.fillStyle = 'rgba(0, 0, 0, 0.45)';
-  roundRect(ctx, xpPanelX, xpPanelY, 350, 100, 15);
-  ctx.fill();
-
-  ctx.strokeStyle = levelColor;
-  ctx.lineWidth = 3;
-  roundRect(ctx, xpPanelX, xpPanelY, 350, 100, 15);
-  ctx.stroke();
-  
-  // Borda interna para efeito de profundidade
-  ctx.strokeStyle = 'rgba(255, 255, 255, 0.15)';
-  ctx.lineWidth = 1;
-  roundRect(ctx, xpPanelX + 2, xpPanelY + 2, 346, 96, 14);
-  ctx.stroke();
-
-  // Level icon and number
-  ctx.fillStyle = levelColor;
-  ctx.font = 'bold 50px Nunito';
-  ctx.fillText('⭐', xpPanelX + 20, xpPanelY + 65);
-  
+  ctx.save();
+  ctx.font = 'bold 32px Nunito';
   ctx.fillStyle = '#FFFFFF';
-  ctx.font = 'bold 42px Nunito';
-  ctx.fillText(`Level ${stats.level}`, xpPanelX + 90, xpPanelY + 45);
+  ctx.shadowColor = 'rgba(0, 0, 0, 0.6)';
+  ctx.shadowBlur = 4;
+  ctx.fillText(stats.silver.toLocaleString(), statsX + 50, statsY);
+  ctx.restore();
+  statsY += statSpacing;
 
-  // XP text
+  // Level & XP
   const currentXP = stats.xp;
   const xpForCurrentLevel = getXPForLevel(stats.level);
   const xpForNextLevel = getXPForNextLevel(stats.level);
   const xpInCurrentLevel = currentXP - xpForCurrentLevel;
-  const xpNeededForLevel = xpForNextLevel - xpForCurrentLevel;
-
-  ctx.fillStyle = '#B0B0B0';
-  ctx.font = '18px Nunito Regular';
-  ctx.fillText(`${xpInCurrentLevel.toLocaleString()} / ${xpNeededForLevel.toLocaleString()} XP`, xpPanelX + 90, xpPanelY + 75);
-
-  // XP Progress bar
-  const xpPercent = xpInCurrentLevel / xpNeededForLevel;
-  drawProgressBar(ctx, xpPanelX + 20, xpPanelY + 85, 310, 8, xpPercent * 100, 100, levelColor, '#2C2F33');
-
-  // "About Me" section com efeito glassmorphism
-  const bioY = 370;
   
-  ctx.fillStyle = 'rgba(0, 0, 0, 0.45)';
-  roundRect(ctx, 400, bioY, 350, 150, 15);
+  ctx.save();
+  ctx.font = 'bold 32px Nunito';
+  ctx.fillStyle = '#FFD700';
+  ctx.fillText('⭐', statsX, statsY);
+  
+  ctx.fillStyle = '#FFFFFF';
+  ctx.shadowColor = 'rgba(0, 0, 0, 0.6)';
+  ctx.shadowBlur = 4;
+  ctx.fillText(`Nível ${stats.level}`, statsX + 50, statsY);
+  
+  // XP next to level
+  ctx.font = 'bold 20px Nunito';
+  ctx.fillStyle = '#CCCCCC';
+  ctx.fillText(`${xpInCurrentLevel} XP`, statsX + 200, statsY);
+  ctx.restore();
+  statsY += statSpacing;
+
+  // Reps
+  drawCompactStat('👍', `${stats.reps || 0} Reps`, '#4A9EFF');
+
+  // "Sobre Mim" section (center-right, like in the image)
+  const bioX = 380;
+  const bioY = 200;
+  const bioWidth = 380;
+  const bioHeight = 140;
+
+  // Semi-transparent dark box for bio
+  ctx.fillStyle = 'rgba(0, 30, 60, 0.7)';
+  roundRect(ctx, bioX, bioY, bioWidth, bioHeight, 12);
   ctx.fill();
 
-  ctx.strokeStyle = levelColor;
+  // Border
+  ctx.strokeStyle = 'rgba(255, 255, 255, 0.3)';
   ctx.lineWidth = 2;
-  roundRect(ctx, 400, bioY, 350, 150, 15);
-  ctx.stroke();
-  
-  // Borda interna
-  ctx.strokeStyle = 'rgba(255, 255, 255, 0.15)';
-  ctx.lineWidth = 1;
-  roundRect(ctx, 402, bioY + 2, 346, 146, 14);
+  roundRect(ctx, bioX, bioY, bioWidth, bioHeight, 12);
   ctx.stroke();
 
-  // Title
-  ctx.fillStyle = '#FFFFFF';
+  // "Sobre Mim" title
+  ctx.save();
   ctx.font = 'bold 24px Nunito';
-  ctx.fillText('📝 About Me', 420, bioY + 35);
+  ctx.fillStyle = '#FFFFFF';
+  ctx.fillText('Sobre Mim', bioX + 20, bioY + 35);
+  ctx.restore();
 
-  // Bio text (wrapped) - with emoji support
-  ctx.fillStyle = '#D0D0D0';
+  // Bio text
+  ctx.save();
   ctx.font = '16px Nunito Regular';
-  await wrapTextWithEmojis(ctx, stats.bio, 420, bioY + 65, 310, 20);
+  ctx.fillStyle = '#E0E0E0';
+  await wrapTextWithEmojis(ctx, stats.bio || 'No bio set...', bioX + 20, bioY + 65, bioWidth - 40, 22);
+  ctx.restore();
 
-  // Footer
-  ctx.fillStyle = 'rgba(255, 255, 255, 0.1)';
-  ctx.fillRect(0, 538, 800, 2);
+  // Dropdown button icon (bottom right, like in the image)
+  const buttonX = 720;
+  const buttonY = 350;
+  ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
+  roundRect(ctx, buttonX, buttonY, 50, 40, 8);
+  ctx.fill();
   
-  ctx.fillStyle = '#7289DA';
-  ctx.font = '14px Nunito Regular';
-  ctx.fillText('Sheriff Bot • Cowboy Profile', 20, 535);
-
-  if (stats.background) {
-    ctx.fillStyle = levelColor;
-    ctx.fillText('⭐ Custom Background', 650, 535);
-  }
+  ctx.strokeStyle = 'rgba(255, 255, 255, 0.5)';
+  ctx.lineWidth = 2;
+  roundRect(ctx, buttonX, buttonY, 50, 40, 8);
+  ctx.stroke();
+  
+  // Dropdown icon (chevron down)
+  ctx.save();
+  ctx.font = 'bold 28px Nunito';
+  ctx.fillStyle = '#FFFFFF';
+  ctx.textAlign = 'center';
+  ctx.fillText('▼', buttonX + 25, buttonY + 28);
+  ctx.restore();
 
   return new AttachmentBuilder(canvas.toBuffer('image/png'), { name: 'profile.png' });
-}
-
-async function drawCurrencyBoxWithImage(ctx: any, x: number, y: number, width: number, height: number, iconImage: any, label: string, value: string, color: string): Promise<void> {
-  // Background com efeito de vidro
-  ctx.fillStyle = 'rgba(0, 0, 0, 0.45)';
-  roundRect(ctx, x, y, width, height, 15);
-  ctx.fill();
-
-  // Border
-  ctx.strokeStyle = color;
-  ctx.lineWidth = 3;
-  roundRect(ctx, x, y, width, height, 15);
-  ctx.stroke();
-  
-  // Borda interna para profundidade
-  ctx.strokeStyle = 'rgba(255, 255, 255, 0.15)';
-  ctx.lineWidth = 1;
-  roundRect(ctx, x + 2, y + 2, width - 4, height - 4, 14);
-  ctx.stroke();
-
-  // Icon (custom image)
-  const iconSize = 48;
-  ctx.drawImage(iconImage, x + 15, y + 16, iconSize, iconSize);
-
-  // Label
-  ctx.font = '18px Nunito Regular';
-  ctx.fillStyle = '#B0B0B0';
-  ctx.fillText(label, x + 75, y + 30);
-
-  // Value
-  ctx.font = 'bold 28px Nunito';
-  ctx.fillStyle = '#FFFFFF';
-  ctx.fillText(value, x + 75, y + 60);
-}
-
-async function drawCurrencyBox(ctx: any, x: number, y: number, width: number, height: number, icon: string, label: string, value: string, color: string): Promise<void> {
-  // Background com efeito de vidro
-  ctx.fillStyle = 'rgba(0, 0, 0, 0.45)';
-  roundRect(ctx, x, y, width, height, 15);
-  ctx.fill();
-
-  // Border
-  ctx.strokeStyle = color;
-  ctx.lineWidth = 3;
-  roundRect(ctx, x, y, width, height, 15);
-  ctx.stroke();
-  
-  // Borda interna para profundidade
-  ctx.strokeStyle = 'rgba(255, 255, 255, 0.15)';
-  ctx.lineWidth = 1;
-  roundRect(ctx, x + 2, y + 2, width - 4, height - 4, 14);
-  ctx.stroke();
-
-  // Icon
-  ctx.font = 'bold 36px Nunito';
-  ctx.fillStyle = color;
-  ctx.fillText(icon, x + 20, y + 50);
-
-  // Label
-  ctx.font = '18px Nunito Regular';
-  ctx.fillStyle = '#B0B0B0';
-  ctx.fillText(label, x + 75, y + 30);
-
-  // Value
-  ctx.font = 'bold 28px Nunito';
-  ctx.fillStyle = '#FFFFFF';
-  ctx.fillText(value, x + 75, y + 60);
-}
-
-function drawProgressBar(ctx: any, x: number, y: number, width: number, height: number, current: number, max: number, fillColor: string, bgColor: string): void {
-  // Background
-  ctx.fillStyle = bgColor;
-  roundRect(ctx, x, y, width, height, height / 2);
-  ctx.fill();
-
-  // Fill
-  const percentage = Math.min((current / max), 1);
-  ctx.fillStyle = fillColor;
-  roundRect(ctx, x, y, width * percentage, height, height / 2);
-  ctx.fill();
 }
 
 function roundRect(ctx: any, x: number, y: number, width: number, height: number, radius: number): void {
@@ -378,8 +304,8 @@ async function wrapTextWithEmojis(ctx: any, text: string, x: number, y: number, 
   }
 
   const parts = parseTextWithEmojis(text);
-  const emojiSize = 18; // Size of emoji images
-  const maxLines = 4;
+  const emojiSize = 16;
+  const maxLines = 3;
   let currentLine: any[] = [];
   let currentWidth = 0;
   let lineCount = 0;
@@ -395,7 +321,6 @@ async function wrapTextWithEmojis(ctx: any, text: string, x: number, y: number, 
         const wordWidth = ctx.measureText(word).width;
         
         if (currentWidth + wordWidth > maxWidth && currentLine.length > 0) {
-          // Draw current line
           await drawLineWithEmojis(ctx, currentLine, x, y + (lineCount * lineHeight), emojiSize);
           lineCount++;
           
@@ -410,7 +335,6 @@ async function wrapTextWithEmojis(ctx: any, text: string, x: number, y: number, 
       }
     } else if (part.type === 'emoji') {
       if (currentWidth + emojiSize > maxWidth && currentLine.length > 0) {
-        // Draw current line
         await drawLineWithEmojis(ctx, currentLine, x, y + (lineCount * lineHeight), emojiSize);
         lineCount++;
         
@@ -425,7 +349,6 @@ async function wrapTextWithEmojis(ctx: any, text: string, x: number, y: number, 
     }
   }
 
-  // Draw last line
   if (currentLine.length > 0 && lineCount < maxLines) {
     await drawLineWithEmojis(ctx, currentLine, x, y + (lineCount * lineHeight), emojiSize);
   }
@@ -444,19 +367,9 @@ async function drawLineWithEmojis(ctx: any, parts: any[], x: number, y: number, 
         ctx.drawImage(emojiImg, currentX, y - emojiSize + 4, emojiSize, emojiSize);
         currentX += emojiSize + 2;
       } catch (error) {
-        // If emoji image not found, draw the emoji character as text
         ctx.fillText(part.value, currentX, y);
         currentX += ctx.measureText(part.value).width;
       }
     }
   }
-}
-
-function getLevelColor(level: number): string {
-  if (level >= 100) return '#FF0000'; // Red
-  if (level >= 75) return '#FF00FF';  // Magenta
-  if (level >= 50) return '#FFD700';  // Gold
-  if (level >= 25) return '#00D9FF';  // Cyan
-  if (level >= 10) return '#9B59B6';  // Purple
-  return '#95A5A6'; // Gray
 }
