@@ -262,12 +262,12 @@ function getCategorySelectMenu(interaction: ChatInputCommandInteraction, isAdmin
   const locale = getLocale(interaction);
   
   const categoryNames = {
-    economy: locale === 'pt-BR' ? '💰 Economia' : locale === 'es-ES' ? '💰 Economía' : locale === 'fr' ? '💰 Économie' : '💰 Economy',
-    gambling: locale === 'pt-BR' ? '🎰 Jogos' : locale === 'es-ES' ? '🎰 Juegos' : locale === 'fr' ? '🎰 Jeux' : '🎰 Gambling',
-    mining: locale === 'pt-BR' ? '⛏️ Mineração' : locale === 'es-ES' ? '⛏️ Minería' : locale === 'fr' ? '⛏️ Minage' : '⛏️ Mining',
-    profile: locale === 'pt-BR' ? '👤 Perfil' : locale === 'es-ES' ? '👤 Perfil' : locale === 'fr' ? '👤 Profil' : '👤 Profile',
-    bounty: locale === 'pt-BR' ? '🔫 Recompensas' : locale === 'es-ES' ? '🔫 Recompensas' : locale === 'fr' ? '🔫 Primes' : '🔫 Bounty',
-    utility: locale === 'pt-BR' ? 'ℹ️ Utilidades' : locale === 'es-ES' ? 'ℹ️ Utilidades' : locale === 'fr' ? 'ℹ️ Utilitaires' : 'ℹ️ Utility'
+    economy: locale === 'pt-BR' ? 'Economia' : locale === 'es-ES' ? 'Economía' : locale === 'fr' ? 'Économie' : 'Economy',
+    gambling: locale === 'pt-BR' ? 'Jogos' : locale === 'es-ES' ? 'Juegos' : locale === 'fr' ? 'Jeux' : 'Gambling',
+    mining: locale === 'pt-BR' ? 'Mineração' : locale === 'es-ES' ? 'Minería' : locale === 'fr' ? 'Minage' : 'Mining',
+    profile: locale === 'pt-BR' ? 'Perfil' : locale === 'es-ES' ? 'Perfil' : locale === 'fr' ? 'Profil' : 'Profile',
+    bounty: locale === 'pt-BR' ? 'Recompensas' : locale === 'es-ES' ? 'Recompensas' : locale === 'fr' ? 'Primes' : 'Bounty',
+    utility: locale === 'pt-BR' ? 'Utilidades' : locale === 'es-ES' ? 'Utilidades' : locale === 'fr' ? 'Utilitaires' : 'Utility'
   };
 
   const options = [
@@ -299,7 +299,7 @@ function getCategorySelectMenu(interaction: ChatInputCommandInteraction, isAdmin
 
   // Add admin category if user has permissions
   if (isAdmin) {
-    const adminLabel = locale === 'pt-BR' ? '⚙️ Admin' : locale === 'es-ES' ? '⚙️ Admin' : locale === 'fr' ? '⚙️ Admin' : '⚙️ Admin';
+    const adminLabel = locale === 'pt-BR' ? 'Admin' : locale === 'es-ES' ? 'Admin' : locale === 'fr' ? 'Admin' : 'Admin';
     options.push(
       new StringSelectMenuOptionBuilder()
         .setLabel(adminLabel)
