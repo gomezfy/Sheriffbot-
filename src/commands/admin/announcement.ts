@@ -188,6 +188,7 @@ module.exports = {
             .setDescription('Action to perform')
             .addChoices(
               { name: 'Create', value: 'create' },
+              { name: 'Edit', value: 'edit' },
               { name: 'List', value: 'list' },
               { name: 'Use', value: 'use' },
               { name: 'Delete', value: 'delete' }
@@ -204,6 +205,26 @@ module.exports = {
           option
             .setName('channel')
             .setDescription('Channel to send (for "use" action)')
+            .setRequired(false)
+        )
+        .addStringOption(option =>
+          option
+            .setName('edit_field')
+            .setDescription('The template field to edit')
+            .setRequired(false)
+            .addChoices(
+              { name: 'Title', value: 'title' },
+              { name: 'Message', value: 'message' },
+              { name: 'Color', value: 'color' },
+              { name: 'Thumbnail', value: 'thumbnail' },
+              { name: 'Image', value: 'image' },
+              { name: 'Footer', value: 'footer' }
+            )
+        )
+        .addStringOption(option =>
+          option
+            .setName('new_value')
+            .setDescription('The new value for the selected field')
             .setRequired(false)
         )
     )
@@ -373,6 +394,14 @@ async function handleSend(interaction: ChatInputCommandInteraction): Promise<voi
 async function handleTemplate(interaction: ChatInputCommandInteraction): Promise<void> {
   const action = interaction.options.getString('action', true);
   const name = interaction.options.getString('name');
+
+  if (name && (name === '__proto__' || name === 'constructor' || name === 'prototype')) {
+    await interaction.reply({
+        content: '❌ Invalid template name.',
+        flags: MessageFlags.Ephemeral
+    });
+    return;
+  }
   const channel = interaction.options.getChannel('channel');
 
   const data = loadData();
@@ -410,8 +439,38 @@ async function handleTemplate(interaction: ChatInputCommandInteraction): Promise
     saveData(data);
 
     await interaction.reply({
-      content: `✅ **Template "${name}" created!**\n\nNow edit it in \`src/data/announcements.json\` with your desired:\n• Title\n• Message\n• Color (hex code)\n• Thumbnail URL (optional)\n• Image URL (optional)\n• Footer text\n\nThen use it with: \`/announcement template action:use name:${name}\``,
-      flags: MessageFlags.Ephemeral
+        content: `✅ **Template "${name}" created!**\n\nUse \`/announcement template action:edit name:${name} ...\` to modify it.`,
+        flags: MessageFlags.Ephemeral
+    });
+    return;
+  }
+
+  if (action === 'edit') {
+    const field = interaction.options.getString('edit_field');
+    const value = interaction.options.getString('new_value');
+
+    if (!name || !field || value === null) {
+        await interaction.reply({
+            content: '❌ For editing, you must provide the template name, the field to edit, and the new value!',
+            flags: MessageFlags.Ephemeral
+        });
+        return;
+    }
+
+    if (!data.templates[name]) {
+        await interaction.reply({
+            content: `❌ Template "${name}" not found!`,
+            flags: MessageFlags.Ephemeral
+        });
+        return;
+    }
+
+    (data.templates[name] as any)[field] = value;
+    saveData(data);
+
+    await interaction.reply({
+        content: `✅ Template "${name}" updated! Field \`${field}\` is now set to \`${value}\`.`,
+        flags: MessageFlags.Ephemeral
     });
     return;
   }
