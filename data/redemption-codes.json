@@ -1,1 +1,16 @@
-{}
+{
+  "SHERIFF-ULTIMATE-MH822AQI-IX4EXL": {
+    "productId": "ultimate",
+    "productName": "Ultimate Pack",
+    "tokens": 2500,
+    "coins": 100000,
+    "vip": true,
+    "background": true,
+    "backpack": false,
+    "createdAt": 1761504105690,
+    "createdBy": "339772388566892546",
+    "redeemed": true,
+    "redeemedBy": "339772388566892546",
+    "redeemedAt": 1761504122188
+  }
+}
