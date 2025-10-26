@@ -73,7 +73,7 @@ module.exports = {
 };
 
 async function createProfileCard(user: User, stats: any): Promise<AttachmentBuilder> {
-  const canvas = createCanvas(800, 400);
+  const canvas = createCanvas(1536, 1024);
   const ctx = canvas.getContext('2d');
 
   // Load custom background or use default gradient
@@ -83,7 +83,7 @@ async function createProfileCard(user: User, stats: any): Promise<AttachmentBuil
       const bgPath = path.join(process.cwd(), 'assets', 'profile-backgrounds', stats.background);
       if (fs.existsSync(bgPath)) {
         const bgImage = await loadImage(bgPath);
-        ctx.drawImage(bgImage, 0, 0, 800, 400);
+        ctx.drawImage(bgImage, 0, 0, 1536, 1024);
         backgroundLoaded = true;
       }
     } catch (error) {
@@ -93,30 +93,30 @@ async function createProfileCard(user: User, stats: any): Promise<AttachmentBuil
 
   // Default gradient background (modern teal/cyan theme like in the image)
   if (!backgroundLoaded) {
-    const gradient = ctx.createLinearGradient(0, 0, 800, 400);
+    const gradient = ctx.createLinearGradient(0, 0, 1536, 1024);
     gradient.addColorStop(0, '#0a7ea4');
     gradient.addColorStop(0.5, '#1d8fb5');
     gradient.addColorStop(1, '#2ba5c9');
     ctx.fillStyle = gradient;
-    ctx.fillRect(0, 0, 800, 400);
+    ctx.fillRect(0, 0, 1536, 1024);
   }
 
   // Semi-transparent overlay
   ctx.fillStyle = 'rgba(0, 0, 0, 0.2)';
-  ctx.fillRect(0, 0, 800, 400);
+  ctx.fillRect(0, 0, 1536, 1024);
 
   // "Rex" signature in top right (like in the image)
   ctx.save();
-  ctx.font = 'italic bold 60px Nunito';
+  ctx.font = 'italic bold 150px Nunito';
   ctx.fillStyle = 'rgba(255, 255, 255, 0.4)';
   ctx.textAlign = 'right';
-  ctx.fillText('Rex', 770, 60);
+  ctx.fillText('Rex', 1480, 150);
   ctx.restore();
 
   // Avatar circle (top left, large)
-  const avatarX = 120;
-  const avatarY = 100;
-  const avatarRadius = 70;
+  const avatarX = 230;
+  const avatarY = 256;
+  const avatarRadius = 180;
 
   try {
     const avatarURL = user.displayAvatarURL({ extension: 'png', size: 256 });
@@ -149,31 +149,31 @@ async function createProfileCard(user: User, stats: any): Promise<AttachmentBuil
 
   // Username with lightning emoji customizado
   ctx.save();
-  ctx.font = 'bold 56px Nunito';
+  ctx.font = 'bold 140px Nunito';
   ctx.fillStyle = '#FFFFFF';
   ctx.shadowColor = 'rgba(0, 0, 0, 0.5)';
-  ctx.shadowBlur = 8;
+  ctx.shadowBlur = 20;
   
   // Draw username
-  ctx.fillText(user.username, 220, 110);
+  ctx.fillText(user.username, 530, 280);
   
   // Draw custom lightning emoji next to username
   try {
     const lightningImg = await loadImage(CUSTOM_EMOJIS.LIGHTNING);
     const usernameWidth = ctx.measureText(user.username).width;
-    ctx.drawImage(lightningImg, 220 + usernameWidth + 10, 110 - 40, 40, 40);
+    ctx.drawImage(lightningImg, 530 + usernameWidth + 20, 280 - 100, 100, 100);
   } catch (error) {
     // Fallback to Unicode emoji if custom emoji fails
     const usernameWidth = ctx.measureText(user.username).width;
-    ctx.fillText('⚡', 220 + usernameWidth + 10, 110);
+    ctx.fillText('⚡', 530 + usernameWidth + 20, 280);
   }
   
   ctx.restore();
 
   // Stats section (left side, stacked vertically)
-  const statsX = 50;
-  let statsY = 200;
-  const statSpacing = 55;
+  const statsX = 130;
+  let statsY = 512;
+  const statSpacing = 140;
 
   // Helper function to draw compact stat with custom emoji
   async function drawCompactStat(emojiPath: string | null, fallbackEmoji: string, value: string, color: string) {
