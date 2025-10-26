@@ -74,7 +74,6 @@ Este documento descreve as medidas de segurança implementadas no Sheriff Bot pa
 **Comandos com Validação:**
 - `/addgold` - Máximo 1 bilhão
 - `/addsilver` - Máximo 1 bilhão
-- `/casino` - Aposta máxima 10 milhões
 - `/poker` - Aposta máxima 10 milhões
 - `/dice` - Aposta máxima 10 milhões
 - `/duel` - Aposta máxima 10 milhões

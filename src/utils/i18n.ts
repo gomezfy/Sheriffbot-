@@ -1,10 +1,7 @@
-import { ChatInputCommandInteraction, User } from 'discord.js';
+import { ChatInputCommandInteraction } from 'discord.js';
 
-type Locale = 'pt-BR' | 'en-US' | 'es-ES' | 'fr';
-
-const translations: Record<Locale, Record<string, string>> = {
+const translations: Record<string, Record<string, string>> = {
   'pt-BR': {
-    // System
     cooldown: 'Devagar, parceiro! Até os cavalos precisam descansar. Volta daqui a {time}! 🐴',
     error: 'Essa não, parceiro! Meu cavalo tropeçou e derrubou tudo... 🤠',
     inventory_full: 'Peraí, cowboy! Tá carregando o rancho inteiro nas costas? Libera espaço aí! 🎒',
@@ -16,8 +13,6 @@ const translations: Record<Locale, Record<string, string>> = {
     daily_cooldown_title: '⏰ O GALO AINDA NÃO CANTOU!',
     daily_cooldown_desc: 'Calma lá, cowboy! Já passou aqui hoje pegando suas moedas!\n\n**Volta quando o sol nascer de novo:** {time}',
     daily_cooldown_footer: 'Vai descansar um pouco, até o xerife dorme! 😴',
-
-    // Mining
     mine_cooldown: 'Você está cansado demais para minerar! Volte em: **{time}**',
     mine_title: 'MINERAÇÃO DE OURO',
     mine_choose: 'Escolha seu método de mineração:',
@@ -31,33 +26,13 @@ const translations: Record<Locale, Record<string, string>> = {
     mine_value: 'Valor',
     mine_next: 'Próxima Mineração',
     mine_good_work: 'Bom trabalho, parceiro!',
-
-    // Mining DM
-    mining_dm_title: '⛏️ Mineração Concluída!',
-    mining_dm_description: 'Sua sessão de mineração terminou, parceiro! Você desenterrou um tesouro.',
-    mining_dm_reward: 'Recompensa',
-    mining_dm_value: 'Valor Total',
-    mining_dm_footer: 'Volte para a mina para mais recompensas!',
-
-    // Territory DM
-    territory_dm_title: '🏛️ Renda de Território Recebida!',
-    territory_dm_description: 'Seus territórios geraram lucros! O xerife depositou o dinheiro na sua conta.',
-    territory_dm_breakdown: 'Detalhes da Renda',
-    territory_dm_total: 'Total Recebido',
-    territory_dm_weekly_bonus: 'Bônus Semanal',
-    territory_dm_footer: 'Continue investindo no seu império!',
-    territory_saloon: 'Saloon Business',
-    territory_mine: 'Gold Mine Shares',
-    territory_ranch: 'Ranch',
-
-    // Generic
     silver_coins: 'Moedas de Prata',
     gold_bars: 'Barras de Ouro',
     weight: 'Peso',
     time_minutes: '{min} minutos',
     time_hours: '{hours}h {min}m',
     
-    // Help Command
+    // Help Command Translations (Portuguese)
     help_title: '🤠 Sheriff Rex - Guia de Comandos',
     help_overview_desc: '**Bem-vindo ao Velho Oeste!** Sheriff Rex é um bot completo com sistema de economia, jogos, mineração e muito mais.\n\n📱 **Suporte a DM:** Alguns comandos funcionam em mensagens diretas!\n🎮 **34 Comandos Disponíveis**\n\n**Selecione uma categoria abaixo para ver os comandos:**',
     help_footer: '🌵 Use os botões para navegar entre as categorias',
@@ -93,7 +68,6 @@ const translations: Record<Locale, Record<string, string>> = {
     help_utility_desc: '**Ferramentas úteis e informações do bot!**\n\n📊 Status e informações\n🌐 Configurações gerais\n❓ Ajuda e suporte\n⚡ Performance',
   },
   'en-US': {
-    // System
     cooldown: 'Whoa there, cowpoke! Even the fastest guns need a break. Come back in {time}! 🐴',
     error: 'Well butter my biscuit! My horse done kicked the bucket... 🤠',
     inventory_full: 'Hold up, partner! You carrying the whole ranch on your back? Lighten that load! 🎒',
@@ -105,8 +79,6 @@ const translations: Record<Locale, Record<string, string>> = {
     daily_cooldown_title: '⏰ THE ROOSTER AIN\'T CROWED YET!',
     daily_cooldown_desc: 'Simmer down, cowboy! You done grabbed your coins already!\n\n**Come back when the sun rises again:** {time}',
     daily_cooldown_footer: 'Go rest your spurs, even outlaws need sleep! 😴',
-
-    // Mining
     mine_cooldown: 'You\'re too tired to mine! Come back in: **{time}**',
     mine_title: 'GOLD MINING',
     mine_choose: 'Choose your mining method:',
@@ -120,33 +92,13 @@ const translations: Record<Locale, Record<string, string>> = {
     mine_value: 'Value',
     mine_next: 'Next Mining',
     mine_good_work: 'Good work, partner!',
-
-    // Mining DM
-    mining_dm_title: '⛏️ Mining Complete!',
-    mining_dm_description: 'Your mining session has ended, partner! You\'ve unearthed some treasure.',
-    mining_dm_reward: 'Reward',
-    mining_dm_value: 'Total Value',
-    mining_dm_footer: 'Head back to the mines for more!',
-
-    // Territory DM
-    territory_dm_title: '🏛️ Territory Income Received!',
-    territory_dm_description: 'Your territories have generated profits! The sheriff has deposited the funds into your account.',
-    territory_dm_breakdown: 'Income Breakdown',
-    territory_dm_total: 'Total Received',
-    territory_dm_weekly_bonus: 'Weekly Bonus',
-    territory_dm_footer: 'Keep investing in your empire!',
-    territory_saloon: 'Saloon Business',
-    territory_mine: 'Gold Mine Shares',
-    territory_ranch: 'Ranch',
-
-    // Generic
     silver_coins: 'Silver Coins',
     gold_bars: 'Gold Bars',
     weight: 'Weight',
     time_minutes: '{min} minutes',
     time_hours: '{hours}h {min}m',
     
-    // Help Command
+    // Help Command Translations (English)
     help_title: '🤠 Sheriff Rex - Command Guide',
     help_overview_desc: '**Welcome to the Wild West!** Sheriff Rex is a complete bot with economy system, games, mining and much more.\n\n📱 **DM Support:** Some commands work in direct messages!\n🎮 **34 Commands Available**\n\n**Select a category below to see the commands:**',
     help_footer: '🌵 Use the buttons to navigate between categories',
@@ -182,7 +134,6 @@ const translations: Record<Locale, Record<string, string>> = {
     help_utility_desc: '**Useful tools and bot information!**\n\n📊 Status and information\n🌐 General settings\n❓ Help and support\n⚡ Performance',
   },
   'es-ES': {
-    // System
     cooldown: '¡Tranquilo, vaquero! Hasta los caballos necesitan siesta. ¡Vuelve en {time}! 🐴',
     error: '¡Caramba, compadre! Mi caballo tropezó y tiró todo... 🤠',
     inventory_full: '¡Oye vaquero! ¿Llevas el rancho entero en la espalda? ¡Libera espacio! 🎒',
@@ -194,8 +145,6 @@ const translations: Record<Locale, Record<string, string>> = {
     daily_cooldown_title: '⏰ ¡EL GALLO NO HA CANTADO AÚN!',
     daily_cooldown_desc: '¡Calma vaquero! Ya agarraste tus monedas hoy!\n\n**Vuelve cuando salga el sol otra vez:** {time}',
     daily_cooldown_footer: '¡Ve a descansar, hasta los forajidos duermen! 😴',
-
-    // Mining
     mine_cooldown: '¡Estás muy cansado para minar! Vuelve en: **{time}**',
     mine_title: 'MINERÍA DE ORO',
     mine_choose: 'Elige tu método de minería:',
@@ -209,33 +158,13 @@ const translations: Record<Locale, Record<string, string>> = {
     mine_value: 'Valor',
     mine_next: 'Próxima Minería',
     mine_good_work: '¡Buen trabajo, compadre!',
-
-    // Mining DM
-    mining_dm_title: '⛏️ ¡Minería Completada!',
-    mining_dm_description: '¡Tu sesión de minería ha terminado, compadre! Has desenterrado un tesoro.',
-    mining_dm_reward: 'Recompensa',
-    mining_dm_value: 'Valor Total',
-    mining_dm_footer: '¡Vuelve a las minas a por más!',
-
-    // Territory DM
-    territory_dm_title: '🏛️ ¡Ingresos de Territorio Recibidos!',
-    territory_dm_description: '¡Tus territorios han generado ganancias! El sheriff ha depositado los fondos en tu cuenta.',
-    territory_dm_breakdown: 'Desglose de Ingresos',
-    territory_dm_total: 'Total Recibido',
-    territory_dm_weekly_bonus: 'Bono Semanal',
-    territory_dm_footer: '¡Sigue invirtiendo en tu imperio!',
-    territory_saloon: 'Saloon Business',
-    territory_mine: 'Gold Mine Shares',
-    territory_ranch: 'Ranch',
-
-    // Generic
     silver_coins: 'Monedas de Plata',
     gold_bars: 'Barras de Oro',
     weight: 'Peso',
     time_minutes: '{min} minutos',
     time_hours: '{hours}h {min}m',
     
-    // Help Command
+    // Help Command Translations (Spanish)
     help_title: '🤠 Sheriff Rex - Guía de Comandos',
     help_overview_desc: '**¡Bienvenido al Viejo Oeste!** Sheriff Rex es un bot completo con sistema de economía, juegos, minería y mucho más.\n\n📱 **Soporte MP:** ¡Algunos comandos funcionan en mensajes privados!\n🎮 **34 Comandos Disponibles**\n\n**Selecciona una categoría abajo para ver los comandos:**',
     help_footer: '🌵 Usa los botones para navegar entre categorías',
@@ -271,7 +200,6 @@ const translations: Record<Locale, Record<string, string>> = {
     help_utility_desc: '**¡Herramientas útiles e información del bot!**\n\n📊 Estado e información\n🌐 Configuraciones generales\n❓ Ayuda y soporte\n⚡ Rendimiento',
   },
   'fr': {
-    // System
     cooldown: 'Doucement, cowboy ! Même les chevaux ont besoin de repos. Reviens dans {time} ! 🐴',
     error: 'Sacrebleu, partenaire ! Mon cheval a trébuché... 🤠',
     inventory_full: 'Hé cowboy ! Tu portes tout le ranch sur ton dos ? Libère de l\'espace ! 🎒',
@@ -283,8 +211,6 @@ const translations: Record<Locale, Record<string, string>> = {
     daily_cooldown_title: '⏰ LE COQ N\'A PAS ENCORE CHANTÉ !',
     daily_cooldown_desc: 'Calme-toi, cowboy ! Tu as déjà pris tes pièces aujourd\'hui !\n\n**Reviens quand le soleil se lèvera à nouveau :** {time}',
     daily_cooldown_footer: 'Va te reposer, même les hors-la-loi dorment ! 😴',
-
-    // Mining
     mine_cooldown: 'Tu es trop fatigué pour miner ! Reviens dans : **{time}**',
     mine_title: 'MINE D\'OR',
     mine_choose: 'Choisis ta méthode de minage :',
@@ -298,33 +224,13 @@ const translations: Record<Locale, Record<string, string>> = {
     mine_value: 'Valeur',
     mine_next: 'Prochain Minage',
     mine_good_work: 'Bon travail, partenaire !',
-
-    // Mining DM
-    mining_dm_title: '⛏️ Minage Terminé !',
-    mining_dm_description: 'Votre session de minage est terminée, partenaire ! Vous avez déterré un trésor.',
-    mining_dm_reward: 'Récompense',
-    mining_dm_value: 'Valeur Totale',
-    mining_dm_footer: 'Retournez à la mine pour plus de récompenses !',
-
-    // Territory DM
-    territory_dm_title: '🏛️ Revenus de Territoire Reçus !',
-    territory_dm_description: 'Vos territoires ont généré des profits ! Le shérif a déposé les fonds sur votre compte.',
-    territory_dm_breakdown: 'Détail des Revenus',
-    territory_dm_total: 'Total Reçu',
-    territory_dm_weekly_bonus: 'Bonus Hebdomadaire',
-    territory_dm_footer: 'Continuez à investir dans votre empire !',
-    territory_saloon: 'Saloon Business',
-    territory_mine: 'Gold Mine Shares',
-    territory_ranch: 'Ranch',
-
-    // Generic
     silver_coins: 'Pièces d\'Argent',
     gold_bars: 'Lingots d\'Or',
     weight: 'Poids',
     time_minutes: '{min} minutes',
     time_hours: '{hours}h {min}m',
     
-    // Help Command
+    // Help Command Translations (French)
     help_title: '🤠 Sheriff Rex - Guide des Commandes',
     help_overview_desc: '**Bienvenue dans le Far West !** Sheriff Rex est un bot complet avec système d\'économie, jeux, minage et bien plus.\n\n📱 **Support MP :** Certaines commandes fonctionnent en messages privés !\n🎮 **34 Commandes Disponibles**\n\n**Sélectionnez une catégorie ci-dessous pour voir les commandes:**',
     help_footer: '🌵 Utilisez les boutons pour naviguer entre les catégories',
@@ -361,44 +267,25 @@ const translations: Record<Locale, Record<string, string>> = {
   }
 };
 
-// Type guard to check if an object is a User
-function isUser(obj: any): obj is User {
-  return obj && typeof obj.id === 'string' && typeof obj.username === 'string';
-}
+export function getLocale(interaction: ChatInputCommandInteraction): string {
+  const locale = interaction.locale || 'en-US';
 
-// Type guard to check if an object is a ChatInputCommandInteraction
-function isInteraction(obj: any): obj is ChatInputCommandInteraction {
-  return obj && obj.isCommand && typeof obj.locale === 'string';
-}
-
-export function getLocale(source: ChatInputCommandInteraction | User | Locale): Locale {
-  let localeString: string = 'en-US';
-
-  if (typeof source === 'string') {
-    localeString = source;
-  } else if (isInteraction(source)) {
-    localeString = source.locale;
-  } else if (isUser(source)) {
-    localeString = source.locale || 'en-US';
-  }
-
-  if (localeString.startsWith('pt')) return 'pt-BR';
-  if (localeString.startsWith('es')) return 'es-ES';
-  if (localeString.startsWith('fr')) return 'fr';
+  if (locale.startsWith('pt')) return 'pt-BR';
+  if (locale.startsWith('es')) return 'es-ES';
+  if (locale.startsWith('fr')) return 'fr';
   
   return 'en-US';
 }
 
-export function t(source: ChatInputCommandInteraction | User | Locale, key: string, params: Record<string, any> = {}): string {
-  const locale = getLocale(source);
-  let text = translations[locale]?.[key] || translations['en-US']?.[key] || key;
+export function t(interaction: ChatInputCommandInteraction, key: string, params: Record<string, any> = {}): string {
+  const locale = getLocale(interaction);
+  let text = translations[locale][key] || translations['en-US'][key] || key;
   
   Object.keys(params).forEach(param => {
-    const regex = new RegExp(`{${param}}`, 'g');
-    text = text.replace(regex, params[param]);
+    text = text.replace(`{${param}}`, params[param]);
   });
   
   return text;
 }
 
-export { translations, type Locale };
+export { translations };

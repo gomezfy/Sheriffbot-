@@ -59,7 +59,6 @@ None specified yet.
 
 ## Recent Changes
 - **October 26, 2025:**
-  - **Casino Interface Complete Redesign:** Completely modernized the `/casino` web interface
     - **Modern HTML5/CSS3:** Implemented advanced CSS with CSS custom properties (variables), 3D transforms, and modern animations
     - **Professional Design:**
       - Radial gradients and ambient lighting effects
@@ -108,7 +107,6 @@ None specified yet.
     - Layout now matches modern profile card design standards
 - **October 25, 2025:**
   - **Custom Emoji Integration in Core Commands:** Replaced Unicode emojis with custom emoji functions
-    - Updated 7 high-traffic commands: announcement, daily, casino, profile, wanted, bounties, help
     - Custom emojis now used in embeds and message content for better branding
     - Maintained Unicode emojis in slash command descriptions (Discord API requirement)
     - All changes compiled successfully with TypeScript
