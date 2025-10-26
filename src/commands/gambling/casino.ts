@@ -1,8 +1,8 @@
 import { SlashCommandBuilder, EmbedBuilder, ChatInputCommandInteraction, MessageFlags, ButtonBuilder, ActionRowBuilder, ButtonStyle } from 'discord.js';
 import axios from 'axios';
 
-const SERVER_URL = process.env.REPLIT_DEV_DOMAIN 
-  ? `https://${process.env.REPLIT_DEV_DOMAIN}` 
+const SERVER_URL = process.env.REPLIT_DEV_DOMAIN
+  ? `https://${process.env.REPLIT_DEV_DOMAIN}`
   : 'http://localhost:5000';
 
 module.exports = {
@@ -11,7 +11,7 @@ module.exports = {
     .setDescription('Play the casino slot machine in an interactive web interface!')
     .setContexts([0, 1, 2]) // Guild, BotDM, PrivateChannel
     .setIntegrationTypes([0, 1]), // Guild Install, User Install
-  
+
   async execute(interaction: ChatInputCommandInteraction): Promise<void> {
     const userId = interaction.user.id;
 

@@ -1,5 +1,6 @@
 import { readData, writeData } from './database';
 import { Client, EmbedBuilder } from 'discord.js';
+import { t } from './i18n';
 import { 
   getGoldBarEmoji,
   getCheckEmoji,
@@ -146,23 +147,24 @@ export async function notifyCompletedMining(client: Client): Promise<number> {
           const moneybagEmoji = getMoneybagEmoji();
           const gemEmoji = getGemEmoji();
 
+          // Use the 't' function with the user object for translation
           const embed = new EmbedBuilder()
             .setColor(0x00FF00)
-            .setTitle(`${checkEmoji} MINERAÇÃO COMPLETA!`)
-            .setDescription(`Sua operação de mineração foi concluída!\n\n${moneybagEmoji} **Recompensa:** ${session.goldAmount} ${goldEmoji} Gold Bar${session.goldAmount > 1 ? 's' : ''}!`)
+            .setTitle(`${checkEmoji} ${t(user, 'mining_dm_title')}`)
+            .setDescription(t(user, 'mining_dm_description'))
             .addFields(
               {
-                name: '⛏️ Tipo de Mineração',
-                value: session.type === 'solo' ? '⛏️ Solo Mining' : '👥 Cooperative Mining',
+                name: moneybagEmoji + ' ' + t(user, 'mining_dm_reward'),
+                value: `${session.goldAmount} ${goldEmoji} ${t(user, 'gold_bars')}`,
                 inline: true
               },
               {
-                name: `${gemEmoji} Ouro Disponível`,
-                value: `${session.goldAmount} ${goldEmoji}`,
+                name: gemEmoji + ' ' + t(user, 'mining_dm_value'),
+                value: `${session.goldAmount * 700} ${t(user, 'silver_coins')}`,
                 inline: true
               }
             )
-            .setFooter({ text: 'Use /mine para coletar seu ouro!' })
+            .setFooter({ text: t(user, 'mine_good_work') })
             .setTimestamp();
 
           await user.send({ embeds: [embed] });

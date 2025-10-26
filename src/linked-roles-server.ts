@@ -501,7 +501,7 @@ const slotSymbols = [
 function getWeightedSymbol() {
   const totalWeight = slotSymbols.reduce((sum, s) => sum + s.weight, 0);
   let random = Math.random() * totalWeight;
-  
+
   for (const item of slotSymbols) {
     random -= item.weight;
     if (random <= 0) return item.symbol;
@@ -525,14 +525,14 @@ function getCasinoStats(userId: string) {
 // Create new casino game session
 app.post('/api/casino/create-session', (req: Request, res: Response) => {
   const { userId } = req.body;
-  
+
   if (!userId) {
     return res.status(400).json({ error: 'User ID required' });
   }
 
   const sessionId = crypto.randomBytes(16).toString('hex');
   const now = Date.now();
-  
+
   casinoSessions.set(sessionId, {
     userId,
     createdAt: now,

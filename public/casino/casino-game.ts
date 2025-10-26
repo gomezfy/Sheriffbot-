@@ -25,7 +25,7 @@ interface SessionResponse {
 class CasinoGame {
   private readonly symbols: string[] = ['🍒', '🍋', '🍊', '🔔', '⭐', '💎'];
   private readonly weights: number[] = [30, 25, 20, 15, 8, 2];
-  
+
   private balance: number = 0;
   private wins: number = 0;
   private losses: number = 0;
@@ -84,12 +84,12 @@ class CasinoGame {
 
   private createParticles(count: number = 20): void {
     const particleSymbols = ['💰', '⭐', '💎', '🔔', '🎊', '✨'];
-    
+
     for (let i = 0; i < count; i++) {
       const particle = document.createElement('div');
       particle.className = 'particle';
       particle.textContent = particleSymbols[Math.floor(Math.random() * particleSymbols.length)];
-      
+
       const startX = 50;
       const randomX = (Math.random() - 0.5) * 200;
       particle.style.setProperty('--tx', `${randomX}px`);
@@ -97,9 +97,9 @@ class CasinoGame {
       particle.style.top = '50%';
       particle.style.animationDelay = `${Math.random() * 0.3}s`;
       particle.style.animationDuration = `${1.5 + Math.random()}s`;
-      
+
       this.elements.particles.appendChild(particle);
-      
+
       setTimeout(() => particle.remove(), 2500);
     }
   }
@@ -118,7 +118,7 @@ class CasinoGame {
     try {
       const response = await fetch(`/api/casino/session/${this.sessionId}`);
       const data: SessionResponse = await response.json();
-      
+
       if (data.success) {
         this.balance = data.balance;
         this.wins = data.stats.wins || 0;
@@ -149,7 +149,7 @@ class CasinoGame {
 
   private showResult(data: SpinResponse): void {
     let resultClass = data.won ? 'win' : 'loss';
-    
+
     if (data.multiplier >= 20) {
       resultClass = 'jackpot';
       this.createParticles(80);
@@ -168,13 +168,13 @@ class CasinoGame {
   }
 
   private animateReel(
-    reel: HTMLElement, 
-    finalSymbol: string, 
+    reel: HTMLElement,
+    finalSymbol: string,
     delay: number
   ): Promise<void> {
     return new Promise((resolve) => {
       reel.classList.add('spinning');
-      
+
       const interval = setInterval(() => {
         reel.textContent = this.symbols[Math.floor(Math.random() * this.symbols.length)];
       }, 80);
@@ -192,7 +192,7 @@ class CasinoGame {
     if (this.isSpinning) return;
 
     const bet = parseInt(this.elements.betAmount.value);
-    
+
     if (bet < 10) {
       this.showError('❌ Aposta mínima: 10 fichas');
       return;
@@ -223,10 +223,10 @@ class CasinoGame {
       const response = await fetch('/api/casino/spin', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
-          userId: this.userId, 
-          sessionId: this.sessionId, 
-          bet 
+        body: JSON.stringify({
+          userId: this.userId,
+          sessionId: this.sessionId,
+          bet
         })
       });
 
