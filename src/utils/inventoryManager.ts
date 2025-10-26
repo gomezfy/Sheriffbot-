@@ -159,6 +159,7 @@ export function addItem(userId: string, itemId: string, quantity: number = 1): a
   }
   
   inventory.items[itemId] += quantity;
+  const newWeight = calculateWeight(inventory);
   inventory.weight = newWeight;
   
   saveInventory(userId, inventory);

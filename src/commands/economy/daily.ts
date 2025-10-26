@@ -1,5 +1,5 @@
 import { SlashCommandBuilder, ChatInputCommandInteraction ,MessageFlags} from 'discord.js';
-import { addXP } from '../../utils/xpManager';
+import { addXp } from '../../utils/xpManager';
 import { economyEmbed, errorEmbed, warningEmbed, formatCurrency, formatDuration, field } from '../../utils/embeds';
 import { getSilverCoinEmoji, getSaloonTokenEmoji } from '../../utils/customEmojis';
 const { addItem } = require('../../utils/inventoryManager');
@@ -106,7 +106,7 @@ module.exports = {
       return;
     }
 
-    addXP(userId, xpAmount);
+    addXp(userId, xpAmount);
     
     userData.lastClaim = now;
     userData.streak = newStreak;
