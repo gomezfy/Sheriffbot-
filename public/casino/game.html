@@ -2,114 +2,232 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>🎰 Sheriff Rex Casino</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>🤠 Sheriff Rex Casino - Wild West Slots</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Rye&family=Oswald:wght@400;600;700&display=swap" rel="stylesheet">
   <style>
     * {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
     }
 
     body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+      font-family: 'Oswald', sans-serif;
+      background: #1a0e0a url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect fill="%23140a08" width="100" height="100"/><circle cx="50" cy="50" r="40" fill="%231a0e0a" opacity="0.3"/></svg>') repeat;
       color: #fff;
       min-height: 100vh;
       display: flex;
       justify-content: center;
       align-items: center;
-      padding: 20px;
+      padding: 10px;
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: radial-gradient(ellipse at center, rgba(139, 69, 19, 0.1) 0%, transparent 70%);
+      pointer-events: none;
+      z-index: 0;
     }
 
     .container {
-      max-width: 600px;
+      max-width: 480px;
       width: 100%;
-      background: rgba(255, 255, 255, 0.05);
-      backdrop-filter: blur(10px);
-      border-radius: 30px;
-      padding: 40px;
-      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
-      border: 2px solid rgba(255, 215, 0, 0.3);
+      position: relative;
+      z-index: 1;
     }
 
     .header {
       text-align: center;
-      margin-bottom: 30px;
+      margin-bottom: 15px;
+      position: relative;
     }
 
-    .header h1 {
-      font-size: 2.5em;
-      margin-bottom: 10px;
-      text-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
-      animation: glow 2s ease-in-out infinite;
+    .logo {
+      font-family: 'Rye', cursive;
+      font-size: clamp(1.8em, 7vw, 2.5em);
+      color: #FFD700;
+      text-shadow: 
+        0 0 10px rgba(255, 215, 0, 0.8),
+        0 0 20px rgba(255, 215, 0, 0.6),
+        2px 2px 4px rgba(0, 0, 0, 0.8),
+        -2px -2px 4px rgba(139, 69, 19, 0.5);
+      margin-bottom: 5px;
+      animation: logoGlow 3s ease-in-out infinite;
+      line-height: 1.2;
     }
 
-    @keyframes glow {
-      0%, 100% { text-shadow: 0 0 20px rgba(255, 215, 0, 0.5); }
-      50% { text-shadow: 0 0 30px rgba(255, 215, 0, 0.8), 0 0 40px rgba(255, 215, 0, 0.6); }
+    @keyframes logoGlow {
+      0%, 100% { text-shadow: 0 0 10px rgba(255, 215, 0, 0.8), 0 0 20px rgba(255, 215, 0, 0.6), 2px 2px 4px rgba(0, 0, 0, 0.8); }
+      50% { text-shadow: 0 0 20px rgba(255, 215, 0, 1), 0 0 30px rgba(255, 215, 0, 0.8), 2px 2px 4px rgba(0, 0, 0, 0.8); }
     }
 
-    .balance {
-      background: rgba(0, 0, 0, 0.3);
-      padding: 15px;
+    .subtitle {
+      font-size: clamp(0.9em, 3vw, 1.1em);
+      color: #DDA15E;
+      font-weight: 600;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+
+    .balance-card {
+      background: linear-gradient(135deg, #8B4513 0%, #654321 100%);
+      border: 3px solid #FFD700;
       border-radius: 15px;
-      margin-bottom: 30px;
-      text-align: center;
+      padding: 15px;
+      margin-bottom: 15px;
+      box-shadow: 
+        0 0 20px rgba(255, 215, 0, 0.3),
+        inset 0 0 20px rgba(0, 0, 0, 0.3);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .balance-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 215, 0, 0.2), transparent);
+      animation: shimmer 3s infinite;
+    }
+
+    @keyframes shimmer {
+      0% { left: -100%; }
+      100% { left: 100%; }
+    }
+
+    .balance-label {
+      font-size: 0.9em;
+      color: #DDA15E;
+      margin-bottom: 5px;
+      letter-spacing: 1px;
     }
 
     .balance-value {
-      font-size: 1.8em;
-      font-weight: bold;
+      font-size: clamp(1.8em, 6vw, 2.2em);
+      font-weight: 700;
       color: #FFD700;
-    }
-
-    .slot-machine {
-      background: linear-gradient(145deg, #2c3e50, #34495e);
-      border-radius: 20px;
-      padding: 30px;
-      margin-bottom: 30px;
-      box-shadow: inset 0 0 30px rgba(0, 0, 0, 0.5);
-      border: 3px solid #FFD700;
-    }
-
-    .slots {
-      display: flex;
-      justify-content: center;
-      gap: 20px;
-      margin-bottom: 30px;
-    }
-
-    .slot {
-      width: 120px;
-      height: 140px;
-      background: linear-gradient(145deg, #1a1a1a, #2d2d2d);
-      border-radius: 15px;
+      text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 5em;
-      border: 3px solid #444;
-      box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.8);
-      transition: all 0.3s;
+      gap: 8px;
     }
 
-    .slot.spinning {
-      animation: spin 0.1s linear infinite;
+    .machine {
+      background: linear-gradient(145deg, #654321 0%, #3d2817 100%);
+      border: 4px solid #8B4513;
+      border-radius: 20px;
+      padding: 20px;
+      margin-bottom: 15px;
+      box-shadow: 
+        0 10px 30px rgba(0, 0, 0, 0.5),
+        inset 0 0 30px rgba(0, 0, 0, 0.4),
+        0 0 0 2px #FFD700;
+      position: relative;
     }
 
-    @keyframes spin {
+    .machine::before {
+      content: '★';
+      position: absolute;
+      top: -15px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 2em;
+      color: #FFD700;
+      text-shadow: 0 0 15px rgba(255, 215, 0, 0.8);
+    }
+
+    .reels-container {
+      background: linear-gradient(180deg, #1a0e0a 0%, #2d1810 100%);
+      border: 3px solid #8B4513;
+      border-radius: 15px;
+      padding: 15px;
+      margin-bottom: 20px;
+      box-shadow: inset 0 0 30px rgba(0, 0, 0, 0.8);
+    }
+
+    .reels {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-bottom: 15px;
+    }
+
+    .reel {
+      aspect-ratio: 1;
+      background: linear-gradient(145deg, #2d1810, #1a0e0a);
+      border: 3px solid #8B4513;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: clamp(3em, 12vw, 4.5em);
+      box-shadow: 
+        inset 0 0 20px rgba(0, 0, 0, 0.9),
+        0 0 15px rgba(139, 69, 19, 0.3);
+      position: relative;
+      overflow: hidden;
+      transition: all 0.3s ease;
+    }
+
+    .reel::before {
+      content: '';
+      position: absolute;
+      inset: 3px;
+      border-radius: 9px;
+      background: linear-gradient(135deg, rgba(255, 215, 0, 0.1) 0%, transparent 100%);
+      pointer-events: none;
+    }
+
+    .reel.spinning {
+      animation: reelSpin 0.1s linear infinite;
+      filter: blur(2px);
+    }
+
+    @keyframes reelSpin {
       0% { transform: translateY(0); }
-      50% { transform: translateY(-10px); }
-      100% { transform: translateY(0); }
+      100% { transform: translateY(-20px); }
+    }
+
+    .reel.win {
+      animation: winPulse 0.6s ease-in-out;
+      border-color: #FFD700;
+      box-shadow: 
+        inset 0 0 20px rgba(0, 0, 0, 0.9),
+        0 0 25px rgba(255, 215, 0, 0.8);
+    }
+
+    @keyframes winPulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.1); }
     }
 
     .result-message {
       text-align: center;
-      font-size: 1.5em;
-      margin: 20px 0;
-      min-height: 60px;
-      font-weight: bold;
+      font-size: clamp(1.1em, 4vw, 1.4em);
+      font-weight: 700;
+      min-height: 50px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 15px;
+      padding: 10px;
+      border-radius: 10px;
+      background: rgba(139, 69, 19, 0.3);
       animation: fadeIn 0.5s;
     }
 
@@ -118,167 +236,300 @@
       to { opacity: 1; transform: translateY(0); }
     }
 
-    .controls {
-      display: flex;
-      flex-direction: column;
-      gap: 15px;
+    .result-message.win {
+      color: #FFD700;
+      text-shadow: 0 0 10px rgba(255, 215, 0, 0.8);
+      background: rgba(255, 215, 0, 0.2);
+      animation: jackpotFlash 0.5s ease-in-out;
     }
 
-    .bet-control {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      background: rgba(0, 0, 0, 0.3);
+    .result-message.loss {
+      color: #ff6b6b;
+    }
+
+    .result-message.jackpot {
+      font-size: clamp(1.3em, 5vw, 1.8em);
+      animation: jackpotFlash 0.8s ease-in-out infinite;
+    }
+
+    @keyframes jackpotFlash {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.1); text-shadow: 0 0 20px rgba(255, 215, 0, 1); }
+    }
+
+    .controls {
+      background: linear-gradient(135deg, #654321 0%, #4a2f1a 100%);
+      border: 3px solid #8B4513;
+      border-radius: 15px;
       padding: 15px;
-      border-radius: 10px;
+      margin-bottom: 15px;
+      box-shadow: 0 5px 20px rgba(0, 0, 0, 0.4);
+    }
+
+    .bet-section {
+      margin-bottom: 15px;
+    }
+
+    .bet-label {
+      font-size: 0.95em;
+      color: #DDA15E;
+      margin-bottom: 8px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      font-weight: 600;
     }
 
     .bet-buttons {
-      display: flex;
-      gap: 10px;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+      margin-bottom: 10px;
     }
 
     .bet-btn {
-      background: rgba(255, 215, 0, 0.2);
+      background: linear-gradient(135deg, #8B4513 0%, #654321 100%);
       border: 2px solid #FFD700;
       color: #FFD700;
-      padding: 8px 15px;
+      padding: 10px;
       border-radius: 8px;
       cursor: pointer;
-      font-weight: bold;
-      transition: all 0.3s;
+      font-weight: 700;
+      font-size: clamp(0.9em, 3vw, 1em);
+      transition: all 0.2s;
+      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
+      font-family: 'Oswald', sans-serif;
+    }
+
+    .bet-btn:active {
+      transform: scale(0.95);
+      box-shadow: 0 1px 5px rgba(0, 0, 0, 0.5);
     }
 
     .bet-btn:hover {
-      background: rgba(255, 215, 0, 0.4);
-      transform: scale(1.05);
+      background: linear-gradient(135deg, #a0522d 0%, #8B4513 100%);
+      box-shadow: 0 0 15px rgba(255, 215, 0, 0.5);
     }
 
     .bet-input {
-      width: 120px;
-      padding: 10px;
-      font-size: 1.2em;
+      width: 100%;
+      padding: 12px;
+      font-size: clamp(1.1em, 4vw, 1.3em);
       text-align: center;
-      background: rgba(0, 0, 0, 0.5);
+      background: linear-gradient(135deg, #2d1810 0%, #1a0e0a 100%);
       border: 2px solid #FFD700;
-      border-radius: 8px;
+      border-radius: 10px;
       color: #FFD700;
-      font-weight: bold;
+      font-weight: 700;
+      font-family: 'Oswald', sans-serif;
+      box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.5);
+    }
+
+    .bet-input:focus {
+      outline: none;
+      border-color: #FFA500;
+      box-shadow: 0 0 15px rgba(255, 165, 0, 0.5), inset 0 2px 10px rgba(0, 0, 0, 0.5);
     }
 
     .spin-button {
-      background: linear-gradient(145deg, #FFD700, #FFA500);
-      color: #000;
+      width: 100%;
+      background: linear-gradient(135deg, #dc2f02 0%, #9d0208 100%);
+      color: #fff;
       border: none;
-      padding: 20px;
-      font-size: 1.5em;
-      font-weight: bold;
+      padding: 18px;
+      font-size: clamp(1.3em, 5vw, 1.6em);
+      font-weight: 700;
       border-radius: 15px;
       cursor: pointer;
       transition: all 0.3s;
-      box-shadow: 0 10px 30px rgba(255, 215, 0, 0.4);
+      box-shadow: 
+        0 6px 20px rgba(220, 47, 2, 0.4),
+        inset 0 -2px 10px rgba(0, 0, 0, 0.3);
       text-transform: uppercase;
+      letter-spacing: 2px;
+      font-family: 'Oswald', sans-serif;
+      position: relative;
+      overflow: hidden;
     }
 
-    .spin-button:hover:not(:disabled) {
-      transform: translateY(-5px);
-      box-shadow: 0 15px 40px rgba(255, 215, 0, 0.6);
+    .spin-button::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 0;
+      height: 0;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.3);
+      transform: translate(-50%, -50%);
+      transition: width 0.6s, height 0.6s;
+    }
+
+    .spin-button:active::before {
+      width: 300px;
+      height: 300px;
+    }
+
+    .spin-button:active {
+      transform: scale(0.98);
+      box-shadow: 
+        0 3px 10px rgba(220, 47, 2, 0.6),
+        inset 0 -2px 10px rgba(0, 0, 0, 0.5);
     }
 
     .spin-button:disabled {
-      background: #555;
+      background: linear-gradient(135deg, #555 0%, #333 100%);
       cursor: not-allowed;
-      opacity: 0.5;
+      opacity: 0.6;
+      box-shadow: none;
     }
 
-    .stats {
+    .stats-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      gap: 15px;
-      margin-top: 20px;
+      gap: 10px;
+      margin-bottom: 15px;
     }
 
     .stat-card {
-      background: rgba(0, 0, 0, 0.3);
-      padding: 15px;
-      border-radius: 10px;
+      background: linear-gradient(135deg, #654321 0%, #4a2f1a 100%);
+      border: 2px solid #8B4513;
+      border-radius: 12px;
+      padding: 12px;
       text-align: center;
+      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
     }
 
     .stat-label {
-      font-size: 0.9em;
-      opacity: 0.8;
+      font-size: clamp(0.75em, 2.5vw, 0.85em);
+      color: #DDA15E;
       margin-bottom: 5px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
     }
 
     .stat-value {
-      font-size: 1.5em;
-      font-weight: bold;
+      font-size: clamp(1.3em, 4vw, 1.6em);
+      font-weight: 700;
       color: #FFD700;
+      text-shadow: 0 0 8px rgba(255, 215, 0, 0.4);
     }
 
     .payout-table {
-      background: rgba(0, 0, 0, 0.3);
-      padding: 20px;
+      background: linear-gradient(135deg, #654321 0%, #4a2f1a 100%);
+      border: 3px solid #8B4513;
       border-radius: 15px;
-      margin-top: 20px;
-      font-size: 0.9em;
+      padding: 15px;
+      box-shadow: 0 5px 20px rgba(0, 0, 0, 0.4);
+    }
+
+    .payout-title {
+      text-align: center;
+      font-size: clamp(1.1em, 4vw, 1.3em);
+      color: #FFD700;
+      margin-bottom: 12px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
     }
 
     .payout-row {
       display: flex;
       justify-content: space-between;
-      padding: 8px 0;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      align-items: center;
+      padding: 8px 10px;
+      border-bottom: 1px solid rgba(139, 69, 19, 0.5);
+      font-size: clamp(0.85em, 3vw, 0.95em);
     }
 
     .payout-row:last-child {
       border-bottom: none;
     }
 
-    .win {
-      color: #00ff00;
+    .payout-symbols {
+      font-size: clamp(1.2em, 4vw, 1.4em);
     }
 
-    .loss {
-      color: #ff4444;
-    }
-
-    .jackpot {
+    .payout-prize {
       color: #FFD700;
-      animation: jackpot 0.5s ease-in-out;
+      font-weight: 700;
     }
 
-    @keyframes jackpot {
-      0%, 100% { transform: scale(1); }
-      50% { transform: scale(1.2); }
+    @media (max-width: 480px) {
+      .container {
+        padding: 0;
+      }
+      
+      .machine {
+        border-radius: 15px;
+        padding: 15px;
+      }
+      
+      .reels-container {
+        padding: 12px;
+      }
+    }
+
+    @media (min-width: 481px) {
+      .container {
+        max-width: 500px;
+      }
+    }
+
+    .particles {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 999;
+    }
+
+    .particle {
+      position: absolute;
+      color: #FFD700;
+      font-size: 20px;
+      animation: particleFall 2s linear forwards;
+      opacity: 0;
+    }
+
+    @keyframes particleFall {
+      0% { opacity: 1; transform: translateY(0) rotate(0deg); }
+      100% { opacity: 0; transform: translateY(100px) rotate(360deg); }
     }
   </style>
 </head>
 <body>
+  <div class="particles" id="particles"></div>
+  
   <div class="container">
     <div class="header">
-      <h1>🎰 SHERIFF REX CASINO 🎰</h1>
-      <p>🤠 Test your luck, partner!</p>
+      <div class="logo">🤠 WILD WEST SLOTS 🤠</div>
+      <div class="subtitle">Sheriff Rex Casino</div>
     </div>
 
-    <div class="balance">
-      <div class="balance-label">💰 Your Balance</div>
-      <div class="balance-value"><span id="balance">0</span> 🎫</div>
+    <div class="balance-card">
+      <div class="balance-label">💰 SUAS FICHAS</div>
+      <div class="balance-value">
+        <span id="balance">0</span>
+        <span>🎫</span>
+      </div>
     </div>
 
-    <div class="slot-machine">
-      <div class="slots">
-        <div class="slot" id="slot1">🎰</div>
-        <div class="slot" id="slot2">🎰</div>
-        <div class="slot" id="slot3">🎰</div>
+    <div class="machine">
+      <div class="reels-container">
+        <div class="reels">
+          <div class="reel" id="reel1">🎰</div>
+          <div class="reel" id="reel2">🎰</div>
+          <div class="reel" id="reel3">🎰</div>
+        </div>
+
+        <div class="result-message" id="result">Boa sorte, parceiro! 🍀</div>
       </div>
 
-      <div class="result-message" id="result"></div>
-
       <div class="controls">
-        <div class="bet-control">
-          <span>💵 Bet Amount:</span>
+        <div class="bet-section">
+          <div class="bet-label">💵 Valor da Aposta</div>
           <div class="bet-buttons">
             <button class="bet-btn" onclick="setBet(10)">10</button>
             <button class="bet-btn" onclick="setBet(50)">50</button>
@@ -289,36 +540,52 @@
         </div>
 
         <button class="spin-button" id="spinBtn" onclick="spin()">
-          🎰 SPIN 🎰
+          🎰 GIRAR 🎰
         </button>
       </div>
     </div>
 
-    <div class="stats">
+    <div class="stats-grid">
       <div class="stat-card">
-        <div class="stat-label">🏆 Wins</div>
+        <div class="stat-label">🏆 Vitórias</div>
         <div class="stat-value" id="wins">0</div>
       </div>
       <div class="stat-card">
-        <div class="stat-label">💔 Losses</div>
+        <div class="stat-label">💔 Derrotas</div>
         <div class="stat-value" id="losses">0</div>
       </div>
       <div class="stat-card">
-        <div class="stat-label">🔥 Streak</div>
+        <div class="stat-label">🔥 Sequência</div>
         <div class="stat-value" id="streak">0</div>
       </div>
     </div>
 
     <div class="payout-table">
-      <h3 style="text-align: center; margin-bottom: 15px;">💰 Payout Table</h3>
-      <div class="payout-row"><span>💎💎💎</span><span>x50 🏆 MEGA JACKPOT</span></div>
-      <div class="payout-row"><span>⭐⭐⭐</span><span>x20 🌟 SUPER WIN</span></div>
-      <div class="payout-row"><span>🔔🔔🔔</span><span>x10 🎉 BIG WIN</span></div>
-      <div class="payout-row"><span>🍊🍊🍊</span><span>x5 🎊 GREAT WIN</span></div>
-      <div class="payout-row"><span>🍋🍋🍋</span><span>x3 😊 NICE WIN</span></div>
-      <div class="payout-row"><span>🍒🍒🍒</span><span>x2.5 👍 WIN</span></div>
-      <div class="payout-row"><span>💎💎</span><span>x5 💍 DIAMOND BONUS</span></div>
-      <div class="payout-row"><span>⭐⭐</span><span>x2 ⭐ STAR PAIR</span></div>
+      <div class="payout-title">💰 Tabela de Prêmios</div>
+      <div class="payout-row">
+        <span class="payout-symbols">💎💎💎</span>
+        <span class="payout-prize">x50 🏆 MEGA</span>
+      </div>
+      <div class="payout-row">
+        <span class="payout-symbols">⭐⭐⭐</span>
+        <span class="payout-prize">x20 🌟 SUPER</span>
+      </div>
+      <div class="payout-row">
+        <span class="payout-symbols">🔔🔔🔔</span>
+        <span class="payout-prize">x10 🎉 GRANDE</span>
+      </div>
+      <div class="payout-row">
+        <span class="payout-symbols">🍊🍊🍊</span>
+        <span class="payout-prize">x5 🎊 ÓTIMO</span>
+      </div>
+      <div class="payout-row">
+        <span class="payout-symbols">💎💎</span>
+        <span class="payout-prize">x5 💍 BÔNUS</span>
+      </div>
+      <div class="payout-row">
+        <span class="payout-symbols">⭐⭐</span>
+        <span class="payout-prize">x2 ⭐ PAR</span>
+      </div>
     </div>
   </div>
 
@@ -347,6 +614,25 @@
 
     function setBet(amount) {
       document.getElementById('betAmount').value = amount;
+      playSound('click');
+    }
+
+    function playSound(type) {
+      // Placeholder para sons futuros
+    }
+
+    function createParticles(count = 20) {
+      const container = document.getElementById('particles');
+      for (let i = 0; i < count; i++) {
+        const particle = document.createElement('div');
+        particle.className = 'particle';
+        particle.textContent = ['💰', '⭐', '💎', '🔔'][Math.floor(Math.random() * 4)];
+        particle.style.left = Math.random() * 100 + '%';
+        particle.style.top = Math.random() * -50 + 'px';
+        particle.style.animationDelay = Math.random() * 0.5 + 's';
+        container.appendChild(particle);
+        setTimeout(() => particle.remove(), 2000);
+      }
     }
 
     async function loadGameData() {
@@ -355,7 +641,8 @@
       sessionId = params.get('session');
 
       if (!userId || !sessionId) {
-        document.getElementById('result').textContent = '❌ Invalid session';
+        document.getElementById('result').textContent = '❌ Sessão inválida';
+        document.getElementById('result').className = 'result-message loss';
         document.getElementById('spinBtn').disabled = true;
         return;
       }
@@ -371,12 +658,14 @@
           streak = data.stats.currentStreak || 0;
           updateDisplay();
         } else {
-          document.getElementById('result').textContent = '❌ Session expired';
+          document.getElementById('result').textContent = '❌ Sessão expirada';
+          document.getElementById('result').className = 'result-message loss';
           document.getElementById('spinBtn').disabled = true;
         }
       } catch (error) {
-        console.error('Error loading game data:', error);
-        document.getElementById('result').textContent = '❌ Error loading game';
+        console.error('Erro ao carregar:', error);
+        document.getElementById('result').textContent = '❌ Erro ao carregar';
+        document.getElementById('result').className = 'result-message loss';
       }
     }
 
@@ -393,26 +682,29 @@
       const bet = parseInt(document.getElementById('betAmount').value);
       
       if (bet < 10) {
-        document.getElementById('result').textContent = '❌ Minimum bet is 10!';
+        document.getElementById('result').textContent = '❌ Aposta mínima: 10 fichas';
+        document.getElementById('result').className = 'result-message loss';
         return;
       }
 
       if (bet > balance) {
-        document.getElementById('result').textContent = '❌ Insufficient balance!';
+        document.getElementById('result').textContent = '❌ Saldo insuficiente!';
+        document.getElementById('result').className = 'result-message loss';
         return;
       }
 
       isSpinning = true;
       document.getElementById('spinBtn').disabled = true;
-      document.getElementById('result').textContent = '🎲 SPINNING...';
+      document.getElementById('result').textContent = '🎲 GIRANDO...';
+      document.getElementById('result').className = 'result-message';
 
-      const slot1 = document.getElementById('slot1');
-      const slot2 = document.getElementById('slot2');
-      const slot3 = document.getElementById('slot3');
+      const reel1 = document.getElementById('reel1');
+      const reel2 = document.getElementById('reel2');
+      const reel3 = document.getElementById('reel3');
 
-      slot1.classList.add('spinning');
-      slot2.classList.add('spinning');
-      slot3.classList.add('spinning');
+      reel1.classList.add('spinning');
+      reel2.classList.add('spinning');
+      reel3.classList.add('spinning');
 
       try {
         const response = await fetch('/api/casino/spin', {
@@ -425,27 +717,32 @@
 
         if (!data.success) {
           document.getElementById('result').textContent = '❌ ' + data.error;
+          document.getElementById('result').className = 'result-message loss';
           isSpinning = false;
           document.getElementById('spinBtn').disabled = false;
-          slot1.classList.remove('spinning');
-          slot2.classList.remove('spinning');
-          slot3.classList.remove('spinning');
+          reel1.classList.remove('spinning');
+          reel2.classList.remove('spinning');
+          reel3.classList.remove('spinning');
           return;
         }
 
+        // Animação dos rolos parando um por um
         setTimeout(() => {
-          slot1.textContent = data.symbols[0];
-          slot1.classList.remove('spinning');
-        }, 800);
+          reel1.textContent = data.symbols[0];
+          reel1.classList.remove('spinning');
+          if (data.won) reel1.classList.add('win');
+        }, 1000);
 
         setTimeout(() => {
-          slot2.textContent = data.symbols[1];
-          slot2.classList.remove('spinning');
-        }, 1600);
+          reel2.textContent = data.symbols[1];
+          reel2.classList.remove('spinning');
+          if (data.won) reel2.classList.add('win');
+        }, 1800);
 
         setTimeout(() => {
-          slot3.textContent = data.symbols[2];
-          slot3.classList.remove('spinning');
+          reel3.textContent = data.symbols[2];
+          reel3.classList.remove('spinning');
+          if (data.won) reel3.classList.add('win');
 
           balance = data.newBalance;
           wins = data.stats.wins;
@@ -453,7 +750,12 @@
           streak = data.stats.currentStreak;
 
           let resultClass = data.won ? 'win' : 'loss';
-          if (data.multiplier >= 20) resultClass = 'jackpot';
+          if (data.multiplier >= 20) {
+            resultClass = 'jackpot';
+            createParticles(50);
+          } else if (data.won) {
+            createParticles(20);
+          }
 
           document.getElementById('result').className = 'result-message ' + resultClass;
           document.getElementById('result').textContent = data.result;
@@ -461,18 +763,37 @@
           updateDisplay();
           isSpinning = false;
           document.getElementById('spinBtn').disabled = false;
-        }, 2400);
+
+          // Remover classe win após animação
+          setTimeout(() => {
+            reel1.classList.remove('win');
+            reel2.classList.remove('win');
+            reel3.classList.remove('win');
+          }, 1000);
+        }, 2600);
 
       } catch (error) {
-        console.error('Error spinning:', error);
-        document.getElementById('result').textContent = '❌ Error occurred';
+        console.error('Erro:', error);
+        document.getElementById('result').textContent = '❌ Erro no servidor';
+        document.getElementById('result').className = 'result-message loss';
         isSpinning = false;
         document.getElementById('spinBtn').disabled = false;
-        slot1.classList.remove('spinning');
-        slot2.classList.remove('spinning');
-        slot3.classList.remove('spinning');
+        reel1.classList.remove('spinning');
+        reel2.classList.remove('spinning');
+        reel3.classList.remove('spinning');
       }
     }
+
+    // Prevenir zoom no double tap (mobile)
+    document.addEventListener('touchend', (e) => {
+      const now = Date.now();
+      if (now - lastTouchEnd <= 300) {
+        e.preventDefault();
+      }
+      lastTouchEnd = now;
+    }, { passive: false });
+
+    let lastTouchEnd = 0;
 
     window.onload = loadGameData;
   </script>
