@@ -58,6 +58,22 @@ None specified yet.
 - **Session Management:** `express-session` (for the web dashboard)
 
 ## Recent Changes
+- **October 26, 2025:**
+  - **Profile Card Complete Redesign:** Completely redesigned the `/profile` command visual layout
+    - Canvas size confirmed at 1536x1024px for high-quality display
+    - Repositioned avatar to top-left corner (180x, 180y, radius 130px)
+    - Username now displays horizontally next to avatar with lightning emoji
+    - Stats reorganized vertically on left side below avatar:
+      - 💎 Gold Bars count displayed first
+      - 🪙 Silver Coins with "RC" prefix
+      - ⭐ Level with XP progress display
+      - 👍 Reputation (Reps) count
+    - "Sobre Mim" (bio) section moved to center-right with larger size (550x200px)
+    - Dropdown button repositioned to bottom-right of bio box
+    - Increased font sizes (username: 100px, stats: 48px) for better readability
+    - Increased emoji sizes (60px) for better visibility
+    - Fixed inventory key access to properly display user balances
+    - Layout now matches modern profile card design standards
 - **October 25, 2025:**
   - **Custom Emoji Integration in Core Commands:** Replaced Unicode emojis with custom emoji functions
     - Updated 7 high-traffic commands: announcement, daily, casino, profile, wanted, bounties, help
