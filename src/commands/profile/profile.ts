@@ -32,18 +32,17 @@ module.exports = {
 
     const inventory = getInventory(targetUser.id);
     const silver = inventory.items['silver'] || 0;
-    const goldBars = inventory.items['gold'] || 0;
+    const saloonTokens = inventory.items['saloon_token'] || 0;
     const xpData = getUserXP(targetUser.id);
     const profile = getUserProfile(targetUser.id);
 
     const card = await createProfileCard(targetUser, {
       silver,
-      goldBars,
+      saloonTokens,
       xp: xpData.xp,
       level: xpData.level,
       bio: profile.bio,
-      background: profile.background,
-      reps: profile.reps || 0
+      background: profile.background
     });
 
     const isOwnProfile = targetUser.id === interaction.user.id;
@@ -216,13 +215,9 @@ async function createProfileCard(user: User, stats: any): Promise<AttachmentBuil
     statsY += statSpacing;
   }
 
-  // Get Gold Bars count
-  const inventory = { items: { 'gold': stats.goldBars || 0 } };
-  const goldBars = stats.goldBars || 0;
-
-  // Stats in order as shown in image:
-  // 1. Gold Bars (💎)
-  await drawStat('💎', CUSTOM_EMOJIS.GOLD_BAR, goldBars.toLocaleString(), '');
+  // Stats in order:
+  // 1. Saloon Tokens (🎫) - sem RC
+  await drawStat('🎫', CUSTOM_EMOJIS.SALOON_TOKEN, stats.saloonTokens.toLocaleString(), '');
 
   // 2. Silver Coins with RC prefix (🪙)
   await drawStat('🪙', CUSTOM_EMOJIS.SILVER_COIN, stats.silver.toLocaleString(), 'RC');
@@ -258,11 +253,8 @@ async function createProfileCard(user: User, stats: any): Promise<AttachmentBuil
   ctx.restore();
   statsY += statSpacing;
 
-  // 4. Reps (👍)
-  await drawStat('👍', CUSTOM_EMOJIS.LIKE, `${stats.reps || 0} Reps`, '');
-
-  // "Sobre Mim" section (center-right area)
-  const bioX = 580;
+  // "Sobre Mim" section (mais pro canto direito)
+  const bioX = 720;
   const bioY = 380;
   const bioWidth = 550;
   const bioHeight = 200;
