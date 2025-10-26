@@ -1,6 +1,25 @@
-import { SlashCommandBuilder, EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, AttachmentBuilder, ChatInputCommandInteraction ,MessageFlags} from 'discord.js';
-const { getUserSilver, addUserSilver, removeUserSilver } = require('../../utils/dataManager');
-import path from 'path';
+import { 
+  SlashCommandBuilder, 
+  EmbedBuilder, 
+  ActionRowBuilder, 
+  ButtonBuilder, 
+  ButtonStyle, 
+  ChatInputCommandInteraction,
+  MessageFlags,
+  ComponentType
+} from 'discord.js';
+import { addItem, removeItem, getInventory } from '../../utils/inventoryManager';
+import { 
+  getRevolverEmoji, 
+  getDartEmoji, 
+  getTrophyEmoji,
+  getSilverCoinEmoji,
+  getTimerEmoji,
+  getCancelEmoji,
+  getCheckEmoji,
+  getLightningEmoji
+} from '../../utils/customEmojis';
+import { isValidBetAmount, commandRateLimiter } from '../../utils/security';
 
 const activeDuels = new Map();
 const cooldowns = new Map();
@@ -8,7 +27,7 @@ const cooldowns = new Map();
 // Duel mechanics: Rock-Paper-Scissors style with HP system
 const ACTIONS = {
   quick_shot: {
-    name: '⚡ Quick Shot',
+    name: 'Quick Shot',
     emoji: '⚡',
     beats: 'aim',
     losesTo: 'dodge',
@@ -16,7 +35,7 @@ const ACTIONS = {
     description: 'Fast but less accurate'
   },
   aim: {
-    name: '🎯 Aimed Shot',
+    name: 'Aimed Shot',
     emoji: '🎯',
     beats: 'dodge',
     losesTo: 'quick_shot',
@@ -24,7 +43,7 @@ const ACTIONS = {
     description: 'Slow but powerful'
   },
   dodge: {
-    name: '🤸 Dodge Roll',
+    name: 'Dodge Roll',
     emoji: '🤸',
     beats: 'quick_shot',
     losesTo: 'aim',
@@ -32,6 +51,16 @@ const ACTIONS = {
     description: 'Avoid damage, counter lightly'
   }
 };
+
+const MAX_BET = 100000; // Maximum bet of 100k Silver
+const MIN_BET = 50;
+const COOLDOWN_TIME = 60000; // 60 seconds
+
+function createHealthBar(hp: number, maxHp: number = 5): string {
+  const hearts = '❤️'.repeat(hp);
+  const empty = '🖤'.repeat(maxHp - hp);
+  return `${hearts}${empty} ${hp}/${maxHp}`;
+}
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -46,9 +75,10 @@ module.exports = {
     .addIntegerOption(option =>
       option
         .setName('bet')
-        .setDescription('Amount of Silver Coins to bet')
+        .setDescription(`Amount of Silver Coins to bet (${MIN_BET}-${MAX_BET.toLocaleString()})`)
         .setRequired(true)
-        .setMinValue(50)
+        .setMinValue(MIN_BET)
+        .setMaxValue(MAX_BET)
     ),
   async execute(interaction: ChatInputCommandInteraction): Promise<void> {
     const challenger = interaction.user;
@@ -57,7 +87,7 @@ module.exports = {
 
     if (!opponent || !bet) {
       await interaction.reply({
-        content: '❌ Please specify both opponent and bet!',
+        content: `${getCancelEmoji()} Please specify both opponent and bet!`,
         flags: MessageFlags.Ephemeral
       });
       return;
@@ -66,7 +96,7 @@ module.exports = {
     // Validation checks
     if (opponent.bot) {
       await interaction.reply({
-        content: '❌ Bots don\'t duel, partner!',
+        content: `${getCancelEmoji()} Bots don't duel, partner!`,
         flags: MessageFlags.Ephemeral
       });
       return;
@@ -74,7 +104,26 @@ module.exports = {
 
     if (opponent.id === challenger.id) {
       await interaction.reply({
-        content: '❌ You can\'t duel yourself!',
+        content: `${getCancelEmoji()} You can't duel yourself!`,
+        flags: MessageFlags.Ephemeral
+      });
+      return;
+    }
+
+    // Security: Validate bet amount
+    if (!isValidBetAmount(bet)) {
+      await interaction.reply({
+        content: `${getCancelEmoji()} Invalid bet amount! Must be between ${MIN_BET} and ${MAX_BET.toLocaleString()}.`,
+        flags: MessageFlags.Ephemeral
+      });
+      return;
+    }
+
+    // Security: Rate limiting
+    if (!commandRateLimiter.canExecute('duel', challenger.id, COOLDOWN_TIME)) {
+      const remaining = commandRateLimiter.getRemainingCooldown('duel', challenger.id, COOLDOWN_TIME);
+      await interaction.reply({
+        content: `${getTimerEmoji()} You just finished a duel! Wait ${Math.ceil(remaining / 1000)} more seconds before challenging again.`,
         flags: MessageFlags.Ephemeral
       });
       return;
@@ -82,14 +131,12 @@ module.exports = {
 
     // Check cooldown
     const now = Date.now();
-    const cooldownAmount = 30000; // 30 seconds
-
     if (cooldowns.has(challenger.id)) {
-      const expirationTime = cooldowns.get(challenger.id) + cooldownAmount;
+      const expirationTime = cooldowns.get(challenger.id) + COOLDOWN_TIME;
       if (now < expirationTime) {
         const timeLeft = Math.ceil((expirationTime - now) / 1000);
         await interaction.reply({
-          content: `⏰ You just finished a duel! Wait ${timeLeft} more seconds before challenging again.`,
+          content: `${getTimerEmoji()} You just finished a duel! Wait ${timeLeft} more seconds before challenging again.`,
           flags: MessageFlags.Ephemeral
         });
         return;
@@ -97,20 +144,24 @@ module.exports = {
     }
 
     // Check if challenger has enough money
-    const challengerBalance = getUserSilver(challenger.id);
+    const challengerInventory = getInventory(challenger.id);
+    const challengerBalance = challengerInventory.items['silver'] || 0;
+    
     if (challengerBalance < bet) {
       await interaction.reply({
-        content: `❌ You don't have enough Silver Coins! You have 🪙 ${challengerBalance.toLocaleString()} but need 🪙 ${bet.toLocaleString()}.`,
+        content: `${getCancelEmoji()} You don't have enough Silver Coins! You have ${getSilverCoinEmoji()} ${challengerBalance.toLocaleString()} but need ${getSilverCoinEmoji()} ${bet.toLocaleString()}.`,
         flags: MessageFlags.Ephemeral
       });
       return;
     }
 
     // Check if opponent has enough money
-    const opponentBalance = getUserSilver(opponent.id);
+    const opponentInventory = getInventory(opponent.id);
+    const opponentBalance = opponentInventory.items['silver'] || 0;
+    
     if (opponentBalance < bet) {
       await interaction.reply({
-        content: `❌ ${opponent.username} doesn't have enough Silver Coins to accept this bet!`,
+        content: `${getCancelEmoji()} ${opponent.username} doesn't have enough Silver Coins to accept this bet!`,
         flags: MessageFlags.Ephemeral
       });
       return;
@@ -119,7 +170,7 @@ module.exports = {
     // Check if either player is already in a duel
     if (activeDuels.has(challenger.id) || activeDuels.has(opponent.id)) {
       await interaction.reply({
-        content: '❌ One of you is already in a duel!',
+        content: `${getCancelEmoji()} One of you is already in a duel!`,
         flags: MessageFlags.Ephemeral
       });
       return;
@@ -140,13 +191,13 @@ module.exports = {
 
     const embed = new EmbedBuilder()
       .setColor('#FF4500')
-      .setTitle('🔫 DUEL CHALLENGE!')
-      .setDescription(`**${challenger.username}** challenges **${opponent.username}** to a Western duel!\n\n💰 **Wager:** 🪙 ${bet.toLocaleString()} Silver Coins\n⏰ **30 seconds** to accept or decline!`)
+      .setTitle(`${getRevolverEmoji()} DUEL CHALLENGE!`)
+      .setDescription(`**${challenger.username}** challenges **${opponent.username}** to a Western duel!\n\n💰 **Wager:** ${getSilverCoinEmoji()} ${bet.toLocaleString()} Silver Coins\n${getTimerEmoji()} **30 seconds** to accept or decline!`)
       .addFields(
-        { name: '🎮 How to Play', value: 'Best of 3 rounds! Each player has 5 HP. Choose your action wisely!', inline: false },
-        { name: '⚡ Quick Shot', value: 'Beats 🎯 Aimed Shot (2 damage)', inline: true },
-        { name: '🎯 Aimed Shot', value: 'Beats 🤸 Dodge (3 damage)', inline: true },
-        { name: '🤸 Dodge Roll', value: 'Beats ⚡ Quick Shot (1 damage)', inline: true }
+        { name: `${getDartEmoji()} How to Play`, value: 'Best of 3 rounds! Each player has 5 HP. Choose your action wisely!', inline: false },
+        { name: '⚡ Quick Shot (2 dmg)', value: 'Beats 🎯 Aimed Shot', inline: true },
+        { name: '🎯 Aimed Shot (3 dmg)', value: 'Beats 🤸 Dodge', inline: true },
+        { name: '🤸 Dodge Roll (1 dmg)', value: 'Beats ⚡ Quick Shot', inline: true }
       )
       .setFooter({ text: `${opponent.username}, click Accept to duel!` })
       .setTimestamp();
@@ -173,13 +224,16 @@ module.exports = {
       }
 
       // Duel accepted! Re-check balances before deducting (prevent race condition)
-      const challengerCurrentBalance = getUserSilver(challenger.id);
-      const opponentCurrentBalance = getUserSilver(opponent.id);
+      const challengerCurrentInventory = getInventory(challenger.id);
+      const opponentCurrentInventory = getInventory(opponent.id);
+      
+      const challengerCurrentBalance = challengerCurrentInventory.items['silver'] || 0;
+      const opponentCurrentBalance = opponentCurrentInventory.items['silver'] || 0;
 
       if (challengerCurrentBalance < bet) {
         const errorEmbed = new EmbedBuilder()
           .setColor('#FF0000')
-          .setTitle('❌ Insufficient Funds')
+          .setTitle(`${getCancelEmoji()} Insufficient Funds`)
           .setDescription(`**${challenger.username}** no longer has enough Silver Coins! Duel cancelled.`)
           .setFooter({ text: 'Balance changed during challenge' });
 
@@ -190,7 +244,7 @@ module.exports = {
       if (opponentCurrentBalance < bet) {
         const errorEmbed = new EmbedBuilder()
           .setColor('#FF0000')
-          .setTitle('❌ Insufficient Funds')
+          .setTitle(`${getCancelEmoji()} Insufficient Funds`)
           .setDescription(`**${opponent.username}** no longer has enough Silver Coins! Duel cancelled.`)
           .setFooter({ text: 'Balance changed during challenge' });
 
@@ -199,21 +253,21 @@ module.exports = {
       }
 
       // Deduct bets BEFORE marking duel as active
-      const challengerRemove = removeUserSilver(challenger.id, bet);
-      const opponentRemove = removeUserSilver(opponent.id, bet);
+      const challengerRemove = removeItem(challenger.id, 'silver', bet);
+      const opponentRemove = removeItem(opponent.id, 'silver', bet);
 
       if (!challengerRemove.success || !opponentRemove.success) {
         // Rollback if one succeeded but the other failed
         if (challengerRemove.success) {
-          addUserSilver(challenger.id, bet);
+          addItem(challenger.id, 'silver', bet);
         }
         if (opponentRemove.success) {
-          addUserSilver(opponent.id, bet);
+          addItem(opponent.id, 'silver', bet);
         }
 
         const errorEmbed = new EmbedBuilder()
           .setColor('#FF0000')
-          .setTitle('❌ Transaction Failed')
+          .setTitle(`${getCancelEmoji()} Transaction Failed`)
           .setDescription('Failed to process bets. Duel cancelled.')
           .setFooter({ text: 'Your silver has been refunded' });
 
@@ -242,7 +296,7 @@ module.exports = {
       if (collected.size === 0) {
         const timeoutEmbed = new EmbedBuilder()
           .setColor('#808080')
-          .setTitle('⏰ Duel Timeout')
+          .setTitle(`${getTimerEmoji()} Duel Timeout`)
           .setDescription(`**${opponent.username}** didn't respond in time. Duel cancelled.`)
           .setFooter({ text: 'Challenge them again when they\'re ready!' });
 
@@ -275,21 +329,30 @@ async function startDuelRound(interaction: any, state: any) {
 
   const roundEmbed = new EmbedBuilder()
     .setColor('#FFD700')
-    .setTitle(`🔫 DUEL - Round ${state.round}/${state.maxRounds}`)
-    .setDescription('**Both players:** Choose your action!\n\n⚡ Quick Shot beats 🎯 Aim\n🎯 Aim beats 🤸 Dodge\n🤸 Dodge beats ⚡ Quick Shot')
+    .setTitle(`${getRevolverEmoji()} DUEL - Round ${state.round}/${state.maxRounds}`)
+    .setDescription(`**Both players:** Choose your action!\n\n⚡ Quick Shot (2 dmg) beats 🎯 Aim\n🎯 Aim (3 dmg) beats 🤸 Dodge\n🤸 Dodge (1 dmg) beats ⚡ Quick Shot`)
     .addFields(
-      { name: `${state.challenger.user.username}`, value: `❤️ ${state.challenger.hp}/5 HP`, inline: true },
+      { 
+        name: `${state.challenger.user.username}`, 
+        value: createHealthBar(state.challenger.hp), 
+        inline: true 
+      },
       { name: 'VS', value: '⚔️', inline: true },
-      { name: `${state.opponent.user.username}`, value: `❤️ ${state.opponent.hp}/5 HP`, inline: true }
+      { 
+        name: `${state.opponent.user.username}`, 
+        value: createHealthBar(state.opponent.hp), 
+        inline: true 
+      }
     )
-    .setFooter({ text: 'You have 15 seconds to choose!' })
+    .setFooter({ text: '⏰ You have 15 seconds to choose!' })
     .setTimestamp();
 
   await interaction.update({ embeds: [roundEmbed], components: [row] });
 
   const collector = interaction.message.createMessageComponentCollector({
     filter: (i: any) => [state.challenger.user.id, state.opponent.user.id].includes(i.user.id),
-    time: 15000
+    time: 15000,
+    componentType: ComponentType.Button
   });
 
   collector.on('collect', async (i: any) => {
@@ -297,10 +360,16 @@ async function startDuelRound(interaction: any, state: any) {
     
     if (i.user.id === state.challenger.user.id) {
       state.challenger.choice = action;
-      await i.reply({ content: `You chose ${(ACTIONS as any)[action].emoji} ${(ACTIONS as any)[action].name}!`, flags: MessageFlags.Ephemeral });
+      await i.reply({ 
+        content: `${getCheckEmoji()} You chose ${(ACTIONS as any)[action].emoji} ${(ACTIONS as any)[action].name}!`, 
+        flags: MessageFlags.Ephemeral 
+      });
     } else if (i.user.id === state.opponent.user.id) {
       state.opponent.choice = action;
-      await i.reply({ content: `You chose ${(ACTIONS as any)[action].emoji} ${(ACTIONS as any)[action].name}!`, flags: MessageFlags.Ephemeral });
+      await i.reply({ 
+        content: `${getCheckEmoji()} You chose ${(ACTIONS as any)[action].emoji} ${(ACTIONS as any)[action].name}!`, 
+        flags: MessageFlags.Ephemeral 
+      });
     }
 
     // Both players chose
@@ -331,34 +400,46 @@ async function resolveRound(message: any, state: any) {
   let result = '';
   let cDamage = 0;
   let oDamage = 0;
+  let embedColor = '#FFA500';
 
   if (cAction.beats === state.opponent.choice) {
     // Challenger wins round
     oDamage = cAction.damage;
     state.opponent.hp = Math.max(0, state.opponent.hp - oDamage);
-    result = `${state.challenger.user.username}'s ${cAction.emoji} beats ${state.opponent.user.username}'s ${oAction.emoji}!\n**${state.opponent.user.username}** takes ${oDamage} damage!`;
+    result = `${getLightningEmoji()} **${state.challenger.user.username}'s** ${cAction.emoji} ${cAction.name} beats **${state.opponent.user.username}'s** ${oAction.emoji} ${oAction.name}!\n\n💥 **${state.opponent.user.username}** takes **${oDamage} damage**!`;
+    embedColor = '#00FF00';
   } else if (oAction.beats === state.challenger.choice) {
     // Opponent wins round
     cDamage = oAction.damage;
     state.challenger.hp = Math.max(0, state.challenger.hp - cDamage);
-    result = `${state.opponent.user.username}'s ${oAction.emoji} beats ${state.challenger.user.username}'s ${cAction.emoji}!\n**${state.challenger.user.username}** takes ${cDamage} damage!`;
+    result = `${getLightningEmoji()} **${state.opponent.user.username}'s** ${oAction.emoji} ${oAction.name} beats **${state.challenger.user.username}'s** ${cAction.emoji} ${cAction.name}!\n\n💥 **${state.challenger.user.username}** takes **${cDamage} damage**!`;
+    embedColor = '#FF4500';
   } else {
     // Draw - both take 1 damage
     cDamage = 1;
     oDamage = 1;
     state.challenger.hp = Math.max(0, state.challenger.hp - 1);
     state.opponent.hp = Math.max(0, state.opponent.hp - 1);
-    result = `Both chose ${cAction.emoji}! It's a draw!\nBoth take 1 damage!`;
+    result = `🤝 Both chose ${cAction.emoji} ${cAction.name}! It's a **DRAW**!\n\n💥 Both players take **1 damage**!`;
+    embedColor = '#FFD700';
   }
 
   const roundResultEmbed = new EmbedBuilder()
-    .setColor('#FFA500')
+    .setColor(parseInt(embedColor.replace('#', ''), 16))
     .setTitle(`🎯 Round ${state.round} Result`)
     .setDescription(result)
     .addFields(
-      { name: `${state.challenger.user.username}`, value: `${cAction.emoji} ${cAction.name}\n❤️ ${state.challenger.hp}/5 HP`, inline: true },
-      { name: 'VS', value: '⚔️', inline: true },
-      { name: `${state.opponent.user.username}`, value: `${oAction.emoji} ${oAction.name}\n❤️ ${state.opponent.hp}/5 HP`, inline: true }
+      { 
+        name: `${state.challenger.user.username}`, 
+        value: `${cAction.emoji} ${cAction.name}\n${createHealthBar(state.challenger.hp)}`, 
+        inline: true 
+      },
+      { name: '⚔️', value: '\u200B', inline: true },
+      { 
+        name: `${state.opponent.user.username}`, 
+        value: `${oAction.emoji} ${oAction.name}\n${createHealthBar(state.opponent.hp)}`, 
+        inline: true 
+      }
     )
     .setTimestamp();
 
@@ -366,11 +447,11 @@ async function resolveRound(message: any, state: any) {
 
   // Check for winner
   if (state.challenger.hp <= 0 || state.opponent.hp <= 0 || state.round >= state.maxRounds) {
-    await new Promise(resolve => setTimeout(resolve, 2000));
+    await new Promise(resolve => setTimeout(resolve, 3000));
     await endDuel(message, state);
   } else {
     state.round++;
-    await new Promise(resolve => setTimeout(resolve, 3000));
+    await new Promise(resolve => setTimeout(resolve, 4000));
     await startDuelRound({ update: async (data: any) => message.edit(data), message }, state);
   }
 }
@@ -386,13 +467,13 @@ async function endDuel(message: any, state: any) {
     loser = state.challenger.user;
   } else {
     // Draw - refund both
-    const refundChallengerResult = addUserSilver(state.challenger.user.id, state.bet);
-    const refundOpponentResult = addUserSilver(state.opponent.user.id, state.bet);
+    const refundChallengerResult = addItem(state.challenger.user.id, 'silver', state.bet);
+    const refundOpponentResult = addItem(state.opponent.user.id, 'silver', state.bet);
 
     const drawEmbed = new EmbedBuilder()
       .setColor('#808080')
       .setTitle('🤝 Duel Draw!')
-      .setDescription(`Both outlaws are equally matched! The duel ends in a draw.\n\n💰 Both players get their 🪙 ${state.bet.toLocaleString()} Silver Coins back.`)
+      .setDescription(`Both outlaws are equally matched! The duel ends in a draw.\n\n💰 Both players get their ${getSilverCoinEmoji()} ${state.bet.toLocaleString()} Silver Coins back.`)
       .setFooter({ text: 'Rematch anytime!' })
       .setTimestamp();
 
@@ -406,16 +487,16 @@ async function endDuel(message: any, state: any) {
 
   // Winner gets double the bet
   const winnings = state.bet * 2;
-  const addResult = addUserSilver(winner.id, winnings);
+  const addResult = addItem(winner.id, 'silver', winnings);
 
   if (!addResult.success) {
     // Refund both if winner's inventory is full
-    addUserSilver(state.challenger.user.id, state.bet);
-    addUserSilver(state.opponent.user.id, state.bet);
+    addItem(state.challenger.user.id, 'silver', state.bet);
+    addItem(state.opponent.user.id, 'silver', state.bet);
 
     const errorEmbed = new EmbedBuilder()
       .setColor('#FF0000')
-      .setTitle('❌ Duel Error')
+      .setTitle(`${getCancelEmoji()} Duel Error`)
       .setDescription(`${winner.username}'s inventory is too full! Both players refunded.`)
       .setTimestamp();
 
@@ -425,13 +506,24 @@ async function endDuel(message: any, state: any) {
     return message.edit({ embeds: [errorEmbed], components: [] });
   }
 
+  const winnerHp = winner.id === state.challenger.user.id ? state.challenger.hp : state.opponent.hp;
+  const loserHp = loser.id === state.challenger.user.id ? state.challenger.hp : state.opponent.hp;
+
   const winEmbed = new EmbedBuilder()
     .setColor('#00FF00')
-    .setTitle('🏆 DUEL WINNER!')
+    .setTitle(`${getTrophyEmoji()} DUEL WINNER!`)
     .setDescription(`**${winner.username}** wins the duel!\n\n${loser.username} has been defeated in the streets of the Wild West!`)
     .addFields(
-      { name: '💰 Prize', value: `🪙 ${winnings.toLocaleString()} Silver Coins`, inline: true },
-      { name: '🎯 Final HP', value: `${winner.username}: ${winner.id === state.challenger.user.id ? state.challenger.hp : state.opponent.hp}/5`, inline: true }
+      { 
+        name: '💰 Prize', 
+        value: `${getSilverCoinEmoji()} **${winnings.toLocaleString()}** Silver Coins`, 
+        inline: true 
+      },
+      { 
+        name: '🎯 Final Score', 
+        value: `${winner.username}: ${createHealthBar(winnerHp)}\n${loser.username}: ${createHealthBar(loserHp)}`, 
+        inline: true 
+      }
     )
     .setFooter({ text: 'The fastest gun in the West!' })
     .setTimestamp();
