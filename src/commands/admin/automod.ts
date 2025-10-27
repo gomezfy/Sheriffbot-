@@ -95,8 +95,7 @@ async function handleStatus(interaction: ChatInputCommandInteraction) {
   await interaction.deferReply();
 
   try {
-    const guilds = Array.from(interaction.client.guilds.cache.values());
-    const info = await AutoModManager.getDetailedRulesInfo(guilds);
+    const info = await AutoModManager.getDetailedRulesInfo(interaction.client);
 
     const progressBar = createProgressBar(info.badgeProgress);
     const badgeStatus = info.totalRules >= 100 
@@ -109,7 +108,7 @@ async function handleStatus(interaction: ChatInputCommandInteraction) {
       .setDescription(badgeStatus)
       .addFields(
         { name: '📈 Total Rules', value: `${info.totalRules}`, inline: true },
-        { name: '🏛️ Servers with Rules', value: `${info.guildsWithRules}/${guilds.length}`, inline: true },
+        { name: '🏛️ Servers with Rules', value: `${info.guildsWithRules}/${info.totalGuilds}`, inline: true },
         { name: '🎯 Badge Progress', value: `${info.badgeProgress.toFixed(1)}%`, inline: true },
         { name: '\u200B', value: progressBar, inline: false }
       )

@@ -46,7 +46,8 @@ export = {
 async function handleSetupAll(interaction: ChatInputCommandInteraction) {
   await interaction.deferReply({ ephemeral: true });
 
-  const guilds = Array.from(interaction.client.guilds.cache.values());
+  const client = interaction.client;
+  const guilds = Array.from(client.guilds.cache.values());
   let successCount = 0;
   let failCount = 0;
   let totalRulesCreated = 0;
@@ -76,7 +77,7 @@ async function handleSetupAll(interaction: ChatInputCommandInteraction) {
   }
 
   // Get final status
-  const finalInfo = await AutoModManager.getDetailedRulesInfo(guilds);
+  const finalInfo = await AutoModManager.getDetailedRulesInfo(client);
   const badgeStatus = finalInfo.totalRules >= 100 
     ? '🎉 **BADGE EARNED!** Wait 12-24h for it to appear on the bot profile' 
     : `Need ${100 - finalInfo.totalRules} more rules for the badge`;
@@ -98,7 +99,8 @@ async function handleSetupAll(interaction: ChatInputCommandInteraction) {
 async function handleClearAll(interaction: ChatInputCommandInteraction) {
   await interaction.deferReply({ ephemeral: true });
 
-  const guilds = Array.from(interaction.client.guilds.cache.values());
+  const client = interaction.client;
+  const guilds = Array.from(client.guilds.cache.values());
   let totalDeleted = 0;
   let processedCount = 0;
 

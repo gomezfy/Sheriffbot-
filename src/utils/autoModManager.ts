@@ -133,48 +133,123 @@ export class AutoModManager {
   }
 
   /**
-   * Gets total AutoMod rules count across all guilds
+   * Gets total AutoMod rules count across all guilds (shard-aware)
    */
-  static async getTotalRulesCount(guilds: Guild[]): Promise<number> {
-    let totalCount = 0;
-
-    for (const guild of guilds) {
-      try {
-        const rules = await guild.autoModerationRules.fetch();
-        totalCount += rules.size;
-      } catch (error) {
-        console.error(`Failed to fetch rules for guild ${guild.name}:`, error);
+  static async getTotalRulesCount(client: any): Promise<number> {
+    if (!client.shard) {
+      // Single shard or no sharding - use local cache
+      const guilds = Array.from(client.guilds.cache.values() as any);
+      let totalCount = 0;
+      
+      for (const guild of guilds) {
+        try {
+          const rules = await (guild as any).autoModerationRules.fetch();
+          totalCount += rules.size;
+        } catch (error) {
+          console.error(`Failed to fetch rules for guild ${(guild as any).name}:`, error);
+        }
       }
+      
+      return totalCount;
     }
 
-    return totalCount;
+    // Multi-shard - aggregate across all shards
+    const results = await client.shard.broadcastEval(async (c: any) => {
+      let count = 0;
+      for (const guild of c.guilds.cache.values() as any) {
+        try {
+          const rules = await (guild as any).autoModerationRules.fetch();
+          count += rules.size;
+        } catch (error) {
+          // Skip guilds we can't access
+        }
+      }
+      return count;
+    });
+
+    return results.reduce((acc: number, val: number) => acc + val, 0);
   }
 
   /**
-   * Gets detailed rules information for all guilds
+   * Gets detailed rules information for all guilds (shard-aware)
    */
-  static async getDetailedRulesInfo(guilds: Guild[]): Promise<{
+  static async getDetailedRulesInfo(client: any): Promise<{
     totalRules: number;
     guildsWithRules: number;
+    totalGuilds: number;
     rulesPerGuild: Map<string, number>;
     badgeProgress: number;
   }> {
+    if (!client.shard) {
+      // Single shard or no sharding - use local cache
+      const guilds = Array.from(client.guilds.cache.values() as any);
+      const rulesPerGuild = new Map<string, number>();
+      let totalRules = 0;
+      let guildsWithRules = 0;
+
+      for (const guild of guilds) {
+        try {
+          const rules = await (guild as any).autoModerationRules.fetch();
+          const count = rules.size;
+          
+          if (count > 0) {
+            guildsWithRules++;
+            rulesPerGuild.set((guild as any).name, count);
+            totalRules += count;
+          }
+        } catch (error) {
+          console.error(`Failed to fetch rules for guild ${(guild as any).name}:`, error);
+        }
+      }
+
+      const badgeProgress = Math.min(100, (totalRules / 100) * 100);
+
+      return {
+        totalRules,
+        guildsWithRules,
+        totalGuilds: guilds.length,
+        rulesPerGuild,
+        badgeProgress
+      };
+    }
+
+    // Multi-shard - aggregate across all shards
+    const shardResults = await client.shard.broadcastEval(async (c: any) => {
+      const guildsInfo: Array<{ name: string; count: number }> = [];
+      let totalRules = 0;
+      let guildsWithRules = 0;
+      
+      for (const guild of c.guilds.cache.values() as any) {
+        try {
+          const rules = await (guild as any).autoModerationRules.fetch();
+          const count = rules.size;
+          
+          if (count > 0) {
+            guildsWithRules++;
+            guildsInfo.push({ name: (guild as any).name, count });
+            totalRules += count;
+          }
+        } catch (error) {
+          // Skip guilds we can't access
+        }
+      }
+      
+      return { guildsInfo, totalRules, guildsWithRules, totalGuilds: c.guilds.cache.size };
+    });
+
+    // Aggregate results from all shards
     const rulesPerGuild = new Map<string, number>();
     let totalRules = 0;
     let guildsWithRules = 0;
+    let totalGuilds = 0;
 
-    for (const guild of guilds) {
-      try {
-        const rules = await guild.autoModerationRules.fetch();
-        const count = rules.size;
-        
-        if (count > 0) {
-          guildsWithRules++;
-          rulesPerGuild.set(guild.name, count);
-          totalRules += count;
-        }
-      } catch (error) {
-        console.error(`Failed to fetch rules for guild ${guild.name}:`, error);
+    for (const result of shardResults) {
+      totalRules += result.totalRules;
+      guildsWithRules += result.guildsWithRules;
+      totalGuilds += result.totalGuilds;
+      
+      for (const guild of result.guildsInfo) {
+        rulesPerGuild.set(guild.name, guild.count);
       }
     }
 
@@ -183,6 +258,7 @@ export class AutoModManager {
     return {
       totalRules,
       guildsWithRules,
+      totalGuilds,
       rulesPerGuild,
       badgeProgress
     };
