@@ -119,12 +119,6 @@ export class EmbedTemplates {
       .setTimestamp();
   }
 
-  static casino(title: string): EmbedBuilder {
-    return new EmbedBuilder()
-      .setColor(0x9B59B6)
-      .setTitle(`${getSlotMachineEmoji()} ${title}`)
-      .setTimestamp();
-  }
 
   static mining(title: string): EmbedBuilder {
     return new EmbedBuilder()

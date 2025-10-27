@@ -70,13 +70,13 @@ export const TERRITORIES: Territory[] = [
     id: 'saloon_business',
     name: 'Saloon Business',
     emoji: '🍺',
-    description: 'Own a bustling saloon in the heart of town! Serve drinks, host poker games, and watch the coins roll in.',
+    description: 'Own a bustling saloon in the heart of town! Serve drinks, host events, and watch the coins roll in.',
     price: 360000,
     benefits: [
       '💰 Generate 5,000 Silver Coins daily',
-      '🎰 Unlock exclusive gambling events',
-      '👥 Host private poker tournaments',
-      '🍻 50% discount on casino games'
+      '🎉 Unlock exclusive social events',
+      '👥 Host private gatherings',
+      '🍻 50% discount on saloon services'
     ],
     rarity: 'rare',
     color: 0xFF8C00, // Dark orange
