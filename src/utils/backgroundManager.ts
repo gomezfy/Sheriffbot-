@@ -41,7 +41,7 @@ export const BACKGROUNDS: Background[] = [
     name: 'Addicted to the Saloon',
     filename: 'addicted-saloon.png',
     price: 800,
-    description: 'Poker table with cards and chips in the saloon',
+    description: 'Classic saloon interior with western atmosphere',
     rarity: 'mythic',
     free: false
   }

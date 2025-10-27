@@ -92,7 +92,7 @@ const COLOR_PRESETS: Record<string, { name: string; hex: string }> = {
   red: { name: '🔴 Wanted Poster', hex: '#DC143C' },
   green: { name: '🟢 Sheriff Badge', hex: '#2ECC71' },
   blue: { name: '🔵 Saloon Night', hex: '#3498DB' },
-  purple: { name: '🟣 Royal Poker', hex: '#9B59B6' },
+  purple: { name: '🟣 Royal Purple', hex: '#9B59B6' },
   orange: { name: '🟠 Desert Sunset', hex: '#E67E22' },
   brown: { name: '🟤 Western Leather', hex: '#8B4513' },
   silver: { name: '⚪ Silver Coin', hex: '#C0C0C0' }
@@ -134,7 +134,7 @@ module.exports = {
               { name: '🔴 Wanted Poster', value: 'red' },
               { name: '🟢 Sheriff Badge', value: 'green' },
               { name: '🔵 Saloon Night', value: 'blue' },
-              { name: '🟣 Royal Poker', value: 'purple' },
+              { name: '🟣 Royal Purple', value: 'purple' },
               { name: '🟠 Desert Sunset', value: 'orange' },
               { name: '🟤 Western Leather', value: 'brown' },
               { name: '⚪ Silver Coin', value: 'silver' }
