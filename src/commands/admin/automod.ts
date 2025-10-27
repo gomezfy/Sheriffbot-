@@ -10,9 +10,9 @@ import {
   EmbedBuilder,
   Colors
 } from 'discord.js';
-import { AutoModManager } from '../../utils/autoModManager.js';
+import { AutoModManager } from '../../utils/autoModManager';
 
-export default {
+export = {
   data: new SlashCommandBuilder()
     .setName('automod')
     .setDescription('🛡️ Manage AutoMod rules (Admin only)')

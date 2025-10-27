@@ -9,10 +9,10 @@ import {
   EmbedBuilder,
   Colors
 } from 'discord.js';
-import { AutoModManager } from '../../utils/autoModManager.js';
-import { isOwner } from '../../utils/security.js';
+import { AutoModManager } from '../../utils/autoModManager';
+import { isOwner } from '../../utils/security';
 
-export default {
+export = {
   data: new SlashCommandBuilder()
     .setName('automodall')
     .setDescription('🛡️ Setup AutoMod in ALL servers (Owner only)')
