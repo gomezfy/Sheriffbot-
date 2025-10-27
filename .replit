@@ -1,4 +1,4 @@
-modules = ["nodejs-18", "web", "bash"]
+modules = ["nodejs-18", "bash"]
 [agent]
 expertMode = true
 integrations = ["javascript_database:1.0.0"]
@@ -23,12 +23,12 @@ args = "Sheriff Bot"
 name = "Sheriff Bot"
 author = "agent"
 
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "npm run start:shard"
-
 [workflows.workflow.metadata]
 outputType = "console"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "npm start"
 
 [[ports]]
 localPort = 3000
