@@ -7,7 +7,8 @@ import {
   SlashCommandBuilder, 
   ChatInputCommandInteraction,
   EmbedBuilder,
-  Colors
+  Colors,
+  MessageFlags
 } from 'discord.js';
 import { AutoModManager } from '../../utils/autoModManager';
 import { isOwner } from '../../utils/security';
@@ -44,7 +45,7 @@ export = {
 };
 
 async function handleSetupAll(interaction: ChatInputCommandInteraction) {
-  await interaction.deferReply({ ephemeral: true });
+  await interaction.deferReply({ flags: MessageFlags.Ephemeral });
 
   const client = interaction.client;
   const guilds = Array.from(client.guilds.cache.values());
@@ -97,7 +98,7 @@ async function handleSetupAll(interaction: ChatInputCommandInteraction) {
 }
 
 async function handleClearAll(interaction: ChatInputCommandInteraction) {
-  await interaction.deferReply({ ephemeral: true });
+  await interaction.deferReply({ flags: MessageFlags.Ephemeral });
 
   const client = interaction.client;
   const guilds = Array.from(client.guilds.cache.values());

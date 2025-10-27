@@ -2,7 +2,8 @@ import {
   ChatInputCommandInteraction, 
   SlashCommandBuilder, 
   EmbedBuilder, 
-  PermissionFlagsBits 
+  PermissionFlagsBits,
+  MessageFlags 
 } from 'discord.js';
 import { uploadCustomEmojis, removeAllCustomEmojis, listCustomEmojis } from '../../utils/emojiUploader';
 
@@ -22,16 +23,17 @@ module.exports = {
     .setDMPermission(false),
 
   async execute(interaction: ChatInputCommandInteraction) {
+    // Defer IMMEDIATELY to prevent timeout
+    await interaction.deferReply({ flags: MessageFlags.Ephemeral });
+
     if (!interaction.guild) {
-      await interaction.reply({ 
-        content: '❌ This command can only be used in a server!', 
-        ephemeral: true 
+      await interaction.editReply({ 
+        content: '❌ This command can only be used in a server!'
       });
       return;
     }
 
     const action = interaction.options.getString('action', true);
-    await interaction.deferReply({ ephemeral: true });
 
     try {
       let results;
