@@ -17,7 +17,7 @@ None specified yet.
 ### Technical Implementations
 - **Language & Runtime:** Built with TypeScript on Node.js 20, using `ts-node`.
 - **Discord Integration:** Leverages `discord.js v14` for Discord API interactions.
-- **Command Structure:** Features 34 slash commands across various categories (Admin, Bounty, Economy, Gambling, Mining, Profile, Utility).
+- **Command Structure:** Features 36 slash commands across various categories (Admin, Bounty, Economy, Gambling, Mining, Profile, Utility).
 - **Dual Economy System:** Manages "Saloon Tokens" and "Silver Coins."
 - **Progressive Backpack Upgrades:** Implements a system for backpack capacity upgrades.
 - **Redemption Code System:** Allows users to redeem website shop purchase codes for in-game items.
@@ -40,6 +40,7 @@ None specified yet.
 - **Advanced Announcement System:** Features preview, color presets, customization, targeting, and template system for announcements.
 - **DM Support:** Enabled DM functionality for user-focused commands.
 - **Multilingual Help System:** `help` command is fully translated and supports automatic language detection.
+- **AutoMod Badge System:** Integrated Discord AutoMod rule management to earn the "Uses AutoMod" badge.
 
 ### System Design Choices
 - **File-based Storage:** All persistent data is stored in JSON files within `src/data/` (development) or `/app/data/` (production).
@@ -58,6 +59,18 @@ None specified yet.
 - **Session Management:** `express-session` (for the web dashboard)
 
 ## Recent Changes
+- **October 27, 2025:**
+  - **AutoMod Integration:** Implemented complete AutoMod system for earning Discord's "Uses AutoMod" badge
+    - Created `AutoModManager` utility with shard-aware rule tracking and management
+    - Added `/automod` command for server admins: setup, status, and clear AutoMod rules
+    - Added `/automodall` command for bot owner: bulk setup/clear rules across all servers
+    - Shard-aware implementation using `broadcastEval()` for accurate cross-shard aggregation
+    - Badge progress tracking shows total rules across all shards (requires 100+ rules for badge)
+    - Default Western-themed rules: Spam Protection, Mention Spam, Profanity Filter, Invite Links, Suspicious Links
+    - Production-ready with architect approval
+  - **Linked Roles Server Removed:** Removed standalone Linked Roles web server at user request
+    - Bot now runs only Discord shard process without web server
+    - Workflow simplified to `npm run start:shard` only
 - **October 26, 2025:**
     - **Modern HTML5/CSS3:** Implemented advanced CSS with CSS custom properties (variables), 3D transforms, and modern animations
     - **Professional Design:**
