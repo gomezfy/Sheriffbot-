@@ -17,19 +17,18 @@ author = "agent"
 
 [[workflows.workflow.tasks]]
 task = "workflow.run"
-args = "Sheriff Bot & Web Server"
+args = "Sheriff Bot"
 
 [[workflows.workflow]]
-name = "Sheriff Bot & Web Server"
+name = "Sheriff Bot"
 author = "agent"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "npm run start:all"
-waitForPort = 5000
+args = "npm run start:shard"
 
 [workflows.workflow.metadata]
-outputType = "webview"
+outputType = "console"
 
 [[ports]]
 localPort = 3000
