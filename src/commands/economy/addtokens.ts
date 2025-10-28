@@ -23,10 +23,11 @@ module.exports = {
     )
     .setDefaultMemberPermissions(0),
   async execute(interaction: ChatInputCommandInteraction): Promise<void> {
+    await interaction.deferReply({ flags: MessageFlags.Ephemeral });
+
     if (interaction.user.id !== OWNER_ID) {
-      await interaction.reply({
-        content: '❌ This command is only available to the bot owner!',
-        flags: [MessageFlags.Ephemeral]
+      await interaction.editReply({
+        content: '❌ This command is only available to the bot owner!'
       });
       return;
     }
@@ -37,9 +38,8 @@ module.exports = {
     const result = addItem(targetUser.id, 'saloon_token', amount);
 
     if (!result.success) {
-      await interaction.reply({
-        content: `❌ Failed to add tokens: ${result.error}`,
-        flags: [MessageFlags.Ephemeral]
+      await interaction.editReply({
+        content: `❌ Failed to add tokens: ${result.error}`
       });
       return;
     }
@@ -57,6 +57,6 @@ module.exports = {
       .setFooter({ text: 'Manual addition by bot owner' })
       .setTimestamp();
 
-    await interaction.reply({ embeds: [embed], flags: MessageFlags.Ephemeral });
+    await interaction.editReply({ embeds: [embed] });
   },
 };

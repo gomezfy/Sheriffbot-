@@ -23,6 +23,8 @@ module.exports = {
     )
     .setDefaultMemberPermissions(0),
   async execute(interaction: ChatInputCommandInteraction): Promise<void> {
+    await interaction.deferReply({ flags: MessageFlags.Ephemeral });
+
     // Security: Validate owner
     if (!await isOwner(interaction)) {
       return;
@@ -31,9 +33,8 @@ module.exports = {
     // Security: Rate limit admin commands
     if (!adminRateLimiter.canExecute(interaction.user.id)) {
       const remaining = adminRateLimiter.getRemainingCooldown(interaction.user.id);
-      await interaction.reply({
-        content: `⏰ Please wait ${(remaining / 1000).toFixed(1)}s before using another admin command.`,
-        flags: MessageFlags.Ephemeral
+      await interaction.editReply({
+        content: `⏰ Please wait ${(remaining / 1000).toFixed(1)}s before using another admin command.`
       });
       return;
     }
@@ -43,9 +44,8 @@ module.exports = {
     
     // Security: Validate amount
     if (!isValidCurrencyAmount(amount)) {
-      await interaction.reply({
-        content: `❌ Invalid amount! Must be between 1 and ${MAX_CURRENCY_AMOUNT.toLocaleString()}.`,
-        flags: MessageFlags.Ephemeral
+      await interaction.editReply({
+        content: `❌ Invalid amount! Must be between 1 and ${MAX_CURRENCY_AMOUNT.toLocaleString()}.`
       });
       return;
     }
@@ -53,9 +53,8 @@ module.exports = {
     const result = addItem(targetUser.id, 'saloon_token', amount);
 
     if (!result.success) {
-      await interaction.reply({
-        content: `❌ Failed to add tokens: ${result.error}`,
-        flags: [MessageFlags.Ephemeral]
+      await interaction.editReply({
+        content: `❌ Failed to add tokens: ${result.error}`
       });
       return;
     }
@@ -73,6 +72,6 @@ module.exports = {
       .setFooter({ text: 'Manual addition by bot owner' })
       .setTimestamp();
 
-    await interaction.reply({ embeds: [embed], flags: MessageFlags.Ephemeral });
+    await interaction.editReply({ embeds: [embed] });
   },
 };
