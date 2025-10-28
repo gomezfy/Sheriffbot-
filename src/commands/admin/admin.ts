@@ -21,17 +21,17 @@ import {
   getCancelEmoji, 
   getCheckEmoji, 
   getTimerEmoji 
-} from '../utils/customEmojis';
-import { setLogConfig, removeLogConfig, getLogConfig } from '../utils/dataManager';
-import { setWelcomeConfig, removeWelcomeConfig, getWelcomeConfig } from '../utils/dataManager';
-import { setWantedConfig, getWantedConfig } from '../utils/dataManager';
-import { buildWelcomeEmbed } from '../utils/welcomeEmbedBuilder';
-import { t, getLocale } from '../utils/i18n';
-import { AutoModManager } from '../utils/autoModManager';
-import { isOwner } from '../utils/security';
-import { addItem } from '../utils/inventoryManager';
-import { writeData, readData, getDataPath } from '../utils/database';
-import { uploadCustomEmojis, removeAllCustomEmojis, listCustomEmojis } from '../utils/emojiUploader';
+} from '../../utils/customEmojis';
+import { setLogConfig, removeLogConfig, getLogConfig } from '../../utils/dataManager';
+import { setWelcomeConfig, removeWelcomeConfig, getWelcomeConfig } from '../../utils/dataManager';
+import { setWantedConfig, getWantedConfig } from '../../utils/dataManager';
+import { buildWelcomeEmbed } from '../../utils/welcomeEmbedBuilder';
+import { t, getLocale } from '../../utils/i18n';
+import { AutoModManager } from '../../utils/autoModManager';
+import { isOwner } from '../../utils/security';
+import { addItem } from '../../utils/inventoryManager';
+import { writeData, readData, getDataPath } from '../../utils/database';
+import { uploadCustomEmojis, removeAllCustomEmojis, listCustomEmojis } from '../../utils/emojiUploader';
 
 const OWNER_ID = process.env.OWNER_ID;
 
@@ -61,7 +61,7 @@ interface HistoryEntry {
   timestamp: number;
 }
 
-const ANNOUNCEMENT_DATA_PATH = path.join(__dirname, '../data/announcements.json');
+const ANNOUNCEMENT_DATA_PATH = path.join(__dirname, '../../data/announcements.json');
 
 function loadAnnouncementData(): AnnouncementData {
   try {
@@ -168,8 +168,8 @@ interface LocaleMessages {
 }
 
 // =============== MIGRATE DATA ===============
-const economyFile = path.join(__dirname, '..', '..', 'data', 'economy.json');
-const backupFile = path.join(__dirname, '..', '..', 'data', 'economy.backup.json');
+const economyFile = path.join(__dirname, '..', '..', '..', 'data', 'economy.json');
+const backupFile = path.join(__dirname, '..', '..', '..', 'data', 'economy.backup.json');
 
 // =============== WELCOME HELPER ===============
 function isValidUrl(string: string): boolean {
@@ -528,7 +528,7 @@ module.exports = {
     ),
 
   async execute(interaction: ChatInputCommandInteraction): Promise<void> {
-    const subcommandGroup = interaction.options.getSubcommandGroup();
+    const subcommandGroup = interaction.options.getSubcommandGroup(false);
     const subcommand = interaction.options.getSubcommand();
 
     // Handle subcommand groups
