@@ -2,34 +2,38 @@ import { SlashCommandBuilder, AttachmentBuilder, ChatInputCommandInteraction ,Me
 import { successEmbed, errorEmbed, warningEmbed, formatCurrency } from '../../utils/embeds';
 import { generateWantedPoster } from '../../utils/wantedPoster';
 import { getDartEmoji, getMoneybagEmoji, getScrollEmoji } from '../../utils/customEmojis';
+import { applyLocalizations } from '../../utils/commandLocalizations';
 const { addBounty, getBountyByTarget } = require('../../utils/dataManager');
 const { getItem, removeItem } = require('../../utils/inventoryManager');
 
 const MIN_BOUNTY = 1000;
 
 module.exports = {
-  data: new SlashCommandBuilder()
-    .setName('wanted')
-    .setDescription('🎯 Place a bounty on someone\'s head!')
-    .addUserOption(option =>
-      option
-        .setName('user')
-        .setDescription('The outlaw you want to place a bounty on')
-        .setRequired(true)
-    )
-    .addIntegerOption(option =>
-      option
-        .setName('amount')
-        .setDescription('Bounty amount (minimum 1000 Silver Coins)')
-        .setRequired(true)
-        .setMinValue(MIN_BOUNTY)
-    )
-    .addStringOption(option =>
-      option
-        .setName('reason')
-        .setDescription('Why are they wanted?')
-        .setRequired(false)
-    ),
+  data: applyLocalizations(
+    new SlashCommandBuilder()
+      .setName('wanted')
+      .setDescription('Place a bounty on a wanted user')
+      .addUserOption(option =>
+        option
+          .setName('user')
+          .setDescription('The outlaw you want to place a bounty on')
+          .setRequired(true)
+      )
+      .addIntegerOption(option =>
+        option
+          .setName('amount')
+          .setDescription('Bounty amount (minimum 1000 Silver Coins)')
+          .setRequired(true)
+          .setMinValue(MIN_BOUNTY)
+      )
+      .addStringOption(option =>
+        option
+          .setName('reason')
+          .setDescription('Why are they wanted?')
+          .setRequired(false)
+      ),
+    'wanted'
+  ),
   async execute(interaction: ChatInputCommandInteraction): Promise<void> {
     const target = interaction.options.getUser('user', true);
     const amount = interaction.options.getInteger('amount', true);
