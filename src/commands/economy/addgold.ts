@@ -1,22 +1,22 @@
 import { SlashCommandBuilder, EmbedBuilder, ChatInputCommandInteraction, MessageFlags } from 'discord.js';
-import { getSaloonTokenEmoji } from '../../utils/customEmojis';
+import { getGoldBarEmoji } from '../../utils/customEmojis';
 import { isOwner, adminRateLimiter, isValidCurrencyAmount, MAX_CURRENCY_AMOUNT } from '../../utils/security';
 const { addItem } = require('../../utils/inventoryManager');
 
 module.exports = {
   data: new SlashCommandBuilder()
     .setName('addgold')
-    .setDescription('[OWNER ONLY] Add Saloon Tokens to a user')
+    .setDescription('[OWNER ONLY] Add Gold Bars to a user')
     .addUserOption(option =>
       option
         .setName('user')
-        .setDescription('The user to give Saloon Tokens to')
+        .setDescription('The user to give Gold Bars to')
         .setRequired(true)
     )
     .addIntegerOption(option =>
       option
         .setName('amount')
-        .setDescription('Amount of Saloon Tokens to add')
+        .setDescription('Amount of Gold Bars to add')
         .setRequired(true)
         .setMinValue(1)
         .setMaxValue(MAX_CURRENCY_AMOUNT)
@@ -50,24 +50,24 @@ module.exports = {
       return;
     }
 
-    const result = addItem(targetUser.id, 'saloon_token', amount);
+    const result = addItem(targetUser.id, 'gold_bar', amount);
 
     if (!result.success) {
       await interaction.editReply({
-        content: `❌ Failed to add tokens: ${result.error}`
+        content: `❌ Failed to add gold bars: ${result.error}`
       });
       return;
     }
 
-    const tokenEmoji = getSaloonTokenEmoji();
+    const goldEmoji = getGoldBarEmoji();
     
     const embed = new EmbedBuilder()
       .setColor('#FFD700')
-      .setTitle('✅ Saloon Tokens Added!')
-      .setDescription(`Successfully added **${amount.toLocaleString()} ${tokenEmoji}** to ${targetUser.tag}!`)
+      .setTitle('✅ Gold Bars Added!')
+      .setDescription(`Successfully added **${amount.toLocaleString()} ${goldEmoji}** to ${targetUser.tag}!`)
       .addFields(
         { name: '👤 User', value: `${targetUser}`, inline: true },
-        { name: '💰 Amount', value: `${amount.toLocaleString()} ${tokenEmoji}`, inline: true }
+        { name: '💰 Amount', value: `${amount.toLocaleString()} ${goldEmoji}`, inline: true }
       )
       .setFooter({ text: 'Manual addition by bot owner' })
       .setTimestamp();
