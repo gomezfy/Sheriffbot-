@@ -28,7 +28,7 @@ outputType = "console"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "npm run start:shard"
+args = "NODE_OPTIONS='--max-old-space-size=1800' npx ts-node src/shard.ts"
 
 [[ports]]
 localPort = 3000
