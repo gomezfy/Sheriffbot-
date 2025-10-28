@@ -1,9 +1,9 @@
 import { SlashCommandBuilder, ChatInputCommandInteraction ,MessageFlags} from 'discord.js';
 import { infoEmbed, warningEmbed, formatCurrency, progressBar } from '../../utils/embeds';
-import { getBackpackEmoji, getMoneybagEmoji, getStatsEmoji, getCrateEmoji, getBalanceEmoji, getWarningEmoji, getAlarmEmoji, getSparklesEmoji } from '../../utils/customEmojis';
+import { getBackpackEmoji, getMoneybagEmoji, getStatsEmoji, getCrateEmoji, getBalanceEmoji, getWarningEmoji, getAlarmEmoji } from '../../utils/customEmojis';
 import { getCustomEmoji } from '../../utils/emojiUploader';
+import { t } from '../../utils/i18n';
 const { getInventory, calculateWeight, ITEMS, getNextUpgrade } = require('../../utils/inventoryManager');
-const { t } = require('../../utils/i18n');
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -23,9 +23,9 @@ module.exports = {
     // Only allow viewing own inventory for privacy
     if (targetUser.id !== interaction.user.id) {
       const embed = warningEmbed(
-        'Private Inventory',
-        'For privacy reasons, you can only view your own inventory.',
-        'Use /inventory without parameters to see yours'
+        t(interaction, 'inventory_private_title'),
+        t(interaction, 'inventory_private_desc'),
+        t(interaction, 'inventory_private_footer')
       );
       
       await interaction.reply({ embeds: [embed], flags: MessageFlags.Ephemeral });
@@ -59,7 +59,7 @@ module.exports = {
     // Build items list
     let itemsList = '';
     if (otherItems.length === 0) {
-      itemsList = '*Your backpack is empty. Start working or mining to collect items!*';
+      itemsList = t(interaction, 'inventory_empty');
     } else {
       for (const [itemId, quantity] of otherItems) {
         const item = (ITEMS as any)[itemId as string];
@@ -83,34 +83,39 @@ module.exports = {
     let upgradeInfo = '';
     
     if (nextUpgrade) {
-      upgradeInfo = `\n💡 **Next Upgrade:** ${nextUpgrade.capacity}kg for **$${nextUpgrade.price}** at the shop`;
+      upgradeInfo = t(interaction, 'inventory_next_upgrade', { capacity: nextUpgrade.capacity, price: nextUpgrade.price });
     } else {
-      upgradeInfo = `\n${getSparklesEmoji()} **Maximum capacity reached!**`;
+      upgradeInfo = t(interaction, 'inventory_max_capacity');
     }
     
     // Create embed
     const embed = infoEmbed(
-      `${getBackpackEmoji()} ${targetUser.username}'s Backpack`,
-      `Manage your items, currency, and inventory space.`
+      `${getBackpackEmoji()} ${t(interaction, 'inventory_title', { username: targetUser.username })}`,
+      t(interaction, 'inventory_subtitle')
     )
       .addFields(
         {
-          name: `${getMoneybagEmoji()} Currency`,
+          name: `${getMoneybagEmoji()} ${t(interaction, 'inventory_currency')}`,
           value: `${formatCurrency(saloonTokens, 'tokens')}\n${formatCurrency(silverCoins, 'silver')}`,
           inline: true
         },
         {
-          name: `${getStatsEmoji()} Inventory Stats`,
-          value: `**Items:** ${totalItems.toLocaleString()}\n**Types:** ${Object.keys(inventory.items).length}/50\n**Weight:** ${currentWeight.toFixed(1)}kg / ${maxWeight}kg`,
+          name: `${getStatsEmoji()} ${t(interaction, 'inventory_stats')}`,
+          value: t(interaction, 'inventory_stats_items', { 
+            items: totalItems.toLocaleString(), 
+            types: Object.keys(inventory.items).length,
+            weight: currentWeight.toFixed(1),
+            maxWeight: maxWeight
+          }),
           inline: true
         },
         {
-          name: `${getCrateEmoji()} Items in Backpack`,
+          name: `${getCrateEmoji()} ${t(interaction, 'inventory_items')}`,
           value: itemsList,
           inline: false
         },
         {
-          name: `${getBalanceEmoji()} Weight Capacity`,
+          name: `${getBalanceEmoji()} ${t(interaction, 'inventory_capacity')}`,
           value: `${weightBar}\n${currentWeight.toFixed(1)}kg / ${maxWeight}kg (${weightPercentage.toFixed(0)}%)${upgradeInfo}`,
           inline: false
         }
@@ -119,11 +124,11 @@ module.exports = {
     
     // Warning if nearly full
     if (weightPercentage >= 90) {
-      embed.setFooter({ text: `${getWarningEmoji()} Your backpack is nearly full! Use /give to transfer items or upgrade your capacity.` });
+      embed.setFooter({ text: `${getWarningEmoji()} ${t(interaction, 'inventory_nearly_full_warning')}` });
     } else if (weightPercentage >= 100) {
-      embed.setFooter({ text: `${getAlarmEmoji()} BACKPACK FULL! You cannot collect more items until you free up space.` });
+      embed.setFooter({ text: `${getAlarmEmoji()} ${t(interaction, 'inventory_full_warning')}` });
     } else {
-      embed.setFooter({ text: 'Use /give to transfer items to other players' });
+      embed.setFooter({ text: t(interaction, 'inventory_transfer_hint') });
     }
     
     await interaction.editReply({ embeds: [embed] });
