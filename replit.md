@@ -1,7 +1,7 @@
 # Sheriff Rex Bot - Western Discord Bot
 
 ## Overview
-Sheriff Rex Bot is a Discord bot with a Wild West theme, featuring an economy system, gambling, mining, bounty hunting, and an integrated web dashboard with e-commerce. It aims to provide an immersive and interactive Western experience within Discord, including real-money purchase options for in-game advantages. The bot and its accompanying website are designed for independent hosting.
+Sheriff Rex Bot is a Discord bot with a Wild West theme, offering an immersive experience through an economy system, gambling, mining, bounty hunting, and a web dashboard with e-commerce functionality. It supports real-money purchases for in-game advantages and is designed for independent hosting of both the bot and its accompanying website.
 
 ## User Preferences
 None specified yet.
@@ -9,204 +9,45 @@ None specified yet.
 ## System Architecture
 
 ### UI/UX Decisions
-- **Minimalist Embed System:** Uses a neutral color palette for clean and modern Discord embeds.
-- **Visual Leaderboard:** Generates professional visual leaderboards using Canvas, displaying rankings, top users' images, medals, colored avatar borders, and gradients.
-- **Visual Profile Cards:** Employs Canvas with the Nunito font for appealing user profiles and wanted posters.
+- **Discord Embeds:** Uses a minimalist, neutral color palette for clean and modern embeds.
+- **Visuals:** Generates professional visual leaderboards and profile cards using Canvas, featuring custom fonts, avatar borders, and gradients.
 - **Custom Emojis:** Integrates 47 custom emojis to enhance the Western theme.
 
 ### Technical Implementations
-- **Language & Runtime:** Built with TypeScript on Node.js 20, using `ts-node`.
-- **Discord Integration:** Leverages `discord.js v14` for Discord API interactions.
-- **Command Structure:** Features 36 slash commands across various categories (Admin, Bounty, Economy, Gambling, Mining, Profile, Utility).
-- **Dual Economy System:** Manages "Saloon Tokens" and "Silver Coins."
-- **Progressive Backpack Upgrades:** Implements a system for backpack capacity upgrades.
-- **Redemption Code System:** Allows users to redeem website shop purchase codes for in-game items.
-- **Canvas Rendering:** Uses `@napi-rs/canvas` for dynamic image generation.
+- **Language & Runtime:** Built with TypeScript on Node.js 20, utilizing `ts-node`.
+- **Discord Integration:** Uses `discord.js v14` for all Discord API interactions.
+- **Command Structure:** Features 36 slash commands across categories like Admin, Bounty, Economy, Gambling, Mining, Profile, and Utility.
+- **Economy System:** Implements a dual economy with "Saloon Tokens" and "Silver Coins."
+- **Upgrades & Redemption:** Includes progressive backpack upgrades and a system for redeeming website purchase codes.
+- **Image Generation:** Employs `@napi-rs/canvas` for dynamic image rendering.
 - **Localization:** Supports PT-BR, EN-US, and ES-ES.
-- **Owner Commands:** Restricted commands for bot owners using `OWNER_ID`.
-- **Separate Hosting:** Bot and web dashboard are designed for separate hosting environments.
-- **Territory Investment System:** Allows users to invest in territories (e.g., Saloon Business, Gold Mine Shares) for automatic income.
-- **Mining Session Tracker:** Tracks active and unclaimed mining sessions server-wide.
+- **Owner Commands:** Restricted commands accessible only to bot owners.
+- **Territory Investment:** Allows users to invest in territories (e.g., Saloon Business, Gold Mine Shares) for passive income.
+- **Mining Session Tracking:** Tracks active and unclaimed mining sessions server-wide.
+- **Announcement System:** Advanced announcement features with previews, templates, and targeting.
+- **DM Support:** Enabled for user-focused commands.
+- **Multilingual Help:** `help` command is fully translated and supports automatic language detection.
+- **AutoMod Integration:** Manages Discord AutoMod rules to earn the "Uses AutoMod" badge.
 
 ### Feature Specifications
-- **Bounty System:** Set, view, and capture bounties with a success rate and cooldown.
-- **Mining System:** Includes solo and co-op mining modes.
-- **Gambling Games:** Features Bank Robbery, Casino, Dice, and Poker.
+- **Bounty System:** Set, view, and capture bounties with success rates and cooldowns.
+- **Mining System:** Offers solo and co-op mining modes.
+- **Gambling Games:** Includes Bank Robbery, Casino, Dice, and Poker.
 - **PvP Duels:** A system for player-versus-player combat.
-- **E-commerce Shop:** Offers backpack upgrade tiers and coin packs via the web dashboard.
-- **Discord Permissions:** Requires specific bot permissions including "Moderate Members."
-- **Automatic Territory Income System:** Automatically distributes territory income to users.
-- **Profile Customization:** Allows users to purchase and select custom profile backgrounds.
-- **Advanced Announcement System:** Features preview, color presets, customization, targeting, and template system for announcements.
-- **DM Support:** Enabled DM functionality for user-focused commands.
-- **Multilingual Help System:** `help` command is fully translated and supports automatic language detection.
-- **AutoMod Badge System:** Integrated Discord AutoMod rule management to earn the "Uses AutoMod" badge.
+- **E-commerce Shop:** Offers in-game items and currency packs via the web dashboard.
+- **Automatic Income:** Automatically distributes territory income and weekly Gold Bar rewards.
+- **Profile Customization:** Users can purchase and select custom profile backgrounds.
 
 ### System Design Choices
-- **File-based Storage:** All persistent data is stored in JSON files within `src/data/` (development) or `/app/data/` (production).
-  - ⚠️ **CRITICAL FOR VERTRA:** Data persistence requires volume mounting at `/app/data/` - see `VERTRA_VOLUME_PERSISTENTE.md`
-  - Without persistent volume, all user data is lost on restart/redeploy
-- **High-Performance Caching:** In-memory cache layer with automatic sync reduces file I/O by 90% for 4-5x faster response times.
-- **Modular Design:** Code is organized into `commands`, `data`, `events`, and `utils` directories.
-- **Environment Variables:** Utilizes environment variables for sensitive data.
+- **File-based Storage:** All persistent data is stored in JSON files (`src/data/` or `/app/data/`). Critical: requires volume mounting at `/app/data/` for data persistence.
+- **High-Performance Caching:** An in-memory cache layer significantly reduces file I/O for faster response times.
+- **Modular Design:** Codebase is organized into `commands`, `data`, `events`, and `utils`.
+- **Environment Variables:** Used for sensitive configuration.
 - **Performance Optimizations:** Includes Discord.js v14 advanced features, command rate limiting, and Canvas optimization.
 
 ## External Dependencies
 - **Discord Library:** `discord.js v14`
 - **Web Framework:** `Express v5` (for the separate web dashboard)
-- **Payment Processing:** `Hotmart API` (for e-commerce)
+- **Payment Processing:** `Hotmart API`
 - **Canvas Rendering:** `@napi-rs/canvas`
 - **Session Management:** `express-session` (for the web dashboard)
-
-## Recent Changes
-- **October 28, 2025:**
-  - **Mine Command Language Detection Improvements:** Completed automatic language detection in `/mine` command
-    - Added 20+ new translation keys for mining sessions tracker, overview, and UI elements
-    - Translated all hardcoded English strings including: "MINING SESSIONS TRACKER", "Active Mining", "Ready to Claim", etc.
-    - Mining method buttons now display in user's language ("Minerar Sozinho" vs "Mine Alone")
-    - Session statistics and progress indicators fully localized
-    - Field names, descriptions, and footer messages adapt to user's language
-    - Fixed "more..." text and session status labels to use translations
-    - Consistent i18n implementation across all mining states (idle, in-progress, completed)
-  - **Middleman Command Language Detection:** Implemented automatic language detection in `/middleman` command
-    - Command now fully supports i18n with automatic user language detection
-    - All messages, buttons, embeds, and menu options adapt to user's Discord language preference
-    - Translations for PT-BR, EN-US, ES-ES, and FR locales
-    - Updated i18n utility functions to accept ButtonInteraction and StringSelectMenuInteraction types
-    - Fixed TypeScript compilation errors related to interaction type checking
-    - Exchange rates, inventory display, and success messages all localized
-    - Improved UX for international users converting tokens and gold bars to silver coins
-  - **Automatic Language Detection in Core Commands:** Implemented i18n (internationalization) support
-    - Added comprehensive translations for `/bankrob`, `/mine`, and `/profile` commands in Portuguese (PT-BR) and English (EN-US)
-    - Bot now automatically detects user's Discord language preference using `interaction.locale`
-    - All user-facing messages, buttons, embeds, and descriptions adapt to user's language
-    - Translations include: titles, descriptions, field names, button labels, error messages, and success messages
-    - Profile command now displays "Nível/Level", "Sobre Mim/About Me" and buttons in user's language
-    - Profile cards dynamically generated with localized text on Canvas images
-    - Over 80 new translation keys added to i18n system for all three commands
-    - Improved user experience for international users with native language support
-    - Commands seamlessly switch between languages without user configuration
-    - Translation system uses fallback to English if user's language is not supported
-    - Infrastructure ready for adding Spanish (ES-ES) and French (FR) translations in the future
-- **October 27, 2025:**
-  - **Replit Environment Migration Complete:** Successfully migrated project to Replit environment
-    - ✅ All npm packages installed and TypeScript compiled successfully
-    - ✅ PostgreSQL database created and schema pushed via Drizzle ORM
-    - ✅ Environment variables configured: DISCORD_TOKEN, DISCORD_CLIENT_ID, OWNER_ID, DATABASE_URL
-    - ✅ Bot running and connected to Discord (Sheriff Rex#5281)
-    - ✅ Fixed interaction timeout issues in commands
-    - ✅ Updated deprecated Discord.js API: `ephemeral: true` → `flags: MessageFlags.Ephemeral`
-    - ✅ Commands fixed: `uploademojis`, `automodall` now use proper flags
-    - ✅ Bot monitoring 3 guilds, all 36 commands loaded
-    - 📝 Workflow configured: `npm start` runs the Discord bot continuously
-  - **AutoMod Integration:** Implemented complete AutoMod system for earning Discord's "Uses AutoMod" badge
-    - Created `AutoModManager` utility with shard-aware rule tracking and management
-    - Added `/automod` command for server admins: setup, status, and clear AutoMod rules
-    - Added `/automodall` command for bot owner: bulk setup/clear rules across all servers
-    - Shard-aware implementation using `broadcastEval()` for accurate cross-shard aggregation
-    - Badge progress tracking shows total rules across all shards (requires 100+ rules for badge)
-    - Default Western-themed rules: Spam Protection, Mention Spam, Profanity Filter, Invite Links, Suspicious Links
-    - Production-ready with architect approval
-  - **Linked Roles Server Removed:** Removed standalone Linked Roles web server at user request
-    - Bot now runs only Discord shard process without web server
-    - Workflow simplified to `npm run start:shard` only
-- **October 26, 2025:**
-    - **Modern HTML5/CSS3:** Implemented advanced CSS with CSS custom properties (variables), 3D transforms, and modern animations
-    - **Professional Design:**
-      - Radial gradients and ambient lighting effects
-      - Animated star field background with 100 twinkling stars
-      - Floating header animation
-      - 3D card transformations on hover
-      - Shimmer effects on balance and stat cards
-      - Rotating golden star decoration on slot machine
-      - Smooth gradient animations on text and backgrounds
-    - **Advanced Animations:**
-      - 3D spinning reels with blur effects and realistic physics
-      - Explosion animation for winning combinations
-      - Particle system with 80+ particles for jackpots
-      - Pulsing win effects with scale and glow
-      - Button ripple effects on interaction
-      - Message slide-in animations
-    - **TypeScript Implementation:**
-      - Converted JavaScript to TypeScript with full type safety
-      - Proper interfaces for API responses (SpinResponse, SessionResponse, GameStats)
-      - Class-based architecture (CasinoGame class)
-      - Async/await for all API calls
-      - Better error handling and state management
-      - Haptic feedback support (vibration on mobile devices)
-    - **Enhanced UX Features:**
-      - Smooth reel animations that stop one-by-one
-      - Visual feedback for all interactions
-      - Mobile-optimized with responsive design
-      - Better color scheme with CSS variables for easy theming
-      - Improved accessibility and loading states
-    - All changes compiled successfully and server tested with 200 OK response
-- **October 26, 2025:**
-  - **Profile Card Complete Redesign:** Completely redesigned the `/profile` command visual layout
-    - Canvas size confirmed at 1536x1024px for high-quality display
-    - Repositioned avatar to top-left corner (180x, 180y, radius 130px)
-    - Username now displays horizontally next to avatar with lightning emoji
-    - Stats reorganized vertically on left side below avatar:
-      - 💎 Gold Bars count displayed first
-      - 🪙 Silver Coins with "RC" prefix
-      - ⭐ Level with XP progress display
-      - 👍 Reputation (Reps) count
-    - "Sobre Mim" (bio) section moved to center-right with larger size (550x200px)
-    - Dropdown button repositioned to bottom-right of bio box
-    - Increased font sizes (username: 100px, stats: 48px) for better readability
-    - Increased emoji sizes (60px) for better visibility
-    - Fixed inventory key access to properly display user balances
-    - Layout now matches modern profile card design standards
-- **October 25, 2025:**
-  - **Custom Emoji Integration in Core Commands:** Replaced Unicode emojis with custom emoji functions
-    - Custom emojis now used in embeds and message content for better branding
-    - Maintained Unicode emojis in slash command descriptions (Discord API requirement)
-    - All changes compiled successfully with TypeScript
-    - Custom emoji system provides consistent Western theme throughout bot experience
-- **October 24, 2025:**
-  - **Territory Image URLs Updated:** Fixed `/territories` command images not displaying
-    - Updated all territory image URLs to use current Replit domain
-    - Fixed: Saloon Business, Gold Mine Shares, and Ranch images now load correctly
-    - Images properly served from website/assets/ via port 5000
-  - **Vertra Cloud Data Persistence Documentation:** Created comprehensive guide
-    - Added `VERTRA_VOLUME_PERSISTENTE.md` with step-by-step volume configuration
-    - Updated `vertracloud.config` with `NODE_ENV=production` and build command
-    - Documented critical issue: data lost on restart without persistent volume
-    - Provided alternatives: PostgreSQL migration, external services, backups
-    - Updated `replit.md` to warn about Vertra data persistence requirements
-  - **Mining Sessions Button Integration:** Improved UX for mining session tracking
-    - Removed `/mining-sessions` slash command (deprecated)
-    - Integrated "📊 Ver Sessões" button directly into `/mine` command
-    - Button now appears in ALL `/mine` states: idle, in-progress, and claim-ready
-    - Users can view server-wide mining statistics from any mining screen
-    - Shows active sessions, unclaimed rewards, progress bars, and time remaining
-    - Ephemeral responses ensure privacy and reduce channel clutter
-    - Consolidated functionality improves discoverability and accessibility
-  - **Automatic Territory Income System:** Implemented automatic territory income distribution
-    - Changed payout cooldown from 24 hours to 23 hours for more frequent rewards
-    - Created `startAutomaticTerritoryIncome()` function that runs on bot startup
-    - System checks every hour for users eligible to receive territory income
-    - Automatically credits Silver Coins to user inventory when 23 hours have passed
-    - Sends DM notification to users with breakdown of income from each territory
-    - Includes 1-second delay between users to avoid Discord rate limiting
-    - Integrated into main bot initialization in `index.ts`
-    - Users no longer need to manually claim territory income with `/claim-territories`
-    - Income data persisted in `territory-income.json` with timestamps
-  - **Automatic Mining Notification System:** Fixed critical bug in DM notification persistence
-    - System automatically checks every 2 minutes for completed mining sessions
-    - Sends private DM notifications when mining completes
-    - Fixed bug where failed DM sends weren't persisted, causing infinite retries
-    - Added `dataModified` flag to track session changes regardless of DM success
-    - System now properly handles blocked users without spam attempts
-    - Integrated into bot startup in `index.ts` via `startMiningNotifications()`
-    - Created comprehensive documentation in `MINING_SYSTEM.md` and `MINING_TEST_PLAN.md`
-  - **Removed `/claim-territories` Command:** System is fully automatic now
-    - Users no longer need to manually claim territory income
-    - All territory benefits are distributed automatically every 23 hours
-    - DM notifications sent automatically when income is credited
-    - Simplified user experience - just buy territories and receive passive income
-  - **Weekly Gold Bar Rewards Implemented:** Gold Mine Shares now give 2 Gold Bars weekly
-    - System tracks weekly cooldown separately from daily income (7 days)
-    - Gold Bars automatically credited when 1 week passes
-    - Bonus shown in DM notification: "🥇 Weekly Bonus: +2 Gold Bars"
-    - Data persisted in `territory-income.json` with `lastGoldPayout` timestamp
