@@ -39,7 +39,34 @@ module.exports = {
       return;
     }
 
-    const sortedBounties = bounties.sort((a, b) => b.totalAmount - a.totalAmount);
+    // Filtrar apenas procurados que estão no servidor
+    let bountiesInServer: Bounty[] = [];
+    
+    if (interaction.guild) {
+      for (const bounty of bounties) {
+        try {
+          await interaction.guild.members.fetch(bounty.targetId);
+          bountiesInServer.push(bounty);
+        } catch (error) {
+          // Usuário não está no servidor, não incluir na lista
+        }
+      }
+    } else {
+      bountiesInServer = bounties;
+    }
+
+    if (bountiesInServer.length === 0) {
+      const embed = warningEmbed(
+        'No Outlaws in Server',
+        'No wanted outlaws are currently in this server!\n\nAll the outlaws have fled.',
+        'Use /wanted to place a bounty'
+      );
+      
+      await interaction.reply({ embeds: [embed] });
+      return;
+    }
+
+    const sortedBounties = bountiesInServer.sort((a, b) => b.totalAmount - a.totalAmount);
     let description = '**Most Wanted Outlaws:**\n\n';
     const moneyEmoji = getMoneybagEmoji();
     const groupEmoji = getCowboysEmoji();
@@ -53,8 +80,8 @@ module.exports = {
       description += `   ${groupEmoji} Contributors: ${bounty.contributors.length}\n\n`;
     }
 
-    if (bounties.length > 10) {
-      description += `*...and ${bounties.length - 10} more outlaws*`;
+    if (bountiesInServer.length > 10) {
+      description += `*...and ${bountiesInServer.length - 10} more outlaws*`;
     }
 
     const embed = infoEmbed(
@@ -62,9 +89,9 @@ module.exports = {
       description
     )
       .addFields(
-        { name: `${getDartEmoji()} Total Bounties`, value: bounties.length.toString(), inline: true },
+        { name: `${getDartEmoji()} Total Bounties`, value: bountiesInServer.length.toString(), inline: true },
         { name: `${getMoneybagEmoji()} Total Rewards`, value: formatCurrency(
-          bounties.reduce((sum, b) => sum + b.totalAmount, 0),
+          bountiesInServer.reduce((sum, b) => sum + b.totalAmount, 0),
           'silver'
         ), inline: true }
       )
