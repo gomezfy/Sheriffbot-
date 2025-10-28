@@ -246,6 +246,21 @@ export const commandLocalizations: Record<string, CommandLocalization> = {
     }
   },
   
+  clearbounty: {
+    name: {
+      'pt-BR': 'limparrecompensa',
+      'en-US': 'clearbounty',
+      'es-ES': 'limparrecompensa',
+      'fr': 'effacerprime'
+    },
+    description: {
+      'pt-BR': 'Remover uma recompensa (Apenas Admin)',
+      'en-US': 'Remove a bounty (Admin only)',
+      'es-ES': 'Eliminar una recompensa (Solo Admin)',
+      'fr': 'Supprimer une prime (Admin uniquement)'
+    }
+  },
+  
   avatar: {
     name: {
       'pt-BR': 'avatar',
