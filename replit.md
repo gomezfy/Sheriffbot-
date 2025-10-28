@@ -11,9 +11,10 @@ Sheriff Rex Bot is a Discord bot with a Wild West theme, offering an immersive e
 
 ## Recent Changes (October 28, 2025)
 - ✅ Added full internationalization (i18n) support to `/territories` command
+- ✅ Added full internationalization (i18n) support to `/music` command
 - ✅ Implemented automatic language detection based on user's Discord language preference
 - ✅ Added translations in 4 languages: Portuguese (PT-BR), English (EN-US), Spanish (ES-ES), and French (FR)
-- ✅ All buttons, labels, messages, and embeds in `/territories` now support multi-language
+- ✅ All buttons, labels, messages, and embeds in `/territories` and `/music` now support multi-language
 - ✅ Configured OWNER_ID for owner-only command access
 - ✅ Ensured `/admin` command visibility restricted to server administrators only
 - ✅ Implemented professional music system with `/music` command
@@ -50,7 +51,7 @@ Sheriff Rex Bot is a Discord bot with a Wild West theme, offering an immersive e
 - **Mining System:** Offers solo and co-op mining modes.
 - **Gambling Games:** Includes Bank Robbery, Casino, Dice, and Poker.
 - **PvP Duels:** A system for player-versus-player combat.
-- **Music Player:** Professional music system with YouTube playback, queue management, volume control, and loop features. Interactive controls include pause/resume, skip, stop, volume adjustment, and queue viewing.
+- **Music Player:** Professional music system with YouTube playback, queue management, volume control, and loop features. Interactive controls include pause/resume, skip, stop, volume adjustment, and queue viewing. Fully localized with automatic language detection (PT-BR, EN-US, ES-ES, FR).
 - **E-commerce Shop:** Offers in-game items and currency packs via the web dashboard.
 - **Automatic Income:** Automatically distributes territory income and weekly Gold Bar rewards.
 - **Profile Customization:** Users can purchase and select custom profile backgrounds.
