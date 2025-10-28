@@ -31,7 +31,7 @@ import { AutoModManager } from '../../utils/autoModManager';
 import { isOwner } from '../../utils/security';
 import { addItem } from '../../utils/inventoryManager';
 import { writeData, readData, getDataPath } from '../../utils/database';
-import { uploadCustomEmojis, removeAllCustomEmojis, listCustomEmojis } from '../../utils/emojiUploader';
+import { uploadCustomEmojis, removeAllCustomEmojis, listCustomEmojis, syncServerEmojis } from '../../utils/emojiUploader';
 
 const OWNER_ID = process.env.OWNER_ID;
 
@@ -516,12 +516,13 @@ module.exports = {
     .addSubcommand(sub =>
       sub
         .setName('uploademojis')
-        .setDescription('Manage custom emojis (upload or remove from the server)')
+        .setDescription('Manage custom emojis (upload, sync or remove from the server)')
         .addStringOption(option =>
           option.setName('action')
-            .setDescription('Choose to upload or remove custom emojis')
+            .setDescription('Choose to upload, sync or remove custom emojis')
             .setRequired(true)
             .addChoices(
+              { name: 'Sync existing server emojis', value: 'sync' },
               { name: 'Upload emojis to server', value: 'upload' },
               { name: 'Remove all emojis from server', value: 'remove' }
             ))
@@ -1754,7 +1755,11 @@ async function handleUploadEmojis(interaction: ChatInputCommandInteraction): Pro
     let title: string;
     let successLabel: string;
 
-    if (action === 'upload') {
+    if (action === 'sync') {
+      results = await syncServerEmojis(interaction.guild);
+      title = '🔄 Emoji Synchronization Results';
+      successLabel = '✅ Successfully Synced';
+    } else if (action === 'upload') {
       results = await uploadCustomEmojis(interaction.guild);
       title = '🎨 Custom Emoji Upload Results';
       successLabel = '✅ Successfully Uploaded/Updated';

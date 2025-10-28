@@ -154,6 +154,44 @@ export async function uploadCustomEmojis(guild: Guild): Promise<{ success: numbe
 }
 
 /**
+ * Sincroniza os emojis existentes do servidor com o mapeamento
+ * Busca todos os emojis do servidor e atualiza o arquivo de mapeamento
+ */
+export async function syncServerEmojis(guild: Guild): Promise<{ success: number; failed: number; errors: string[] }> {
+  const results = {
+    success: 0,
+    failed: 0,
+    errors: [] as string[]
+  };
+
+  try {
+    const serverEmojis = await guild.emojis.fetch();
+    
+    if (serverEmojis.size === 0) {
+      results.errors.push('No emojis found on server');
+      return results;
+    }
+
+    const mapping = loadEmojiMapping();
+
+    serverEmojis.forEach(emoji => {
+      if (emoji.name) {
+        const prefix = emoji.animated ? 'a:' : ':';
+        mapping[emoji.name] = `<${prefix}${emoji.name}:${emoji.id}>`;
+        results.success++;
+      }
+    });
+
+    saveEmojiMapping(mapping);
+
+  } catch (error: any) {
+    results.errors.push(`Failed to sync emojis: ${error.message}`);
+  }
+
+  return results;
+}
+
+/**
  * Obtém um emoji customizado pelo nome
  */
 export function getCustomEmoji(name: string, fallback: string = '❓'): string {
