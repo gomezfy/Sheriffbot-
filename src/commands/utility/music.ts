@@ -21,7 +21,10 @@ import {
   toggleLoopQueue,
   searchSong,
   setVolume,
-  getVolume
+  getVolume,
+  getCurrentTime,
+  createProgressBar,
+  formatDuration
 } from '../../utils/musicQueue';
 
 module.exports = {
@@ -131,6 +134,46 @@ module.exports = {
   }
 };
 
+function createNowPlayingEmbed(guildId: string): EmbedBuilder | null {
+  const queue = getQueue(guildId);
+  if (!queue || queue.songs.length === 0) return null;
+
+  const song = queue.songs[0];
+  const currentTime = getCurrentTime(guildId);
+  const progress = createProgressBar(currentTime, song.durationInSec, 25);
+  
+  const currentTimeStr = formatDuration(currentTime);
+  const totalTimeStr = song.duration;
+  
+  const statusIcon = queue.playing ? '▶️' : '⏸️';
+  const loopText = queue.loop ? '🔂 Loop: Song' : queue.loopQueue ? '🔁 Loop: Queue' : '➡️ Normal';
+  
+  const embed = new EmbedBuilder()
+    .setColor(0x1DB954)
+    .setAuthor({ 
+      name: '🎵 Now Playing', 
+      iconURL: 'https://cdn.discordapp.com/attachments/placeholder/music-note.png' 
+    })
+    .setTitle(song.title)
+    .setURL(song.url)
+    .setThumbnail(song.thumbnail)
+    .setDescription(
+      `${statusIcon} **Status:** ${queue.playing ? 'Playing' : 'Paused'}\n` +
+      `${loopText}\n` +
+      `🔊 **Volume:** ${queue.volume}%\n\n` +
+      `\`${currentTimeStr}\` ${progress} \`${totalTimeStr}\``
+    )
+    .addFields(
+      { name: '👤 Requested By', value: `<@${song.requestedBy}>`, inline: true },
+      { name: '📋 Queue', value: `${queue.songs.length} song(s)`, inline: true },
+      { name: '⏱️ Duration', value: totalTimeStr, inline: true }
+    )
+    .setFooter({ text: 'Use the buttons below to control playback' })
+    .setTimestamp();
+
+  return embed;
+}
+
 async function handlePlay(interaction: ChatInputCommandInteraction): Promise<void> {
   await interaction.deferReply();
 
@@ -173,26 +216,17 @@ async function handlePlay(interaction: ChatInputCommandInteraction): Promise<voi
     queue.songs.push(song);
     await playSong(interaction.guildId!);
 
-    const embed = new EmbedBuilder()
-      .setColor(0x00FF00)
-      .setTitle('🎵 Now Playing')
-      .setDescription(`**[${song.title}](${song.url})**`)
-      .setThumbnail(song.thumbnail)
-      .addFields(
-        { name: '⏱️ Duration', value: song.duration, inline: true },
-        { name: '👤 Requested by', value: `<@${song.requestedBy}>`, inline: true }
-      )
-      .setTimestamp();
-
     const rows = createPlayerControls();
+    const embed = createNowPlayingEmbed(interaction.guildId!);
 
     const reply = await interaction.editReply({
       content: '',
-      embeds: [embed],
+      embeds: embed ? [embed] : [],
       components: rows
     });
 
     setupControlsCollector(reply, interaction.guildId!);
+    startProgressUpdater(reply, interaction.guildId!);
   } else {
     queue.songs.push(song);
 
@@ -384,43 +418,17 @@ async function handleNowPlaying(interaction: ChatInputCommandInteraction): Promi
     return;
   }
 
-  const song = queue.songs[0];
-
-  const embed = new EmbedBuilder()
-    .setColor(0x9B59B6)
-    .setTitle('🎵 Now Playing')
-    .setDescription(`**[${song.title}](${song.url})**`)
-    .setThumbnail(song.thumbnail)
-    .addFields(
-      { name: '⏱️ Duration', value: song.duration, inline: true },
-      { name: '👤 Requested by', value: `<@${song.requestedBy}>`, inline: true },
-      { name: '▶️ Status', value: queue.playing ? 'Playing' : 'Paused', inline: true }
-    )
-    .setTimestamp();
-
-  if (queue.loop) {
-    embed.addFields({
-      name: '🔂 Loop',
-      value: 'Enabled',
-      inline: true
-    });
-  } else if (queue.loopQueue) {
-    embed.addFields({
-      name: '🔁 Queue Loop',
-      value: 'Enabled',
-      inline: true
-    });
-  }
-
+  const embed = createNowPlayingEmbed(interaction.guildId!);
   const rows = createPlayerControls();
 
   const reply = await interaction.reply({
-    embeds: [embed],
+    embeds: embed ? [embed] : [],
     components: rows,
     fetchReply: true
   });
 
   setupControlsCollector(reply, interaction.guildId!);
+  startProgressUpdater(reply, interaction.guildId!);
 }
 
 async function handleLoop(interaction: ChatInputCommandInteraction): Promise<void> {
@@ -517,6 +525,32 @@ function createPlayerControls(): ActionRowBuilder<ButtonBuilder>[] {
   );
 
   return [row1, row2];
+}
+
+function startProgressUpdater(message: any, guildId: string): void {
+  const updateInterval = setInterval(async () => {
+    const queue = getQueue(guildId);
+    if (!queue || queue.songs.length === 0) {
+      clearInterval(updateInterval);
+      return;
+    }
+
+    const embed = createNowPlayingEmbed(guildId);
+    if (embed) {
+      try {
+        await message.edit({
+          embeds: [embed],
+          components: message.components
+        });
+      } catch (error) {
+        clearInterval(updateInterval);
+      }
+    } else {
+      clearInterval(updateInterval);
+    }
+  }, 10000);
+
+  setTimeout(() => clearInterval(updateInterval), 600000);
 }
 
 function setupControlsCollector(message: any, guildId: string): void {

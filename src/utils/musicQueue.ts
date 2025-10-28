@@ -16,6 +16,7 @@ export interface Song {
   title: string;
   url: string;
   duration: string;
+  durationInSec: number;
   thumbnail: string;
   requestedBy: string;
   requestedByTag: string;
@@ -32,6 +33,7 @@ export interface ServerQueue {
   loop: boolean;
   loopQueue: boolean;
   currentResource: AudioResource<null> | null;
+  startTime: number | null;
 }
 
 const queues = new Map<string, ServerQueue>();
@@ -53,7 +55,8 @@ export async function createQueue(
     playing: false,
     loop: false,
     loopQueue: false,
-    currentResource: null
+    currentResource: null,
+    startTime: null
   };
 
   queues.set(guild.id, queue);
@@ -128,6 +131,7 @@ export async function playSong(guildId: string): Promise<void> {
     }
 
     queue.currentResource = resource;
+    queue.startTime = Date.now();
     queue.player.play(resource);
   } catch (error) {
     console.error('Error playing song:', error);
@@ -247,6 +251,7 @@ export async function searchSong(query: string): Promise<Song | null> {
         title: videoDetails.title || 'Unknown',
         url: videoDetails.url,
         duration: formatDuration(videoDetails.durationInSec || 0),
+        durationInSec: videoDetails.durationInSec || 0,
         thumbnail: videoDetails.thumbnails?.[0]?.url || '',
         requestedBy: '',
         requestedByTag: ''
@@ -261,6 +266,7 @@ export async function searchSong(query: string): Promise<Song | null> {
         title: video.title || 'Unknown',
         url: video.url,
         duration: formatDuration(video.durationInSec || 0),
+        durationInSec: video.durationInSec || 0,
         thumbnail: video.thumbnails?.[0]?.url || '',
         requestedBy: '',
         requestedByTag: ''
@@ -272,7 +278,7 @@ export async function searchSong(query: string): Promise<Song | null> {
   }
 }
 
-function formatDuration(seconds: number): string {
+export function formatDuration(seconds: number): string {
   const hours = Math.floor(seconds / 3600);
   const minutes = Math.floor((seconds % 3600) / 60);
   const secs = seconds % 60;
@@ -281,4 +287,24 @@ function formatDuration(seconds: number): string {
     return `${hours}:${minutes.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
   }
   return `${minutes}:${secs.toString().padStart(2, '0')}`;
+}
+
+export function getCurrentTime(guildId: string): number {
+  const queue = getQueue(guildId);
+  if (!queue || !queue.startTime || !queue.playing) return 0;
+  
+  return Math.floor((Date.now() - queue.startTime) / 1000);
+}
+
+export function createProgressBar(current: number, total: number, length: number = 20): string {
+  if (total === 0) return '▬'.repeat(length);
+  
+  const progress = Math.min(current / total, 1);
+  const filledLength = Math.round(progress * length);
+  const emptyLength = length - filledLength;
+  
+  const filled = '▰'.repeat(filledLength);
+  const empty = '▱'.repeat(emptyLength);
+  
+  return filled + empty;
 }
