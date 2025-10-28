@@ -31,6 +31,7 @@ export interface ServerQueue {
   playing: boolean;
   loop: boolean;
   loopQueue: boolean;
+  currentResource: AudioResource<null> | null;
 }
 
 const queues = new Map<string, ServerQueue>();
@@ -51,7 +52,8 @@ export async function createQueue(
     volume: 50,
     playing: false,
     loop: false,
-    loopQueue: false
+    loopQueue: false,
+    currentResource: null
   };
 
   queues.set(guild.id, queue);
@@ -117,9 +119,15 @@ export async function playSong(guildId: string): Promise<void> {
 
     const stream = await playdl.stream(song.url);
     const resource = createAudioResource(stream.stream, {
-      inputType: stream.type
+      inputType: stream.type,
+      inlineVolume: true
     });
 
+    if (resource.volume) {
+      resource.volume.setVolumeLogarithmic(queue.volume / 100);
+    }
+
+    queue.currentResource = resource;
     queue.player.play(resource);
   } catch (error) {
     console.error('Error playing song:', error);
@@ -208,29 +216,56 @@ export function toggleLoopQueue(guildId: string): boolean {
   return queue.loopQueue;
 }
 
+export function setVolume(guildId: string, volume: number): boolean {
+  const queue = getQueue(guildId);
+  if (!queue) return false;
+  
+  volume = Math.max(0, Math.min(100, volume));
+  queue.volume = volume;
+  
+  if (queue.currentResource && queue.currentResource.volume) {
+    queue.currentResource.volume.setVolumeLogarithmic(volume / 100);
+  }
+  
+  return true;
+}
+
+export function getVolume(guildId: string): number {
+  const queue = getQueue(guildId);
+  return queue ? queue.volume : 50;
+}
+
 export async function searchSong(query: string): Promise<Song | null> {
   try {
     const isURL = playdl.yt_validate(query) === 'video';
     
-    let video;
     if (isURL) {
-      video = await playdl.video_info(query);
+      const video = await playdl.video_info(query);
+      const videoDetails = video.video_details;
+      
+      return {
+        title: videoDetails.title || 'Unknown',
+        url: videoDetails.url,
+        duration: formatDuration(videoDetails.durationInSec || 0),
+        thumbnail: videoDetails.thumbnails?.[0]?.url || '',
+        requestedBy: '',
+        requestedByTag: ''
+      };
     } else {
       const searchResults = await playdl.search(query, { limit: 1 });
       if (searchResults.length === 0) return null;
-      video = searchResults[0];
+      
+      const video = searchResults[0];
+      
+      return {
+        title: video.title || 'Unknown',
+        url: video.url,
+        duration: formatDuration(video.durationInSec || 0),
+        thumbnail: video.thumbnails?.[0]?.url || '',
+        requestedBy: '',
+        requestedByTag: ''
+      };
     }
-
-    const videoInfo = video.video_details || video;
-    
-    return {
-      title: videoInfo.title || 'Unknown',
-      url: videoInfo.url,
-      duration: formatDuration(videoInfo.durationInSec || 0),
-      thumbnail: videoInfo.thumbnails?.[0]?.url || '',
-      requestedBy: '',
-      requestedByTag: ''
-    };
   } catch (error) {
     console.error('Error searching song:', error);
     return null;

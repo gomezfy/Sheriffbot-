@@ -19,7 +19,9 @@ import {
   stopMusic,
   toggleLoop,
   toggleLoopQueue,
-  searchSong
+  searchSong,
+  setVolume,
+  getVolume
 } from '../../utils/musicQueue';
 
 module.exports = {
@@ -76,6 +78,19 @@ module.exports = {
       subcommand
         .setName('loopqueue')
         .setDescription('Toggle loop for entire queue')
+    )
+    .addSubcommand(subcommand =>
+      subcommand
+        .setName('volume')
+        .setDescription('Set the player volume (0-100)')
+        .addIntegerOption(option =>
+          option
+            .setName('level')
+            .setDescription('Volume level (0-100)')
+            .setRequired(true)
+            .setMinValue(0)
+            .setMaxValue(100)
+        )
     ),
 
   async execute(interaction: ChatInputCommandInteraction): Promise<void> {
@@ -108,6 +123,9 @@ module.exports = {
         break;
       case 'loopqueue':
         await handleLoopQueue(interaction);
+        break;
+      case 'volume':
+        await handleVolume(interaction);
         break;
     }
   }
@@ -166,12 +184,12 @@ async function handlePlay(interaction: ChatInputCommandInteraction): Promise<voi
       )
       .setTimestamp();
 
-    const row = createPlayerControls();
+    const rows = createPlayerControls();
 
     const reply = await interaction.editReply({
       content: '',
       embeds: [embed],
-      components: [row]
+      components: rows
     });
 
     setupControlsCollector(reply, interaction.guildId!);
@@ -394,11 +412,11 @@ async function handleNowPlaying(interaction: ChatInputCommandInteraction): Promi
     });
   }
 
-  const row = createPlayerControls();
+  const rows = createPlayerControls();
 
   const reply = await interaction.reply({
     embeds: [embed],
-    components: [row],
+    components: rows,
     fetchReply: true
   });
 
@@ -443,8 +461,28 @@ async function handleLoopQueue(interaction: ChatInputCommandInteraction): Promis
   });
 }
 
-function createPlayerControls(): ActionRowBuilder<ButtonBuilder> {
-  return new ActionRowBuilder<ButtonBuilder>().addComponents(
+async function handleVolume(interaction: ChatInputCommandInteraction): Promise<void> {
+  const queue = getQueue(interaction.guildId!);
+
+  if (!queue || queue.songs.length === 0) {
+    await interaction.reply({
+      content: '❌ Nothing is currently playing!',
+      flags: MessageFlags.Ephemeral
+    });
+    return;
+  }
+
+  const volume = interaction.options.getInteger('level', true);
+  setVolume(interaction.guildId!, volume);
+
+  await interaction.reply({
+    content: `🔊 Volume set to ${volume}%!`,
+    flags: MessageFlags.Ephemeral
+  });
+}
+
+function createPlayerControls(): ActionRowBuilder<ButtonBuilder>[] {
+  const row1 = new ActionRowBuilder<ButtonBuilder>().addComponents(
     new ButtonBuilder()
       .setCustomId('music_pause_resume')
       .setLabel('⏸️ Pause/Resume')
@@ -466,6 +504,19 @@ function createPlayerControls(): ActionRowBuilder<ButtonBuilder> {
       .setLabel('⏹️ Stop')
       .setStyle(ButtonStyle.Danger)
   );
+
+  const row2 = new ActionRowBuilder<ButtonBuilder>().addComponents(
+    new ButtonBuilder()
+      .setCustomId('music_volume_down')
+      .setLabel('🔉 -10%')
+      .setStyle(ButtonStyle.Secondary),
+    new ButtonBuilder()
+      .setCustomId('music_volume_up')
+      .setLabel('🔊 +10%')
+      .setStyle(ButtonStyle.Secondary)
+  );
+
+  return [row1, row2];
 }
 
 function setupControlsCollector(message: any, guildId: string): void {
@@ -548,6 +599,26 @@ function setupControlsCollector(message: any, guildId: string): void {
           flags: MessageFlags.Ephemeral
         });
         collector.stop();
+        break;
+
+      case 'music_volume_up':
+        const currentVolumeUp = getVolume(guildId);
+        const newVolumeUp = Math.min(100, currentVolumeUp + 10);
+        setVolume(guildId, newVolumeUp);
+        await i.reply({
+          content: `🔊 Volume: ${newVolumeUp}%`,
+          flags: MessageFlags.Ephemeral
+        });
+        break;
+
+      case 'music_volume_down':
+        const currentVolumeDown = getVolume(guildId);
+        const newVolumeDown = Math.max(0, currentVolumeDown - 10);
+        setVolume(guildId, newVolumeDown);
+        await i.reply({
+          content: `🔉 Volume: ${newVolumeDown}%`,
+          flags: MessageFlags.Ephemeral
+        });
         break;
     }
   });
