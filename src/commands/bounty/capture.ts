@@ -58,6 +58,29 @@ module.exports = {
       return;
     }
 
+    // Verificar se o alvo está no servidor
+    if (!interaction.guild) {
+      const embed = errorEmbed(
+        'Server Only',
+        'This command can only be used in a server!',
+        'Try using this command in a server'
+      );
+      await interaction.reply({ embeds: [embed], flags: MessageFlags.Ephemeral });
+      return;
+    }
+
+    try {
+      await interaction.guild.members.fetch(target.id);
+    } catch (error) {
+      const embed = errorEmbed(
+        'Outlaw Not in Server',
+        `**${target.tag}** is not in this server!\n\nYou can only capture outlaws who are currently in the server.`,
+        'The outlaw must be present to be captured'
+      );
+      await interaction.reply({ embeds: [embed], flags: MessageFlags.Ephemeral });
+      return;
+    }
+
     const now = Date.now();
     const lastCapture = captureData[hunter.id] || 0;
     if (now - lastCapture < CAPTURE_COOLDOWN) {
