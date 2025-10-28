@@ -4,6 +4,7 @@ const { addItem } = require('../../utils/inventoryManager');
 const { applyPunishment, isPunished, formatTime, getRemainingTime } = require('../../utils/punishmentManager');
 const { createAutoWanted } = require('../../utils/autoWanted');
 import { getMuteEmoji, getBankEmoji, getMoneybagEmoji, getRevolverEmoji, getCowboysEmoji, getSilverCoinEmoji, getGoldBarEmoji, getClockEmoji, getCancelEmoji, getBalanceEmoji, getAlarmEmoji, getRunningCowboyEmoji, getDartEmoji, getWarningEmoji } from '../../utils/customEmojis';
+import { t, getLocale } from '../../utils/i18n';
 import path from 'path';
 
 const activeRobberies = new Map();
@@ -23,7 +24,7 @@ module.exports = {
       const lockEmoji = getMuteEmoji();
       const timerEmoji = getClockEmoji();
       await interaction.reply({
-        content: `${lockEmoji} **You're in jail!**\n\n${punishment.reason}\n\n${timerEmoji} Time remaining: **${formatTime(remaining)}**\n\nYou cannot commit crimes while serving your sentence!`,
+        content: `${lockEmoji} **${t(interaction, 'bankrob_in_jail')}**\n\n${punishment.reason}\n\n${timerEmoji} ${t(interaction, 'bankrob_time_remaining')}: **${formatTime(remaining)}**\n\n${t(interaction, 'bankrob_in_jail_desc')}`,
         flags: [MessageFlags.Ephemeral]
       });
       return;
@@ -39,7 +40,7 @@ module.exports = {
         const timeLeft = Math.ceil((expirationTime - now) / 1000 / 60);
         const timerEmoji = getClockEmoji();
         await interaction.reply({
-          content: `${timerEmoji} The sheriff's watching you closely! Wait ${timeLeft} more minutes before attempting another robbery.`,
+          content: `${timerEmoji} ${t(interaction, 'bankrob_sheriff_watching', { time: timeLeft })}`,
           flags: [MessageFlags.Ephemeral]
         });
         return;
@@ -49,7 +50,7 @@ module.exports = {
     if (activeRobberies.has(userId)) {
       const cancelEmoji = getCancelEmoji();
       await interaction.reply({
-        content: `${cancelEmoji} You already have an active robbery! Wait for it to finish or expire.`,
+        content: `${cancelEmoji} ${t(interaction, 'bankrob_already_active')}`,
         flags: [MessageFlags.Ephemeral]
       });
       return;
@@ -57,7 +58,7 @@ module.exports = {
 
     const joinButton = new ButtonBuilder()
       .setCustomId(`bankrob_join_${userId}`)
-      .setLabel('Join the Robbery')
+      .setLabel(t(interaction, 'bankrob_join_btn'))
       .setStyle(ButtonStyle.Danger);
 
     const row = new ActionRowBuilder<ButtonBuilder>().addComponents(joinButton);
@@ -73,16 +74,16 @@ module.exports = {
 
     const embed = new EmbedBuilder()
       .setColor('#FF0000')
-      .setTitle(`${bankEmoji} BANK ROBBERY IN PROGRESS!`)
-      .setDescription(`${cowboysEmoji} **${interaction.user.username}** is planning a bank robbery!\n\nThis is a dangerous job, partner. We need one more outlaw to pull this off!\n\n${clockEmoji} You have **60 seconds** to find a partner!`)
+      .setTitle(`${bankEmoji} ${t(interaction, 'bankrob_title')}`)
+      .setDescription(`${cowboysEmoji} **${interaction.user.username}** ${t(interaction, 'bankrob_planning')}\n\n${t(interaction, 'bankrob_dangerous_job')}\n\n${clockEmoji} ${t(interaction, 'bankrob_60_seconds')}`)
       .setImage('attachment://bank-robbery.png')
       .addFields(
-        { name: `${silverEmoji} Silver Reward`, value: '800-2000 Coins (split)', inline: true },
-        { name: `${goldEmoji} Gold Bonus`, value: '2-4 Gold Bars (split)', inline: true },
-        { name: `${clockEmoji} Duration`, value: '3 minutes', inline: true },
-        { name: `${getWarningEmoji()} Risk`, value: '30% chance of capture!', inline: true }
+        { name: `${silverEmoji} ${t(interaction, 'bankrob_silver_reward')}`, value: t(interaction, 'bankrob_silver_split'), inline: true },
+        { name: `${goldEmoji} ${t(interaction, 'bankrob_gold_bonus')}`, value: t(interaction, 'bankrob_gold_split'), inline: true },
+        { name: `${clockEmoji} ${t(interaction, 'bankrob_duration')}`, value: t(interaction, 'bankrob_3_minutes'), inline: true },
+        { name: `${getWarningEmoji()} ${t(interaction, 'bankrob_risk')}`, value: t(interaction, 'bankrob_risk_capture'), inline: true }
       )
-      .setFooter({ text: 'Click the button to join!' })
+      .setFooter({ text: t(interaction, 'bankrob_click_join') })
       .setTimestamp();
 
     const response = await interaction.reply({ embeds: [embed], components: [row], files: [bankRobberyImage] });

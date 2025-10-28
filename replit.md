@@ -59,6 +59,17 @@ None specified yet.
 - **Session Management:** `express-session` (for the web dashboard)
 
 ## Recent Changes
+- **October 28, 2025:**
+  - **Automatic Language Detection in Core Gambling and Mining Commands:** Implemented i18n (internationalization) support
+    - Added comprehensive translations for `/bankrob` and `/mine` commands in Portuguese (PT-BR) and English (EN-US)
+    - Bot now automatically detects user's Discord language preference using `interaction.locale`
+    - All user-facing messages, buttons, embeds, and descriptions adapt to user's language
+    - Translations include: titles, descriptions, field names, button labels, error messages, and success messages
+    - Over 80 new translation keys added to i18n system for both commands
+    - Improved user experience for international users with native language support
+    - Commands seamlessly switch between languages without user configuration
+    - Translation system uses fallback to English if user's language is not supported
+    - Infrastructure ready for adding Spanish (ES-ES) and French (FR) translations in the future
 - **October 27, 2025:**
   - **Replit Environment Migration Complete:** Successfully migrated project to Replit environment
     - ✅ All npm packages installed and TypeScript compiled successfully

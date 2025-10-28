@@ -3,6 +3,7 @@ import fs from 'fs';
 import path from 'path';
 import { getSilverCoinEmoji, getGoldBarEmoji, getCowboyEmoji, getPickaxeEmoji, getCheckEmoji, getSparklesEmoji, getMoneybagEmoji, getBackpackEmoji } from '../../utils/customEmojis';
 import { cleanupOldSessions, getActiveSessions, getUnclaimedSessions, getMiningStats, formatTime as formatMiningTime } from '../../utils/miningTracker';
+import { t, getLocale } from '../../utils/i18n';
 const { addItem, getInventory, removeItem, transferItem } = require('../../utils/inventoryManager');
 const { addUserSilver, getUserSilver, removeUserSilver } = require('../../utils/dataManager');
 const { readData, writeData } = require('../../utils/database');
@@ -94,16 +95,19 @@ module.exports = {
         
         const viewSessionsButton = new ButtonBuilder()
           .setCustomId('view_sessions_progress')
-          .setLabel('View Sessions')
+          .setLabel(t(interaction, 'mine_sessions_btn'))
           .setStyle(ButtonStyle.Secondary);
         
         const progressRow = new ActionRowBuilder<ButtonBuilder>().addComponents(viewSessionsButton);
         
+        const mineType = activeMining.type === 'solo' ? `${getPickaxeEmoji()} ${t(interaction, 'mine_solo')}` : `👥 ${t(interaction, 'mine_coop')}`;
+        const goldBarText = t(interaction, 'gold_bars');
+        
         const embed = new EmbedBuilder()
           .setColor(0xFFD700)
-          .setTitle(`${getPickaxeEmoji()} MINING IN PROGRESS`)
-          .setDescription(`You're currently mining for gold!\n\n${bar}\n\n**Time Remaining:** ${formatTime(timeLeft)}\n**Type:** ${activeMining.type === 'solo' ? `${getPickaxeEmoji()} Solo Mining` : '👥 Cooperative Mining'}\n**Expected Reward:** ${activeMining.goldAmount} ${goldEmoji} Gold Bar${activeMining.goldAmount > 1 ? 's' : ''}`)
-          .setFooter({ text: 'Come back when mining is complete!' })
+          .setTitle(`${getPickaxeEmoji()} ${t(interaction, 'mine_in_progress')}`)
+          .setDescription(`${t(interaction, 'mine_currently_mining')}\n\n${bar}\n\n**${t(interaction, 'mine_time_remaining')}:** ${formatTime(timeLeft)}\n**${t(interaction, 'mine_type')}:** ${mineType}\n**${t(interaction, 'mine_expected_reward')}:** ${activeMining.goldAmount} ${goldEmoji} ${goldBarText}`)
+          .setFooter({ text: t(interaction, 'mine_come_back') })
           .setTimestamp();
         
         const reply = await interaction.reply({ embeds: [embed], components: [progressRow], flags: MessageFlags.Ephemeral });
@@ -179,23 +183,25 @@ Pending Gold: ${stats.totalGoldPending} ${goldEmoji}
         // Mineração completa - pode coletar
         const claimButton = new ButtonBuilder()
           .setCustomId('claim_mining')
-          .setLabel('Collect Gold')
+          .setLabel(t(interaction, 'mine_collect_btn'))
           .setStyle(ButtonStyle.Success);
         
         const viewSessionsClaimButton = new ButtonBuilder()
           .setCustomId('view_sessions_claim')
-          .setLabel('View Sessions')
+          .setLabel(t(interaction, 'mine_sessions_btn'))
           .setStyle(ButtonStyle.Secondary);
         
         const row = new ActionRowBuilder<ButtonBuilder>().addComponents(claimButton, viewSessionsClaimButton);
         
         const goldEmoji = getGoldBarEmoji();
         
+        const goldBarText = t(interaction, 'gold_bars');
+        
         const embed = new EmbedBuilder()
           .setColor(0x00FF00)
-          .setTitle('✅ MINING COMPLETE!')
-          .setDescription(`Your mining operation is complete!\n\n💰 **Reward:** ${activeMining.goldAmount} ${goldEmoji} Gold Bar${activeMining.goldAmount > 1 ? 's' : ''}!\n\nClick below to collect your gold!`)
-          .setFooter({ text: 'Great work, partner!' })
+          .setTitle(`✅ ${t(interaction, 'mine_complete')}`)
+          .setDescription(`${t(interaction, 'mine_complete_desc')}\n\n💰 **${t(interaction, 'mine_reward')}:** ${activeMining.goldAmount} ${goldEmoji} ${goldBarText}!\n\n${t(interaction, 'mine_click_to_join')}`)
+          .setFooter({ text: t(interaction, 'mine_great_work') })
           .setTimestamp();
         
         await interaction.reply({ embeds: [embed], components: [row] });
@@ -267,7 +273,7 @@ Pending Gold: ${stats.totalGoldPending} ${goldEmoji}
           
           if (i.customId !== 'claim_mining') return;
           if (i.user.id !== userId) {
-            return i.reply({ content: '❌ This gold is not yours!', flags: MessageFlags.Ephemeral });
+            return i.reply({ content: `❌ ${t(interaction, 'mine_not_yours')}`, flags: MessageFlags.Ephemeral });
           }
           
           await i.deferUpdate();
@@ -278,9 +284,9 @@ Pending Gold: ${stats.totalGoldPending} ${goldEmoji}
             return i.editReply({
               embeds: [{
                 color: 0xFF0000,
-                title: '⚠️ COLLECTION FAILED',
-                description: `${addResult.error}\n\nYour saddlebag is too heavy to carry the gold!\n\nFree up some space and use /mine again to collect.`,
-                footer: { text: 'The gold will wait for you!' }
+                title: `⚠️ ${t(interaction, 'mine_collection_failed')}`,
+                description: `${addResult.error}\n\n${t(interaction, 'mine_inventory_heavy')}`,
+                footer: { text: t(interaction, 'mine_gold_waiting') }
               }],
               components: []
             });
@@ -295,19 +301,24 @@ Pending Gold: ${stats.totalGoldPending} ${goldEmoji}
           const moneybagEmoji = getMoneybagEmoji();
           const backpackEmoji = getBackpackEmoji();
           
+          const goldBarText = t(interaction, 'gold_bars');
+          const silverCoinText = t(interaction, 'silver_coins');
+          const weightText = t(interaction, 'weight');
+          const valueText = t(interaction, 'mine_value');
+          
           await i.editReply({
             embeds: [{
               color: 0xFFD700,
-              title: `${checkEmoji} ${getPickaxeEmoji()} GOLD COLLECTED! ${sparklesEmoji}`,
-              description: `\`\`\`diff\n+ You collected ${activeMining.goldAmount} ${goldEmoji} Gold Bar${activeMining.goldAmount > 1 ? 's' : ''}!\n\`\`\`\n${backpackEmoji} **Weight:** ${addResult.newWeight.toFixed(2)}kg / ${userInventory.maxWeight}kg`,
+              title: `${checkEmoji} ${getPickaxeEmoji()} ${t(interaction, 'mine_collected')} ${sparklesEmoji}`,
+              description: `\`\`\`diff\n+ ${t(interaction, 'mine_you_collected')} ${activeMining.goldAmount} ${goldEmoji} ${goldBarText}!\n\`\`\`\n${backpackEmoji} **${weightText}:** ${addResult.newWeight.toFixed(2)}kg / ${userInventory.maxWeight}kg`,
               fields: [
                 {
-                  name: `${moneybagEmoji} Value`,
-                  value: `\`${activeMining.goldAmount * GOLD_VALUE} ${silverEmoji} Silver Coins\``,
+                  name: `${moneybagEmoji} ${valueText}`,
+                  value: `\`${activeMining.goldAmount * GOLD_VALUE} ${silverEmoji} ${silverCoinText}\``,
                   inline: true
                 }
               ],
-              footer: { text: `${getCowboyEmoji()} Great work, partner! You can mine again now.` },
+              footer: { text: `${getCowboyEmoji()} ${t(interaction, 'mine_can_mine_again')}` },
               timestamp: new Date().toISOString()
             }],
             components: []
