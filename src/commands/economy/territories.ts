@@ -45,6 +45,7 @@ module.exports = {
   async execute(interaction: ChatInputCommandInteraction): Promise<void> {
     const userId = interaction.user.id;
     let currentIndex = 0;
+    let currentInteraction: any = interaction; // Track the current interaction for translations
 
     const silverEmoji = getSilverCoinEmoji();
 
@@ -62,28 +63,28 @@ module.exports = {
         .setDescription(territory.description)
         .addFields(
           {
-            name: `${getMoneybagEmoji()} ${t(interaction, 'territories_price')}`,
-            value: `${territory.price.toLocaleString()} ${silverEmoji} ${t(interaction, 'silver_coins')}`,
+            name: `${getMoneybagEmoji()} ${t(currentInteraction, 'territories_price')}`,
+            value: `${territory.price.toLocaleString()} ${silverEmoji} ${t(currentInteraction, 'silver_coins')}`,
             inline: true
           },
           {
-            name: `${getDartEmoji()} ${t(interaction, 'territories_rarity')}`,
+            name: `${getDartEmoji()} ${t(currentInteraction, 'territories_rarity')}`,
             value: territory.rarity.charAt(0).toUpperCase() + territory.rarity.slice(1),
             inline: true
           },
           {
-            name: `${getStatsEmoji()} ${t(interaction, 'territories_status')}`,
-            value: owned ? `${getCheckEmoji()} **${t(interaction, 'territories_owned')}**` : userSilver >= territory.price ? `${getGreenCircle()} **${t(interaction, 'territories_available')}**` : `${getRedCircle()} **${t(interaction, 'territories_insufficient')}**`,
+            name: `${getStatsEmoji()} ${t(currentInteraction, 'territories_status')}`,
+            value: owned ? `${getCheckEmoji()} **${t(currentInteraction, 'territories_owned')}**` : userSilver >= territory.price ? `${getGreenCircle()} **${t(currentInteraction, 'territories_available')}**` : `${getRedCircle()} **${t(currentInteraction, 'territories_insufficient')}**`,
             inline: true
           },
           {
-            name: `${getGiftEmoji()} ${t(interaction, 'territories_benefits')}`,
+            name: `${getGiftEmoji()} ${t(currentInteraction, 'territories_benefits')}`,
             value: territory.benefits.map(b => `• ${b}`).join('\n'),
             inline: false
           }
         )
         .setFooter({
-          text: t(interaction, 'territories_footer', { current: index + 1, total: TERRITORIES.length, owned: ownedTerritories.length })
+          text: t(currentInteraction, 'territories_footer', { current: index + 1, total: TERRITORIES.length, owned: ownedTerritories.length })
         })
         .setTimestamp();
 
@@ -107,17 +108,17 @@ module.exports = {
       const row1 = new ActionRowBuilder<ButtonBuilder>().addComponents(
         new ButtonBuilder()
           .setCustomId('prev')
-          .setLabel(t(interaction, 'territories_prev'))
+          .setLabel(t(currentInteraction, 'territories_prev'))
           .setStyle(ButtonStyle.Secondary)
           .setDisabled(index === 0),
         new ButtonBuilder()
           .setCustomId('purchase')
-          .setLabel(owned ? t(interaction, 'territories_owned') : t(interaction, 'territories_buy', { price: (territory.price / 1000).toFixed(0) }))
+          .setLabel(owned ? t(currentInteraction, 'territories_owned') : t(currentInteraction, 'territories_buy', { price: (territory.price / 1000).toFixed(0) }))
           .setStyle(owned ? ButtonStyle.Success : canAfford ? ButtonStyle.Primary : ButtonStyle.Danger)
           .setDisabled(owned || !canAfford),
         new ButtonBuilder()
           .setCustomId('next')
-          .setLabel(t(interaction, 'territories_next'))
+          .setLabel(t(currentInteraction, 'territories_next'))
           .setStyle(ButtonStyle.Secondary)
           .setDisabled(index === TERRITORIES.length - 1)
       );
@@ -125,12 +126,12 @@ module.exports = {
       const row2 = new ActionRowBuilder<ButtonBuilder>().addComponents(
         new ButtonBuilder()
           .setCustomId('my_territories')
-          .setLabel(t(interaction, 'territories_my_territories'))
+          .setLabel(t(currentInteraction, 'territories_my_territories'))
           .setStyle(ButtonStyle.Success)
           .setDisabled(ownedTerritories.length === 0),
         new ButtonBuilder()
           .setCustomId('close')
-          .setLabel(t(interaction, 'territories_close'))
+          .setLabel(t(currentInteraction, 'territories_close'))
           .setStyle(ButtonStyle.Danger)
       );
 
@@ -153,10 +154,13 @@ module.exports = {
     });
 
     collector.on('collect', async (i) => {
+      // Update current interaction for translations
+      currentInteraction = i;
+      
       // Only allow the command user to interact
       if (i.user.id !== userId) {
         return i.reply({
-          content: `${getCancelEmoji()} ${t(interaction, 'territories_not_yours')}`,
+          content: `${getCancelEmoji()} ${t(i, 'territories_not_yours')}`,
           flags: MessageFlags.Ephemeral
         });
       }
@@ -182,7 +186,7 @@ module.exports = {
         // Double-check affordability
         if (currentSilver < territory.price) {
           return i.reply({
-            content: `${getCancelEmoji()} ${t(interaction, 'territories_need_more', { amount: (territory.price - currentSilver).toLocaleString() })} ${silverEmoji}`,
+            content: `${getCancelEmoji()} ${t(i, 'territories_need_more', { amount: (territory.price - currentSilver).toLocaleString() })} ${silverEmoji}`,
             flags: MessageFlags.Ephemeral
           });
         }
@@ -190,7 +194,7 @@ module.exports = {
         // Double-check ownership
         if (ownsTerritory(userId, territory.id)) {
           return i.reply({
-            content: `${getCancelEmoji()} ${t(interaction, 'territories_already_own')}`,
+            content: `${getCancelEmoji()} ${t(i, 'territories_already_own')}`,
             flags: MessageFlags.Ephemeral
           });
         }
@@ -199,7 +203,7 @@ module.exports = {
         const removed = removeUserSilver(userId, territory.price);
         if (!removed) {
           return i.reply({
-            content: `${getCancelEmoji()} ${t(interaction, 'territories_transaction_failed')}`,
+            content: `${getCancelEmoji()} ${t(i, 'territories_transaction_failed')}`,
             flags: MessageFlags.Ephemeral
           });
         }
@@ -210,7 +214,7 @@ module.exports = {
           const { addUserSilver } = require('../../utils/dataManager');
           addUserSilver(userId, territory.price);
           return i.reply({
-            content: `${getCancelEmoji()} ${t(interaction, 'territories_purchase_failed')}`,
+            content: `${getCancelEmoji()} ${t(i, 'territories_purchase_failed')}`,
             flags: MessageFlags.Ephemeral
           });
         }
@@ -218,26 +222,26 @@ module.exports = {
         // Success!
         const successEmbed = new EmbedBuilder()
           .setColor(0x00FF00)
-          .setTitle(`${getPartyEmoji()} ${t(interaction, 'territories_purchased_title')}`)
-          .setDescription(t(interaction, 'territories_purchased_desc', { name: `${territory.emoji} ${territory.name}` }))
+          .setTitle(`${getPartyEmoji()} ${t(i, 'territories_purchased_title')}`)
+          .setDescription(t(i, 'territories_purchased_desc', { name: `${territory.emoji} ${territory.name}` }))
           .addFields(
             {
-              name: `${getMoneybagEmoji()} ${t(interaction, 'territories_amount_paid')}`,
-              value: `${territory.price.toLocaleString()} ${silverEmoji} ${t(interaction, 'silver_coins')}`,
+              name: `${getMoneybagEmoji()} ${t(i, 'territories_amount_paid')}`,
+              value: `${territory.price.toLocaleString()} ${silverEmoji} ${t(i, 'silver_coins')}`,
               inline: true
             },
             {
-              name: `${getMoneybagEmoji()} ${t(interaction, 'territories_remaining_balance')}`,
+              name: `${getMoneybagEmoji()} ${t(i, 'territories_remaining_balance')}`,
               value: `${(currentSilver - territory.price).toLocaleString()} ${silverEmoji}`,
               inline: true
             },
             {
-              name: `${getGiftEmoji()} ${t(interaction, 'territories_benefits_unlocked')}`,
+              name: `${getGiftEmoji()} ${t(i, 'territories_benefits_unlocked')}`,
               value: territory.benefits.map(b => `• ${b}`).join('\n'),
               inline: false
             }
           )
-          .setFooter({ text: t(interaction, 'territories_now_own', { count: getTerritoryCount(userId) }) })
+          .setFooter({ text: t(i, 'territories_now_own', { count: getTerritoryCount(userId) }) })
           .setTimestamp();
 
         await i.reply({ embeds: [successEmbed], flags: MessageFlags.Ephemeral });
@@ -260,21 +264,21 @@ module.exports = {
 
         const myTerritoriesEmbed = new EmbedBuilder()
           .setColor(0xFFD700)
-          .setTitle(`${getBuildingEmoji()} ${t(interaction, 'territories_my_title')}`)
-          .setDescription(territoriesInfo || t(interaction, 'territories_no_territories'))
+          .setTitle(`${getBuildingEmoji()} ${t(i, 'territories_my_title')}`)
+          .setDescription(territoriesInfo || t(i, 'territories_no_territories'))
           .addFields({
-            name: `${getStatsEmoji()} ${t(interaction, 'territories_statistics')}`,
-            value: t(interaction, 'territories_owned_count', { owned: owned.length, total: TERRITORIES.length, percentage: Math.round((owned.length / TERRITORIES.length) * 100) }),
+            name: `${getStatsEmoji()} ${t(i, 'territories_statistics')}`,
+            value: t(i, 'territories_owned_count', { owned: owned.length, total: TERRITORIES.length, percentage: Math.round((owned.length / TERRITORIES.length) * 100) }),
             inline: false
           })
-          .setFooter({ text: t(interaction, 'territories_keep_expanding') })
+          .setFooter({ text: t(i, 'territories_keep_expanding') })
           .setTimestamp();
 
         await i.reply({ embeds: [myTerritoriesEmbed], flags: MessageFlags.Ephemeral });
 
       } else if (i.customId === 'close') {
         await i.update({
-          content: t(interaction, 'territories_browser_closed'),
+          content: t(i, 'territories_browser_closed'),
           embeds: [],
           components: []
         });
