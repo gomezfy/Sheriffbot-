@@ -3,6 +3,7 @@ import { addXp } from '../../utils/xpManager';
 import { economyEmbed, errorEmbed, warningEmbed, formatCurrency, formatDuration, field } from '../../utils/embeds';
 import { getSilverCoinEmoji, getSaloonTokenEmoji } from '../../utils/customEmojis';
 import { t } from '../../utils/i18n';
+import { applyLocalizations } from '../../utils/commandLocalizations';
 const { addItem } = require('../../utils/inventoryManager');
 const { readData, writeData } = require('../../utils/database');
 
@@ -24,11 +25,14 @@ function saveDailyData(data: DailyData): void {
 }
 
 module.exports = {
-  data: new SlashCommandBuilder()
-    .setName('daily')
-    .setDescription('Claim your daily reward and build a streak!')
-    .setContexts([0, 1, 2]) // Guild, BotDM, PrivateChannel
-    .setIntegrationTypes([0, 1]), // Guild Install, User Install
+  data: applyLocalizations(
+    new SlashCommandBuilder()
+      .setName('daily')
+      .setDescription('Claim your daily reward and build a streak!')
+      .setContexts([0, 1, 2]) // Guild, BotDM, PrivateChannel
+      .setIntegrationTypes([0, 1]), // Guild Install, User Install
+    'daily'
+  ),
   async execute(interaction: ChatInputCommandInteraction): Promise<void> {
     const userId = interaction.user.id;
     const dailyData = getDailyData();

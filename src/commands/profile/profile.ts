@@ -6,6 +6,7 @@ const { parseTextWithEmojis } = require('../../utils/emojiMapper');
 const { getCustomEmojiPath, CUSTOM_EMOJIS } = require('../../utils/customEmojis');
 import { createCanvas, loadImage, GlobalFonts } from '@napi-rs/canvas';
 import { t, getLocale } from '../../utils/i18n';
+import { applyLocalizations } from '../../utils/commandLocalizations';
 import fs from 'fs';
 import path from 'path';
 
@@ -15,17 +16,20 @@ GlobalFonts.registerFromPath(path.join(process.cwd(), 'assets/fonts/Nunito-SemiB
 GlobalFonts.registerFromPath(path.join(process.cwd(), 'assets/fonts/Nunito-Regular.ttf'), 'Nunito Regular');
 
 module.exports = {
-  data: new SlashCommandBuilder()
-    .setName('profile')
-    .setDescription('View your cowboy profile card')
-    .setContexts([0, 1, 2]) // Guild, BotDM, PrivateChannel
-    .setIntegrationTypes([0, 1]) // Guild Install, User Install
-    .addUserOption(option =>
-      option
-        .setName('user')
-        .setDescription('View another cowboy\'s profile')
-        .setRequired(false)
-    ),
+  data: applyLocalizations(
+    new SlashCommandBuilder()
+      .setName('profile')
+      .setDescription('View your cowboy profile card')
+      .setContexts([0, 1, 2]) // Guild, BotDM, PrivateChannel
+      .setIntegrationTypes([0, 1]) // Guild Install, User Install
+      .addUserOption(option =>
+        option
+          .setName('user')
+          .setDescription('View another cowboy\'s profile')
+          .setRequired(false)
+      ),
+    'profile'
+  ),
   async execute(interaction: ChatInputCommandInteraction): Promise<void> {
     await interaction.deferReply();
 

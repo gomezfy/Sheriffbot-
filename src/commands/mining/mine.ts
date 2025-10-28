@@ -4,6 +4,7 @@ import path from 'path';
 import { getSilverCoinEmoji, getGoldBarEmoji, getCowboyEmoji, getPickaxeEmoji, getCheckEmoji, getSparklesEmoji, getMoneybagEmoji, getBackpackEmoji } from '../../utils/customEmojis';
 import { cleanupOldSessions, getActiveSessions, getUnclaimedSessions, getMiningStats, formatTime as formatMiningTime } from '../../utils/miningTracker';
 import { t, getLocale } from '../../utils/i18n';
+import { applyLocalizations } from '../../utils/commandLocalizations';
 const { addItem, getInventory, removeItem, transferItem } = require('../../utils/inventoryManager');
 const { addUserSilver, getUserSilver, removeUserSilver } = require('../../utils/dataManager');
 const { readData, writeData } = require('../../utils/database');
@@ -71,9 +72,14 @@ function formatTime(ms: number) {
 }
 
 module.exports = {
-  data: new SlashCommandBuilder()
-    .setName('mine')
-    .setDescription(`${getPickaxeEmoji()} Mine for gold in the mountains`),
+  data: applyLocalizations(
+    new SlashCommandBuilder()
+      .setName('mine')
+      .setDescription('Mine for gold in the mountains! Solo or cooperative')
+      .setContexts([0, 1, 2])
+      .setIntegrationTypes([0, 1]),
+    'mine'
+  ),
   async execute(interaction: ChatInputCommandInteraction): Promise<void> {
     const userId = interaction.user.id;
     

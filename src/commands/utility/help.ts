@@ -8,6 +8,7 @@ import {
   EmbedBuilder 
 } from 'discord.js';
 import { t, getLocale } from '../../utils/i18n';
+import { applyLocalizations } from '../../utils/commandLocalizations';
 import { 
   getMoneybagEmoji, 
   getSlotMachineEmoji, 
@@ -317,11 +318,14 @@ function getCategorySelectMenu(interaction: ChatInputCommandInteraction, isAdmin
 }
 
 export = {
-  data: new SlashCommandBuilder()
-    .setName('help')
-    .setDescription('Shows all available commands and their descriptions')
-    .setContexts([0, 1, 2])
-    .setIntegrationTypes([0, 1]),
+  data: applyLocalizations(
+    new SlashCommandBuilder()
+      .setName('help')
+      .setDescription('Shows all available commands and their descriptions')
+      .setContexts([0, 1, 2])
+      .setIntegrationTypes([0, 1]),
+    'help'
+  ),
   async execute(interaction: ChatInputCommandInteraction): Promise<void> {
     const isAdmin = interaction.memberPermissions?.has('Administrator') || false;
     const mainEmbed = getMainEmbed(interaction);

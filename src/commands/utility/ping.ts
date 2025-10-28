@@ -1,12 +1,16 @@
 import { SlashCommandBuilder, ChatInputCommandInteraction } from 'discord.js';
 import { t } from '../../utils/i18n';
+import { applyLocalizations } from '../../utils/commandLocalizations';
 
 export = {
-  data: new SlashCommandBuilder()
-    .setName('ping')
-    .setDescription('Check the bot\'s latency')
-    .setContexts([0, 1, 2]) // Guild, BotDM, PrivateChannel
-    .setIntegrationTypes([0, 1]), // Guild Install, User Install
+  data: applyLocalizations(
+    new SlashCommandBuilder()
+      .setName('ping')
+      .setDescription('Check the bot\'s latency')
+      .setContexts([0, 1, 2]) // Guild, BotDM, PrivateChannel
+      .setIntegrationTypes([0, 1]), // Guild Install, User Install
+    'ping'
+  ),
   async execute(interaction: ChatInputCommandInteraction): Promise<void> {
     await interaction.reply({ 
       content: '🏓 Calculating...'
