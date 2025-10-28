@@ -1,4 +1,4 @@
-import { ChatInputCommandInteraction } from 'discord.js';
+import { ChatInputCommandInteraction, ButtonInteraction, StringSelectMenuInteraction, Interaction } from 'discord.js';
 
 const translations: Record<string, Record<string, string>> = {
   'pt-BR': {
@@ -699,7 +699,7 @@ const translations: Record<string, Record<string, string>> = {
   }
 };
 
-export function getLocale(interaction: ChatInputCommandInteraction): string {
+export function getLocale(interaction: ChatInputCommandInteraction | ButtonInteraction | StringSelectMenuInteraction | Interaction): string {
   const locale = interaction.locale || 'en-US';
 
   if (locale.startsWith('pt')) return 'pt-BR';
@@ -709,7 +709,7 @@ export function getLocale(interaction: ChatInputCommandInteraction): string {
   return 'en-US';
 }
 
-export function t(interaction: ChatInputCommandInteraction, key: string, params: Record<string, any> = {}): string {
+export function t(interaction: ChatInputCommandInteraction | ButtonInteraction | StringSelectMenuInteraction | Interaction, key: string, params: Record<string, any> = {}): string {
   const locale = getLocale(interaction);
   let text = translations[locale][key] || translations['en-US'][key] || key;
   

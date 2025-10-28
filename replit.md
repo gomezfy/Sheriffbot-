@@ -60,6 +60,14 @@ None specified yet.
 
 ## Recent Changes
 - **October 28, 2025:**
+  - **Middleman Command Language Detection:** Implemented automatic language detection in `/middleman` command
+    - Command now fully supports i18n with automatic user language detection
+    - All messages, buttons, embeds, and menu options adapt to user's Discord language preference
+    - Translations for PT-BR, EN-US, ES-ES, and FR locales
+    - Updated i18n utility functions to accept ButtonInteraction and StringSelectMenuInteraction types
+    - Fixed TypeScript compilation errors related to interaction type checking
+    - Exchange rates, inventory display, and success messages all localized
+    - Improved UX for international users converting tokens and gold bars to silver coins
   - **Automatic Language Detection in Core Commands:** Implemented i18n (internationalization) support
     - Added comprehensive translations for `/bankrob`, `/mine`, and `/profile` commands in Portuguese (PT-BR) and English (EN-US)
     - Bot now automatically detects user's Discord language preference using `interaction.locale`

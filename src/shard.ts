@@ -25,7 +25,11 @@ const token = process.env.DISCORD_TOKEN!;
 // Calculate optimal shard count
 // Discord recommends 1 shard per 1000 guilds
 // For 10k+ users, we'll use auto sharding
-const manager = new ShardingManager(path.join(__dirname, 'index.js'), {
+// Check if we're running with ts-node (development) or compiled (production)
+const isTypeScript = __filename.endsWith('.ts');
+const indexFile = isTypeScript ? path.join(__dirname, 'index.ts') : path.join(__dirname, 'index.js');
+
+const shardOptions: any = {
   token: token,
   totalShards: 'auto', // Auto-calculate based on guild count
   respawn: true, // Auto-respawn crashed shards
@@ -34,7 +38,14 @@ const manager = new ShardingManager(path.join(__dirname, 'index.js'), {
     '--max-old-space-size=512', // 512MB per shard
     '--expose-gc' // Enable manual garbage collection
   ]
-});
+};
+
+// If running with TypeScript, use ts-node
+if (isTypeScript) {
+  shardOptions.execArgv.push('-r', 'ts-node/register');
+}
+
+const manager = new ShardingManager(indexFile, shardOptions);
 
 // Shard lifecycle events
 manager.on('shardCreate', shard => {
