@@ -60,12 +60,14 @@ None specified yet.
 
 ## Recent Changes
 - **October 28, 2025:**
-  - **Automatic Language Detection in Core Gambling and Mining Commands:** Implemented i18n (internationalization) support
-    - Added comprehensive translations for `/bankrob` and `/mine` commands in Portuguese (PT-BR) and English (EN-US)
+  - **Automatic Language Detection in Core Commands:** Implemented i18n (internationalization) support
+    - Added comprehensive translations for `/bankrob`, `/mine`, and `/profile` commands in Portuguese (PT-BR) and English (EN-US)
     - Bot now automatically detects user's Discord language preference using `interaction.locale`
     - All user-facing messages, buttons, embeds, and descriptions adapt to user's language
     - Translations include: titles, descriptions, field names, button labels, error messages, and success messages
-    - Over 80 new translation keys added to i18n system for both commands
+    - Profile command now displays "Nível/Level", "Sobre Mim/About Me" and buttons in user's language
+    - Profile cards dynamically generated with localized text on Canvas images
+    - Over 80 new translation keys added to i18n system for all three commands
     - Improved user experience for international users with native language support
     - Commands seamlessly switch between languages without user configuration
     - Translation system uses fallback to English if user's language is not supported

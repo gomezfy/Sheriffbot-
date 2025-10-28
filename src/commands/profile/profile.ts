@@ -5,6 +5,7 @@ const { getUserProfile } = require('../../utils/profileManager');
 const { parseTextWithEmojis } = require('../../utils/emojiMapper');
 const { getCustomEmojiPath, CUSTOM_EMOJIS } = require('../../utils/customEmojis');
 import { createCanvas, loadImage, GlobalFonts } from '@napi-rs/canvas';
+import { t, getLocale } from '../../utils/i18n';
 import fs from 'fs';
 import path from 'path';
 
@@ -43,7 +44,7 @@ module.exports = {
       level: xpData.level,
       bio: profile.bio,
       background: profile.background
-    });
+    }, interaction);
 
     const isOwnProfile = targetUser.id === interaction.user.id;
 
@@ -52,15 +53,15 @@ module.exports = {
         .addComponents(
           new ButtonBuilder()
             .setCustomId('edit_bio')
-            .setLabel('Edit Bio')
+            .setLabel(t(interaction, 'profile_edit_bio'))
             .setStyle(ButtonStyle.Primary),
           new ButtonBuilder()
             .setCustomId('change_background')
-            .setLabel('Change Background')
+            .setLabel(t(interaction, 'profile_change_bg'))
             .setStyle(ButtonStyle.Secondary),
           new ButtonBuilder()
             .setCustomId('shop_backgrounds')
-            .setLabel('Shop Backgrounds')
+            .setLabel(t(interaction, 'profile_shop_bg'))
             .setStyle(ButtonStyle.Success)
         );
 
@@ -71,7 +72,7 @@ module.exports = {
   },
 };
 
-async function createProfileCard(user: User, stats: any): Promise<AttachmentBuilder> {
+async function createProfileCard(user: User, stats: any, interaction: ChatInputCommandInteraction): Promise<AttachmentBuilder> {
   const canvas = createCanvas(1536, 1024);
   const ctx = canvas.getContext('2d');
 
@@ -242,7 +243,7 @@ async function createProfileCard(user: User, stats: any): Promise<AttachmentBuil
   ctx.fillStyle = '#FFFFFF';
   ctx.shadowColor = 'rgba(0, 0, 0, 0.7)';
   ctx.shadowBlur = 8;
-  ctx.fillText(`Nível ${stats.level}`, statsX + 80, statsY);
+  ctx.fillText(`${t(interaction, 'profile_level')} ${stats.level}`, statsX + 80, statsY);
   
   // XP in smaller text
   ctx.font = 'bold 28px Nunito';
@@ -272,14 +273,14 @@ async function createProfileCard(user: User, stats: any): Promise<AttachmentBuil
   ctx.save();
   ctx.font = 'bold 32px Nunito';
   ctx.fillStyle = '#FFFFFF';
-  ctx.fillText('Sobre Mim', bioX + 25, bioY + 45);
+  ctx.fillText(t(interaction, 'profile_about_me'), bioX + 25, bioY + 45);
   ctx.restore();
 
   // Bio text
   ctx.save();
   ctx.font = '28px Nunito Regular';
   ctx.fillStyle = '#E5E5E5';
-  await wrapTextWithEmojis(ctx, stats.bio || 'No bio set yet...', bioX + 25, bioY + 90, bioWidth - 50, 38);
+  await wrapTextWithEmojis(ctx, stats.bio || t(interaction, 'profile_no_bio'), bioX + 25, bioY + 90, bioWidth - 50, 38, interaction);
   ctx.restore();
 
   // Dropdown button icon (bottom right of bio box)
@@ -321,9 +322,9 @@ function roundRect(ctx: any, x: number, y: number, width: number, height: number
   ctx.closePath();
 }
 
-async function wrapTextWithEmojis(ctx: any, text: string, x: number, y: number, maxWidth: number, lineHeight: number): Promise<void> {
+async function wrapTextWithEmojis(ctx: any, text: string, x: number, y: number, maxWidth: number, lineHeight: number, interaction: ChatInputCommandInteraction): Promise<void> {
   if (!text || text.trim() === '') {
-    ctx.fillText('No bio set yet...', x, y);
+    ctx.fillText(t(interaction, 'profile_no_bio'), x, y);
     return;
   }
 
