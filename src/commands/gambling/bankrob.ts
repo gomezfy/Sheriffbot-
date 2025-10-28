@@ -13,9 +13,36 @@ const cooldowns = new Map();
 module.exports = {
   data: new SlashCommandBuilder()
     .setName('bankrob')
-    .setDescription('Start a bank robbery! Find a partner and rob the bank together!'),
+    .setDescription('Start a bank robbery! Find a partner and rob the bank together!')
+    .addUserOption(option =>
+      option
+        .setName('partner')
+        .setDescription('Choose your partner for the robbery')
+        .setRequired(true)
+    ),
   async execute(interaction: ChatInputCommandInteraction): Promise<void> {
     const userId = interaction.user.id;
+    const partner = interaction.options.getUser('partner', true);
+
+    // Can't rob with yourself
+    if (partner.id === userId) {
+      const cancelEmoji = getCancelEmoji();
+      await interaction.reply({
+        content: `${cancelEmoji} You can't rob the bank alone! Choose a partner.`,
+        flags: [MessageFlags.Ephemeral]
+      });
+      return;
+    }
+
+    // Can't rob with bots
+    if (partner.bot) {
+      const cancelEmoji = getCancelEmoji();
+      await interaction.reply({
+        content: `${cancelEmoji} Bots can't help you rob a bank! Choose a real partner.`,
+        flags: [MessageFlags.Ephemeral]
+      });
+      return;
+    }
 
     // Check if user is punished (in jail)
     const punishment = isPunished(userId);
@@ -75,7 +102,7 @@ module.exports = {
     const embed = new EmbedBuilder()
       .setColor('#FF0000')
       .setTitle(`${bankEmoji} ${t(interaction, 'bankrob_title')}`)
-      .setDescription(`${cowboysEmoji} **${interaction.user.username}** ${t(interaction, 'bankrob_planning')}\n\n${t(interaction, 'bankrob_dangerous_job')}\n\n${clockEmoji} ${t(interaction, 'bankrob_60_seconds')}`)
+      .setDescription(`${cowboysEmoji} **${interaction.user.username}** invited **${partner.username}** to rob the bank!\n\n${t(interaction, 'bankrob_dangerous_job')}\n\n${clockEmoji} **${partner.username}**, you have 60 seconds to accept!`)
       .setImage('attachment://bank-robbery.png')
       .addFields(
         { name: `${silverEmoji} ${t(interaction, 'bankrob_silver_reward')}`, value: t(interaction, 'bankrob_silver_split'), inline: true },
@@ -83,7 +110,7 @@ module.exports = {
         { name: `${clockEmoji} ${t(interaction, 'bankrob_duration')}`, value: t(interaction, 'bankrob_3_minutes'), inline: true },
         { name: `${getWarningEmoji()} ${t(interaction, 'bankrob_risk')}`, value: t(interaction, 'bankrob_risk_capture'), inline: true }
       )
-      .setFooter({ text: t(interaction, 'bankrob_click_join') })
+      .setFooter({ text: `${partner.username}, click the button below to join!` })
       .setTimestamp();
 
     const response = await interaction.reply({ embeds: [embed], components: [row], files: [bankRobberyImage] });
@@ -107,8 +134,9 @@ module.exports = {
       const lockEmoji = getMuteEmoji();
       const timerEmoji = getClockEmoji();
       
-      if (i.user.id === userId) {
-        await i.reply({ content: `${cancelEmoji} You can\'t join your own robbery!`, flags: [MessageFlags.Ephemeral] });
+      // Only the invited partner can join
+      if (i.user.id !== partner.id) {
+        await i.reply({ content: `${cancelEmoji} This robbery invitation is for **${partner.username}** only!`, flags: [MessageFlags.Ephemeral] });
         return;
       }
 
