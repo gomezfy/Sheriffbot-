@@ -141,6 +141,21 @@ export const commandLocalizations: Record<string, CommandLocalization> = {
     }
   },
   
+  redeem: {
+    name: {
+      'pt-BR': 'resgatar',
+      'en-US': 'redeem',
+      'es-ES': 'canjear',
+      'fr': 'echanger'
+    },
+    description: {
+      'pt-BR': 'Resgate um código de compra da loja do site',
+      'en-US': 'Redeem a purchase code from the website shop',
+      'es-ES': 'Canjea un código de compra de la tienda del sitio web',
+      'fr': 'Échangez un code d\'achat de la boutique du site web'
+    }
+  },
+  
   territories: {
     name: {
       'pt-BR': 'territorios',

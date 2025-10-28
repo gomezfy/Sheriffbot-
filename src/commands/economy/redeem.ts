@@ -3,6 +3,20 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { successEmbed, errorEmbed, warningEmbed, formatCurrency } from '../../utils/embeds';
 import { getDataPath, writeData, readData } from '../../utils/database';
+import { t, getLocale } from '../../utils/i18n';
+import { 
+  getGiftEmoji, 
+  getCheckEmoji, 
+  getCrossEmoji,
+  getSparklesEmoji,
+  getBackpackEmoji,
+  getStarEmoji,
+  getWarningEmoji,
+  getSaloonTokenEmoji,
+  getSilverCoinEmoji,
+  getInfoEmoji
+} from '../../utils/customEmojis';
+import { applyLocalizations } from '../../utils/commandLocalizations';
 const { addItem, upgradeBackpack, getBackpackLevel } = require('../../utils/inventoryManager');
 const { showProgressBar } = require('../../utils/progressBar');
 
@@ -36,18 +50,20 @@ function saveRedemptionCodes(data: Record<string, RedemptionCode>): void {
   writeData('redemption-codes.json', data);
 }
 
+const commandBuilder = new SlashCommandBuilder()
+  .setName('redeem')
+  .setDescription('🎁 Redeem a purchase code from the website shop')
+  .setContexts([0, 1, 2]) // Guild, BotDM, PrivateChannel
+  .setIntegrationTypes([0, 1]) // Guild Install, User Install
+  .addStringOption(option =>
+    option
+      .setName('code')
+      .setDescription('Your redemption code (e.g. SHERIFF-GOLD-ABC123)')
+      .setRequired(true)
+  );
+
 module.exports = {
-  data: new SlashCommandBuilder()
-    .setName('redeem')
-    .setDescription('🎁 Redeem a purchase code from the website shop')
-    .setContexts([0, 1, 2]) // Guild, BotDM, PrivateChannel
-    .setIntegrationTypes([0, 1]) // Guild Install, User Install
-    .addStringOption(option =>
-      option
-        .setName('code')
-        .setDescription('Your redemption code (e.g. SHERIFF-GOLD-ABC123)')
-        .setRequired(true)
-    ),
+  data: applyLocalizations(commandBuilder, 'redeem'),
   async execute(interaction: ChatInputCommandInteraction): Promise<void> {
     const code = interaction.options.getString('code', true).toUpperCase().trim();
     const userId = interaction.user.id;
@@ -59,11 +75,12 @@ module.exports = {
       
       // Check if code exists
       if (!redemptionCodes[code]) {
-        const embed = errorEmbed(
-          'Invalid Code',
-          `The code \`${code}\` does not exist.\n\nMake sure you copied it correctly from the shop!`,
-          'Buy products at the website shop'
-        );
+        const embed = new EmbedBuilder()
+          .setColor(0xE74C3C)
+          .setTitle(`${getCrossEmoji()} ${t(interaction, 'redeem_invalid_title')}`)
+          .setDescription(t(interaction, 'redeem_invalid_desc', { code }))
+          .setFooter({ text: t(interaction, 'redeem_invalid_footer') })
+          .setTimestamp();
         
         await interaction.editReply({ embeds: [embed] });
         return;
@@ -75,18 +92,22 @@ module.exports = {
       if (redemption.redeemed) {
         const redeemedDate = redemption.redeemedAt ? new Date(redemption.redeemedAt).toLocaleString() : 'Unknown';
         
-        const embed = warningEmbed(
-          'Already Redeemed',
-          `This code has already been used!\n\n**Product:** ${redemption.productName}\n**Redeemed on:** ${redeemedDate}`,
-          'Each code can only be used once'
-        );
+        const embed = new EmbedBuilder()
+          .setColor(0xF39C12)
+          .setTitle(`${getWarningEmoji()} ${t(interaction, 'redeem_already_title')}`)
+          .setDescription(t(interaction, 'redeem_already_desc', { 
+            product: redemption.productName,
+            date: redeemedDate 
+          }))
+          .setFooter({ text: t(interaction, 'redeem_already_footer') })
+          .setTimestamp();
         
         await interaction.editReply({ embeds: [embed] });
         return;
       }
 
       // Show progress bar
-      await showProgressBar(interaction, '🎁 REDEEMING CODE', 'Processing your purchase...', 2000, '#FFD700');
+      await showProgressBar(interaction, `${getGiftEmoji()} ${t(interaction, 'redeem_processing').toUpperCase()}`, t(interaction, 'redeem_processing'), 2000, '#FFD700');
 
       // Apply rewards
       const rewards = [];
@@ -97,7 +118,7 @@ module.exports = {
       if (redemption.tokens > 0) {
         const tokenResult = addItem(userId, 'saloon_token', redemption.tokens);
         if (tokenResult.success) {
-          rewards.push(`+${formatCurrency(redemption.tokens, 'tokens')}`);
+          rewards.push(`${getSaloonTokenEmoji()} +${formatCurrency(redemption.tokens, 'tokens')}`);
         }
       }
 
@@ -105,7 +126,7 @@ module.exports = {
       if (redemption.coins > 0) {
         const coinResult = addItem(userId, 'silver', redemption.coins);
         if (coinResult.success) {
-          rewards.push(`+${formatCurrency(redemption.coins, 'silver')}`);
+          rewards.push(`${getSilverCoinEmoji()} +${formatCurrency(redemption.coins, 'silver')}`);
         }
       }
 
@@ -119,11 +140,15 @@ module.exports = {
         const inventory = getInventory(userId);
         
         if (inventory.maxWeight >= targetCapacity) {
-          const embed = warningEmbed(
-            'Upgrade Not Needed',
-            `You already have a backpack with **${inventory.maxWeight}kg** capacity!\n\nThis upgrade is for **${targetCapacity}kg**, which you already have or exceeded.\n\n**Note:** Your redemption code was **not consumed** and can be given to another player.`,
-            'Consider buying a higher tier upgrade'
-          );
+          const embed = new EmbedBuilder()
+            .setColor(0xF39C12)
+            .setTitle(`${getInfoEmoji()} ${t(interaction, 'redeem_upgrade_not_needed_title')}`)
+            .setDescription(t(interaction, 'redeem_upgrade_not_needed_desc', { 
+              current: inventory.maxWeight,
+              target: targetCapacity 
+            }))
+            .setFooter({ text: t(interaction, 'redeem_upgrade_not_needed_footer') })
+            .setTimestamp();
           
           await interaction.editReply({ embeds: [embed] });
           return;
@@ -134,7 +159,7 @@ module.exports = {
         if (upgradeResult.success) {
           backpackUpgraded = true;
           newCapacity = targetCapacity;
-          rewards.push(`📦 Inventory upgraded to **${targetCapacity}kg**`);
+          rewards.push(`${getBackpackEmoji()} ${t(interaction, 'redeem_inventory_upgraded', { capacity: targetCapacity })}`);
         }
       }
 
@@ -146,24 +171,45 @@ module.exports = {
       saveRedemptionCodes(redemptionCodes);
 
       // Create success embed
-      const embed = successEmbed(
-        'Code Redeemed Successfully!',
-        `Thank you for your purchase! 🎉\n\n**Product:** ${redemption.productName}\n**Code:** \`${code}\``,
-        'Enjoy your rewards, partner!'
-      ).addFields(
-        { name: '🎁 Rewards Received', value: rewards.length > 0 ? rewards.join('\n') : 'Special perks activated!', inline: false }
-      );
+      const embed = new EmbedBuilder()
+        .setColor(0x2ECC71)
+        .setTitle(`${getCheckEmoji()} ${t(interaction, 'redeem_success_title')}`)
+        .setDescription(t(interaction, 'redeem_success_desc', { 
+          product: redemption.productName,
+          code 
+        }))
+        .addFields(
+          { 
+            name: `${getGiftEmoji()} ${t(interaction, 'redeem_rewards')}`, 
+            value: rewards.length > 0 ? rewards.join('\n') : t(interaction, 'redeem_special_perks'), 
+            inline: false 
+          }
+        )
+        .setFooter({ text: t(interaction, 'redeem_success_footer') })
+        .setTimestamp();
 
       if (redemption.vip) {
-        embed.addFields({ name: '🌟 VIP Status', value: 'Activated! You now have access to exclusive features.', inline: false });
+        embed.addFields({ 
+          name: `${getStarEmoji()} ${t(interaction, 'redeem_vip_status')}`, 
+          value: t(interaction, 'redeem_vip_activated'), 
+          inline: false 
+        });
       }
 
       if (redemption.background) {
-        embed.addFields({ name: '🎨 Exclusive Background', value: 'Unlocked! Use it in your profile.', inline: false });
+        embed.addFields({ 
+          name: `${getSparklesEmoji()} ${t(interaction, 'redeem_background')}`, 
+          value: t(interaction, 'redeem_background_unlocked'), 
+          inline: false 
+        });
       }
 
       if (backpackUpgraded) {
-        embed.addFields({ name: '🎒 Backpack Upgraded', value: `Your inventory capacity is now **${newCapacity}kg**!`, inline: false });
+        embed.addFields({ 
+          name: `${getBackpackEmoji()} ${t(interaction, 'redeem_backpack')}`, 
+          value: t(interaction, 'redeem_backpack_upgraded', { capacity: newCapacity }), 
+          inline: false 
+        });
       }
 
       await interaction.editReply({ embeds: [embed] });
@@ -173,11 +219,12 @@ module.exports = {
     } catch (error) {
       console.error('Error redeeming code:', error);
       
-      const embed = errorEmbed(
-        'Redemption Error',
-        `An error occurred while processing your code.\n\nPlease try again or contact support if the issue persists.`,
-        'Error details have been logged'
-      );
+      const embed = new EmbedBuilder()
+        .setColor(0xE74C3C)
+        .setTitle(`${getCrossEmoji()} ${t(interaction, 'redeem_error_title')}`)
+        .setDescription(t(interaction, 'redeem_error_desc'))
+        .setFooter({ text: t(interaction, 'redeem_error_footer') })
+        .setTimestamp();
       
       await interaction.editReply({ embeds: [embed] });
     }
