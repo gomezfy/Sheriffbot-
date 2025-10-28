@@ -16,7 +16,7 @@ None specified yet.
 ### Technical Implementations
 - **Language & Runtime:** Built with TypeScript on Node.js 20, utilizing `ts-node`.
 - **Discord Integration:** Uses `discord.js v14` for all Discord API interactions.
-- **Command Structure:** Features 36 slash commands across categories like Admin, Bounty, Economy, Gambling, Mining, Profile, and Utility.
+- **Command Structure:** Features 33 slash commands across categories like Admin, Bounty, Economy, Gambling, Mining, Profile, and Utility. Commands are organized with subcommands to reduce clutter (e.g., `/bounty` with `list`, `wanted`, `capture`, `clear` subcommands).
 - **Economy System:** Implements a dual economy with "Saloon Tokens" and "Silver Coins."
 - **Upgrades & Redemption:** Includes progressive backpack upgrades and a system for redeeming website purchase codes.
 - **Image Generation:** Employs `@napi-rs/canvas` for dynamic image rendering.
