@@ -124,16 +124,16 @@ module.exports = {
 
             const sessionsEmbed = new EmbedBuilder()
               .setColor(0xFFD700)
-              .setTitle(`${getPickaxeEmoji()} MINING SESSIONS TRACKER`)
-              .setDescription('Current mining operations across the server')
+              .setTitle(`${getPickaxeEmoji()} ${t(i, 'mine_sessions_tracker')}`)
+              .setDescription(t(i, 'mine_current_operations'))
               .addFields({
-                name: '📊 Overview',
+                name: `📊 ${t(i, 'mine_overview')}`,
                 value: `\`\`\`yaml
-Active Sessions: ${stats.totalActive}
-Solo Mining: ${stats.soloMining}
-Cooperative: ${stats.coopMining}
-Ready to Claim: ${stats.unclaimed}
-Pending Gold: ${stats.totalGoldPending} ${goldEmoji}
+${t(i, 'mine_active_sessions')}: ${stats.totalActive}
+${t(i, 'mine_solo_mining_label')}: ${stats.soloMining}
+${t(i, 'mine_cooperative_label')}: ${stats.coopMining}
+${t(i, 'mine_ready_to_claim')}: ${stats.unclaimed}
+${t(i, 'mine_pending_gold')}: ${stats.totalGoldPending} ${goldEmoji}
 \`\`\``,
                 inline: false
               });
@@ -147,8 +147,8 @@ Pending Gold: ${stats.totalGoldPending} ${goldEmoji}
               }).join('\n\n');
 
               sessionsEmbed.addFields({
-                name: '⏳ Active Mining',
-                value: activeList + (activeSessions.length > 10 ? `\n\n_+${activeSessions.length - 10} more..._` : ''),
+                name: `⏳ ${t(i, 'mine_active_mining')}`,
+                value: activeList + (activeSessions.length > 10 ? `\n\n_+${activeSessions.length - 10} ${t(i, 'mine_more')}_` : ''),
                 inline: false
               });
             }
@@ -159,21 +159,21 @@ Pending Gold: ${stats.totalGoldPending} ${goldEmoji}
               }).join('\n');
 
               sessionsEmbed.addFields({
-                name: '✅ Ready to Claim',
-                value: unclaimedList + (unclaimedSessions.length > 5 ? `\n_+${unclaimedSessions.length - 5} more..._` : ''),
+                name: `✅ ${t(i, 'mine_ready_to_claim')}`,
+                value: unclaimedList + (unclaimedSessions.length > 5 ? `\n_+${unclaimedSessions.length - 5} ${t(i, 'mine_more')}_` : ''),
                 inline: false
               });
             }
 
             if (activeSessions.length === 0 && unclaimedSessions.length === 0) {
               sessionsEmbed.addFields({
-                name: '💤 No Active Sessions',
-                value: 'No one is currently mining.',
+                name: `💤 ${t(i, 'mine_no_active_sessions')}`,
+                value: t(i, 'mine_no_one_mining'),
                 inline: false
               });
             }
 
-            sessionsEmbed.setFooter({ text: `${getPickaxeEmoji()} Mining sessions update in real-time` }).setTimestamp();
+            sessionsEmbed.setFooter({ text: `${getPickaxeEmoji()} ${t(i, 'mine_sessions_realtime')}` }).setTimestamp();
             await i.reply({ embeds: [sessionsEmbed], flags: MessageFlags.Ephemeral });
           }
         });
@@ -218,16 +218,16 @@ Pending Gold: ${stats.totalGoldPending} ${goldEmoji}
 
             const sessionsEmbed = new EmbedBuilder()
               .setColor(0xFFD700)
-              .setTitle(`${getPickaxeEmoji()} MINING SESSIONS TRACKER`)
-              .setDescription('Current mining operations across the server')
+              .setTitle(`${getPickaxeEmoji()} ${t(i, 'mine_sessions_tracker')}`)
+              .setDescription(t(i, 'mine_current_operations'))
               .addFields({
-                name: '📊 Overview',
+                name: `📊 ${t(i, 'mine_overview')}`,
                 value: `\`\`\`yaml
-Active Sessions: ${stats.totalActive}
-Solo Mining: ${stats.soloMining}
-Cooperative: ${stats.coopMining}
-Ready to Claim: ${stats.unclaimed}
-Pending Gold: ${stats.totalGoldPending} ${goldEmoji}
+${t(i, 'mine_active_sessions')}: ${stats.totalActive}
+${t(i, 'mine_solo_mining_label')}: ${stats.soloMining}
+${t(i, 'mine_cooperative_label')}: ${stats.coopMining}
+${t(i, 'mine_ready_to_claim')}: ${stats.unclaimed}
+${t(i, 'mine_pending_gold')}: ${stats.totalGoldPending} ${goldEmoji}
 \`\`\``,
                 inline: false
               });
@@ -241,8 +241,8 @@ Pending Gold: ${stats.totalGoldPending} ${goldEmoji}
               }).join('\n\n');
 
               sessionsEmbed.addFields({
-                name: '⏳ Active Mining',
-                value: activeList + (activeSessions.length > 10 ? `\n\n_+${activeSessions.length - 10} more..._` : ''),
+                name: `⏳ ${t(i, 'mine_active_mining')}`,
+                value: activeList + (activeSessions.length > 10 ? `\n\n_+${activeSessions.length - 10} ${t(i, 'mine_more')}_` : ''),
                 inline: false
               });
             }
@@ -253,21 +253,21 @@ Pending Gold: ${stats.totalGoldPending} ${goldEmoji}
               }).join('\n');
 
               sessionsEmbed.addFields({
-                name: '✅ Ready to Claim',
-                value: unclaimedList + (unclaimedSessions.length > 5 ? `\n_+${unclaimedSessions.length - 5} more..._` : ''),
+                name: `✅ ${t(i, 'mine_ready_to_claim')}`,
+                value: unclaimedList + (unclaimedSessions.length > 5 ? `\n_+${unclaimedSessions.length - 5} ${t(i, 'mine_more')}_` : ''),
                 inline: false
               });
             }
 
             if (activeSessions.length === 0 && unclaimedSessions.length === 0) {
               sessionsEmbed.addFields({
-                name: '💤 No Active Sessions',
-                value: 'No one is currently mining.',
+                name: `💤 ${t(i, 'mine_no_active_sessions')}`,
+                value: t(i, 'mine_no_one_mining'),
                 inline: false
               });
             }
 
-            sessionsEmbed.setFooter({ text: `${getPickaxeEmoji()} Mining sessions update in real-time` }).setTimestamp();
+            sessionsEmbed.setFooter({ text: `${getPickaxeEmoji()} ${t(i, 'mine_sessions_realtime')}` }).setTimestamp();
             return i.reply({ embeds: [sessionsEmbed], flags: MessageFlags.Ephemeral });
           }
           
@@ -336,15 +336,15 @@ Pending Gold: ${stats.totalGoldPending} ${goldEmoji}
       .addComponents(
         new ButtonBuilder()
           .setCustomId('mine_solo')
-          .setLabel('Mine Alone (1h30m)')
+          .setLabel(t(interaction, 'mine_alone_duration'))
           .setStyle(ButtonStyle.Primary),
         new ButtonBuilder()
           .setCustomId('mine_coop')
-          .setLabel('Find Partner (30min)')
+          .setLabel(t(interaction, 'mine_find_partner'))
           .setStyle(ButtonStyle.Success),
         new ButtonBuilder()
           .setCustomId('view_sessions')
-          .setLabel('View Sessions')
+          .setLabel(t(interaction, 'mine_sessions_btn'))
           .setStyle(ButtonStyle.Secondary)
       );
 
@@ -355,27 +355,27 @@ Pending Gold: ${stats.totalGoldPending} ${goldEmoji}
 
     const embed = new EmbedBuilder()
       .setColor(0xFFD700)
-      .setTitle(`${getPickaxeEmoji()} GOLD MINING`)
+      .setTitle(`${getPickaxeEmoji()} ${t(interaction, 'mine_title')}`)
       .setImage('attachment://gold-mining.png')
-      .setDescription('Choose your mining method:')
+      .setDescription(t(interaction, 'mine_choose'))
       .addFields(
         {
-          name: `${getPickaxeEmoji()} Solo Mining`,
-          value: '```yaml\nDuration: 1h 30min\nReward: 1-3 Gold Bars\nPlayers: 1```',
+          name: `${getPickaxeEmoji()} ${t(interaction, 'mine_solo_mining_label')}`,
+          value: `\`\`\`yaml\n${t(interaction, 'mine_duration_1h30')}\n${t(interaction, 'mine_reward_1_3')}\n${t(interaction, 'mine_players_1')}\`\`\``,
           inline: true
         },
         {
-          name: '👥 Cooperative Mining',
-          value: '```yaml\nDuration: 30 minutes\nReward: 4-6 Gold Bars (split)\nPlayers: 2```',
+          name: `👥 ${t(interaction, 'mine_coop')}`,
+          value: `\`\`\`yaml\n${t(interaction, 'mine_duration_30min')}\n${t(interaction, 'mine_reward_4_6_split')}\n${t(interaction, 'mine_players_2')}\`\`\``,
           inline: true
         },
         {
-          name: '💰 Gold Value',
-          value: `\`\`\`1 Gold Bar = ${GOLD_VALUE} Silver Coins\`\`\``,
+          name: `💰 ${t(interaction, 'mine_gold_value_label')}`,
+          value: `\`\`\`${t(interaction, 'mine_gold_value', { value: GOLD_VALUE })}\`\`\``,
           inline: false
         }
       )
-      .setFooter({ text: 'Mining happens automatically - come back when done!' })
+      .setFooter({ text: t(interaction, 'mine_auto_come_back') })
       .setTimestamp();
 
     await interaction.reply({ 
@@ -452,8 +452,8 @@ Pending Gold: ${stats.totalGoldPending} ${goldEmoji}
 
         if (activeSessions.length === 0 && unclaimedSessions.length === 0) {
           sessionsEmbed.addFields({
-            name: '💤 No Active Sessions',
-            value: 'No one is currently mining. Use the buttons below to start!',
+            name: `💤 ${t(i, 'mine_no_active_sessions')}`,
+            value: t(i, 'mine_no_one_mining_start'),
             inline: false
           });
         }

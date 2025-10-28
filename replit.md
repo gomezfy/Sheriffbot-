@@ -60,6 +60,14 @@ None specified yet.
 
 ## Recent Changes
 - **October 28, 2025:**
+  - **Mine Command Language Detection Improvements:** Completed automatic language detection in `/mine` command
+    - Added 20+ new translation keys for mining sessions tracker, overview, and UI elements
+    - Translated all hardcoded English strings including: "MINING SESSIONS TRACKER", "Active Mining", "Ready to Claim", etc.
+    - Mining method buttons now display in user's language ("Minerar Sozinho" vs "Mine Alone")
+    - Session statistics and progress indicators fully localized
+    - Field names, descriptions, and footer messages adapt to user's language
+    - Fixed "more..." text and session status labels to use translations
+    - Consistent i18n implementation across all mining states (idle, in-progress, completed)
   - **Middleman Command Language Detection:** Implemented automatic language detection in `/middleman` command
     - Command now fully supports i18n with automatic user language detection
     - All messages, buttons, embeds, and menu options adapt to user's Discord language preference
