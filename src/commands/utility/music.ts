@@ -26,12 +26,13 @@ import {
   createProgressBar,
   formatDuration
 } from '../../utils/musicQueue';
+import { t, getLocale } from '../../utils/i18n';
+import { applyLocalizations } from '../../utils/commandLocalizations';
 
-module.exports = {
-  data: new SlashCommandBuilder()
-    .setName('music')
-    .setDescription('🎵 Professional music player system')
-    .addSubcommand(subcommand =>
+const commandBuilder = new SlashCommandBuilder()
+  .setName('music')
+  .setDescription('🎵 Professional music player system')
+  .addSubcommand(subcommand =>
       subcommand
         .setName('play')
         .setDescription('Play a song from YouTube')
@@ -94,8 +95,11 @@ module.exports = {
             .setMinValue(0)
             .setMaxValue(100)
         )
-    ),
+    );
 
+module.exports = {
+  data: applyLocalizations(commandBuilder, 'music'),
+  
   async execute(interaction: ChatInputCommandInteraction): Promise<void> {
     const subcommand = interaction.options.getSubcommand();
 
@@ -134,7 +138,7 @@ module.exports = {
   }
 };
 
-function createNowPlayingEmbed(guildId: string): EmbedBuilder | null {
+function createNowPlayingEmbed(guildId: string, interaction: any): EmbedBuilder | null {
   const queue = getQueue(guildId);
   if (!queue || queue.songs.length === 0) return null;
 
@@ -146,29 +150,34 @@ function createNowPlayingEmbed(guildId: string): EmbedBuilder | null {
   const totalTimeStr = song.duration;
   
   const statusIcon = queue.playing ? '▶️' : '⏸️';
-  const loopText = queue.loop ? '🔂 Loop: Song' : queue.loopQueue ? '🔁 Loop: Queue' : '➡️ Normal';
+  const statusText = queue.playing ? t(interaction, 'music_status_playing') : t(interaction, 'music_status_paused');
+  const loopText = queue.loop 
+    ? t(interaction, 'music_loop_mode_song') 
+    : queue.loopQueue 
+    ? t(interaction, 'music_loop_mode_queue') 
+    : t(interaction, 'music_loop_mode_normal');
   
   const embed = new EmbedBuilder()
     .setColor(0x1DB954)
     .setAuthor({ 
-      name: '🎵 Now Playing', 
+      name: t(interaction, 'music_now_playing'), 
       iconURL: 'https://cdn.discordapp.com/attachments/placeholder/music-note.png' 
     })
     .setTitle(song.title)
     .setURL(song.url)
     .setThumbnail(song.thumbnail)
     .setDescription(
-      `${statusIcon} **Status:** ${queue.playing ? 'Playing' : 'Paused'}\n` +
+      `${statusIcon} **${t(interaction, 'music_status')}:** ${statusText}\n` +
       `${loopText}\n` +
-      `🔊 **Volume:** ${queue.volume}%\n\n` +
+      `${t(interaction, 'music_volume')}: ${queue.volume}%\n\n` +
       `\`${currentTimeStr}\` ${progress} \`${totalTimeStr}\``
     )
     .addFields(
-      { name: '👤 Requested By', value: `<@${song.requestedBy}>`, inline: true },
-      { name: '📋 Queue', value: `${queue.songs.length} song(s)`, inline: true },
-      { name: '⏱️ Duration', value: totalTimeStr, inline: true }
+      { name: t(interaction, 'music_requested_by'), value: `<@${song.requestedBy}>`, inline: true },
+      { name: t(interaction, 'music_queue_count'), value: `${queue.songs.length} ${t(interaction, 'music_songs')}`, inline: true },
+      { name: t(interaction, 'music_duration'), value: totalTimeStr, inline: true }
     )
-    .setFooter({ text: 'Use the buttons below to control playback' })
+    .setFooter({ text: t(interaction, 'music_use_buttons') })
     .setTimestamp();
 
   return embed;
@@ -182,7 +191,7 @@ async function handlePlay(interaction: ChatInputCommandInteraction): Promise<voi
 
   if (!voiceChannel) {
     await interaction.editReply({
-      content: '❌ You need to be in a voice channel to play music!'
+      content: t(interaction, 'music_need_voice_channel')
     });
     return;
   }
@@ -190,14 +199,14 @@ async function handlePlay(interaction: ChatInputCommandInteraction): Promise<voi
   const query = interaction.options.getString('song', true);
 
   await interaction.editReply({
-    content: '🔍 Searching for your song...'
+    content: t(interaction, 'music_searching')
   });
 
   const song = await searchSong(query);
 
   if (!song) {
     await interaction.editReply({
-      content: '❌ Could not find that song. Please try again with a different search term.'
+      content: t(interaction, 'music_not_found')
     });
     return;
   }
@@ -216,8 +225,8 @@ async function handlePlay(interaction: ChatInputCommandInteraction): Promise<voi
     queue.songs.push(song);
     await playSong(interaction.guildId!);
 
-    const rows = createPlayerControls();
-    const embed = createNowPlayingEmbed(interaction.guildId!);
+    const rows = createPlayerControls(interaction);
+    const embed = createNowPlayingEmbed(interaction.guildId!, interaction);
 
     const reply = await interaction.editReply({
       content: '',
@@ -225,20 +234,20 @@ async function handlePlay(interaction: ChatInputCommandInteraction): Promise<voi
       components: rows
     });
 
-    setupControlsCollector(reply, interaction.guildId!);
-    startProgressUpdater(reply, interaction.guildId!);
+    setupControlsCollector(reply, interaction.guildId!, interaction);
+    startProgressUpdater(reply, interaction.guildId!, interaction);
   } else {
     queue.songs.push(song);
 
     const embed = new EmbedBuilder()
       .setColor(0xFFD700)
-      .setTitle('➕ Added to Queue')
+      .setTitle(t(interaction, 'music_added_to_queue'))
       .setDescription(`**[${song.title}](${song.url})**`)
       .setThumbnail(song.thumbnail)
       .addFields(
-        { name: '⏱️ Duration', value: song.duration, inline: true },
-        { name: '📊 Position in Queue', value: `#${queue.songs.length}`, inline: true },
-        { name: '👤 Requested by', value: `<@${song.requestedBy}>`, inline: true }
+        { name: t(interaction, 'music_duration'), value: song.duration, inline: true },
+        { name: t(interaction, 'music_position_in_queue'), value: `#${queue.songs.length}`, inline: true },
+        { name: t(interaction, 'music_requested_by'), value: `<@${song.requestedBy}>`, inline: true }
       )
       .setTimestamp();
 
@@ -254,7 +263,7 @@ async function handlePause(interaction: ChatInputCommandInteraction): Promise<vo
 
   if (!queue || queue.songs.length === 0) {
     await interaction.reply({
-      content: '❌ Nothing is currently playing!',
+      content: t(interaction, 'music_nothing_playing'),
       flags: MessageFlags.Ephemeral
     });
     return;
@@ -264,12 +273,12 @@ async function handlePause(interaction: ChatInputCommandInteraction): Promise<vo
 
   if (paused) {
     await interaction.reply({
-      content: '⏸️ Paused the music!',
+      content: t(interaction, 'music_paused'),
       flags: MessageFlags.Ephemeral
     });
   } else {
     await interaction.reply({
-      content: '❌ Could not pause the music.',
+      content: t(interaction, 'music_could_not_pause'),
       flags: MessageFlags.Ephemeral
     });
   }
@@ -280,7 +289,7 @@ async function handleResume(interaction: ChatInputCommandInteraction): Promise<v
 
   if (!queue || queue.songs.length === 0) {
     await interaction.reply({
-      content: '❌ Nothing is currently playing!',
+      content: t(interaction, 'music_nothing_playing'),
       flags: MessageFlags.Ephemeral
     });
     return;
@@ -290,12 +299,12 @@ async function handleResume(interaction: ChatInputCommandInteraction): Promise<v
 
   if (resumed) {
     await interaction.reply({
-      content: '▶️ Resumed the music!',
+      content: t(interaction, 'music_resumed'),
       flags: MessageFlags.Ephemeral
     });
   } else {
     await interaction.reply({
-      content: '❌ Could not resume the music.',
+      content: t(interaction, 'music_could_not_resume'),
       flags: MessageFlags.Ephemeral
     });
   }
@@ -306,7 +315,7 @@ async function handleSkip(interaction: ChatInputCommandInteraction): Promise<voi
 
   if (!queue || queue.songs.length === 0) {
     await interaction.reply({
-      content: '❌ Nothing is currently playing!',
+      content: t(interaction, 'music_nothing_playing'),
       flags: MessageFlags.Ephemeral
     });
     return;
@@ -316,12 +325,12 @@ async function handleSkip(interaction: ChatInputCommandInteraction): Promise<voi
 
   if (skipped) {
     await interaction.reply({
-      content: '⏭️ Skipped the current song!',
+      content: t(interaction, 'music_skipped'),
       flags: MessageFlags.Ephemeral
     });
   } else {
     await interaction.reply({
-      content: '❌ Could not skip the song.',
+      content: t(interaction, 'music_could_not_skip'),
       flags: MessageFlags.Ephemeral
     });
   }
@@ -332,7 +341,7 @@ async function handleStop(interaction: ChatInputCommandInteraction): Promise<voi
 
   if (!queue) {
     await interaction.reply({
-      content: '❌ Nothing is currently playing!',
+      content: t(interaction, 'music_nothing_playing'),
       flags: MessageFlags.Ephemeral
     });
     return;
@@ -341,7 +350,7 @@ async function handleStop(interaction: ChatInputCommandInteraction): Promise<voi
   stopMusic(interaction.guildId!);
 
   await interaction.reply({
-    content: '⏹️ Stopped the music and cleared the queue!',
+    content: t(interaction, 'music_stopped'),
     flags: MessageFlags.Ephemeral
   });
 }
@@ -351,7 +360,7 @@ async function handleQueue(interaction: ChatInputCommandInteraction): Promise<vo
 
   if (!queue || queue.songs.length === 0) {
     await interaction.reply({
-      content: '❌ The queue is empty!',
+      content: t(interaction, 'music_queue_empty'),
       flags: MessageFlags.Ephemeral
     });
     return;
@@ -362,41 +371,41 @@ async function handleQueue(interaction: ChatInputCommandInteraction): Promise<vo
 
   const embed = new EmbedBuilder()
     .setColor(0x3498DB)
-    .setTitle('🎵 Music Queue')
+    .setTitle(t(interaction, 'music_queue_title'))
     .setThumbnail(currentSong.thumbnail)
     .addFields({
-      name: '🎵 Now Playing',
-      value: `**[${currentSong.title}](${currentSong.url})**\n⏱️ ${currentSong.duration} | 👤 <@${currentSong.requestedBy}>`,
+      name: t(interaction, 'music_now_playing_label'),
+      value: `**[${currentSong.title}](${currentSong.url})**\n${t(interaction, 'music_duration')}: ${currentSong.duration} | ${t(interaction, 'music_requested_by')}: <@${currentSong.requestedBy}>`,
       inline: false
     })
     .setTimestamp();
 
   if (upcomingSongs.length > 0) {
     const queueText = upcomingSongs
-      .map((song, index) => `**${index + 1}.** [${song.title}](${song.url})\n⏱️ ${song.duration} | 👤 <@${song.requestedBy}>`)
+      .map((song, index) => `**${index + 1}.** [${song.title}](${song.url})\n${t(interaction, 'music_duration')}: ${song.duration} | ${t(interaction, 'music_requested_by')}: <@${song.requestedBy}>`)
       .join('\n\n');
 
     embed.addFields({
-      name: '📋 Up Next',
+      name: t(interaction, 'music_up_next'),
       value: queueText,
       inline: false
     });
 
     if (queue.songs.length > 11) {
-      embed.setFooter({ text: `And ${queue.songs.length - 11} more songs...` });
+      embed.setFooter({ text: t(interaction, 'music_and_more').replace('{count}', `${queue.songs.length - 11}`) });
     }
   }
 
   if (queue.loop) {
     embed.addFields({
-      name: '🔂 Loop Status',
-      value: '**Current Song** is looping',
+      name: t(interaction, 'music_loop_mode_song'),
+      value: '**' + t(interaction, 'music_status_playing') + '**',
       inline: true
     });
   } else if (queue.loopQueue) {
     embed.addFields({
-      name: '🔁 Loop Status',
-      value: '**Queue** is looping',
+      name: t(interaction, 'music_loop_mode_queue'),
+      value: '**' + t(interaction, 'music_status_playing') + '**',
       inline: true
     });
   }
@@ -412,14 +421,14 @@ async function handleNowPlaying(interaction: ChatInputCommandInteraction): Promi
 
   if (!queue || queue.songs.length === 0) {
     await interaction.reply({
-      content: '❌ Nothing is currently playing!',
+      content: t(interaction, 'music_nothing_playing'),
       flags: MessageFlags.Ephemeral
     });
     return;
   }
 
-  const embed = createNowPlayingEmbed(interaction.guildId!);
-  const rows = createPlayerControls();
+  const embed = createNowPlayingEmbed(interaction.guildId!, interaction);
+  const rows = createPlayerControls(interaction);
 
   const reply = await interaction.reply({
     embeds: embed ? [embed] : [],
@@ -427,8 +436,8 @@ async function handleNowPlaying(interaction: ChatInputCommandInteraction): Promi
     fetchReply: true
   });
 
-  setupControlsCollector(reply, interaction.guildId!);
-  startProgressUpdater(reply, interaction.guildId!);
+  setupControlsCollector(reply, interaction.guildId!, interaction);
+  startProgressUpdater(reply, interaction.guildId!, interaction);
 }
 
 async function handleLoop(interaction: ChatInputCommandInteraction): Promise<void> {
@@ -436,7 +445,7 @@ async function handleLoop(interaction: ChatInputCommandInteraction): Promise<voi
 
   if (!queue || queue.songs.length === 0) {
     await interaction.reply({
-      content: '❌ Nothing is currently playing!',
+      content: t(interaction, 'music_nothing_playing'),
       flags: MessageFlags.Ephemeral
     });
     return;
@@ -445,7 +454,7 @@ async function handleLoop(interaction: ChatInputCommandInteraction): Promise<voi
   const loopEnabled = toggleLoop(interaction.guildId!);
 
   await interaction.reply({
-    content: loopEnabled ? '🔂 Loop enabled for current song!' : '🔂 Loop disabled!',
+    content: loopEnabled ? t(interaction, 'music_loop_song_enabled') : t(interaction, 'music_loop_disabled'),
     flags: MessageFlags.Ephemeral
   });
 }
@@ -455,7 +464,7 @@ async function handleLoopQueue(interaction: ChatInputCommandInteraction): Promis
 
   if (!queue || queue.songs.length === 0) {
     await interaction.reply({
-      content: '❌ Nothing is currently playing!',
+      content: t(interaction, 'music_nothing_playing'),
       flags: MessageFlags.Ephemeral
     });
     return;
@@ -464,7 +473,7 @@ async function handleLoopQueue(interaction: ChatInputCommandInteraction): Promis
   const loopEnabled = toggleLoopQueue(interaction.guildId!);
 
   await interaction.reply({
-    content: loopEnabled ? '🔁 Queue loop enabled!' : '🔁 Queue loop disabled!',
+    content: loopEnabled ? t(interaction, 'music_loop_queue_enabled') : t(interaction, 'music_loop_disabled'),
     flags: MessageFlags.Ephemeral
   });
 }
@@ -474,7 +483,7 @@ async function handleVolume(interaction: ChatInputCommandInteraction): Promise<v
 
   if (!queue || queue.songs.length === 0) {
     await interaction.reply({
-      content: '❌ Nothing is currently playing!',
+      content: t(interaction, 'music_nothing_playing'),
       flags: MessageFlags.Ephemeral
     });
     return;
@@ -484,50 +493,50 @@ async function handleVolume(interaction: ChatInputCommandInteraction): Promise<v
   setVolume(interaction.guildId!, volume);
 
   await interaction.reply({
-    content: `🔊 Volume set to ${volume}%!`,
+    content: t(interaction, 'music_volume_set').replace('{volume}', `${volume}`),
     flags: MessageFlags.Ephemeral
   });
 }
 
-function createPlayerControls(): ActionRowBuilder<ButtonBuilder>[] {
+function createPlayerControls(interaction: any): ActionRowBuilder<ButtonBuilder>[] {
   const row1 = new ActionRowBuilder<ButtonBuilder>().addComponents(
     new ButtonBuilder()
       .setCustomId('music_pause_resume')
-      .setLabel('⏸️ Pause/Resume')
+      .setLabel(t(interaction, 'music_btn_pause_resume'))
       .setStyle(ButtonStyle.Primary),
     new ButtonBuilder()
       .setCustomId('music_skip')
-      .setLabel('⏭️ Skip')
+      .setLabel(t(interaction, 'music_btn_skip'))
       .setStyle(ButtonStyle.Primary),
     new ButtonBuilder()
       .setCustomId('music_loop')
-      .setLabel('🔂 Loop')
+      .setLabel(t(interaction, 'music_btn_loop'))
       .setStyle(ButtonStyle.Secondary),
     new ButtonBuilder()
       .setCustomId('music_queue')
-      .setLabel('📋 Queue')
+      .setLabel(t(interaction, 'music_btn_queue'))
       .setStyle(ButtonStyle.Secondary),
     new ButtonBuilder()
       .setCustomId('music_stop')
-      .setLabel('⏹️ Stop')
+      .setLabel(t(interaction, 'music_btn_stop'))
       .setStyle(ButtonStyle.Danger)
   );
 
   const row2 = new ActionRowBuilder<ButtonBuilder>().addComponents(
     new ButtonBuilder()
       .setCustomId('music_volume_down')
-      .setLabel('🔉 -10%')
+      .setLabel(t(interaction, 'music_btn_volume_down'))
       .setStyle(ButtonStyle.Secondary),
     new ButtonBuilder()
       .setCustomId('music_volume_up')
-      .setLabel('🔊 +10%')
+      .setLabel(t(interaction, 'music_btn_volume_up'))
       .setStyle(ButtonStyle.Secondary)
   );
 
   return [row1, row2];
 }
 
-function startProgressUpdater(message: any, guildId: string): void {
+function startProgressUpdater(message: any, guildId: string, interaction: any): void {
   const updateInterval = setInterval(async () => {
     const queue = getQueue(guildId);
     if (!queue || queue.songs.length === 0) {
@@ -535,7 +544,7 @@ function startProgressUpdater(message: any, guildId: string): void {
       return;
     }
 
-    const embed = createNowPlayingEmbed(guildId);
+    const embed = createNowPlayingEmbed(guildId, interaction);
     if (embed) {
       try {
         await message.edit({
@@ -553,7 +562,7 @@ function startProgressUpdater(message: any, guildId: string): void {
   setTimeout(() => clearInterval(updateInterval), 600000);
 }
 
-function setupControlsCollector(message: any, guildId: string): void {
+function setupControlsCollector(message: any, guildId: string, interaction: any): void {
   const collector = message.createMessageComponentCollector({
     componentType: ComponentType.Button,
     time: 600000
@@ -564,7 +573,7 @@ function setupControlsCollector(message: any, guildId: string): void {
 
     if (!queue) {
       await i.reply({
-        content: '❌ Nothing is currently playing!',
+        content: t(i, 'music_nothing_playing'),
         flags: MessageFlags.Ephemeral
       });
       return;
@@ -575,13 +584,13 @@ function setupControlsCollector(message: any, guildId: string): void {
         if (queue.playing) {
           pauseSong(guildId);
           await i.reply({
-            content: '⏸️ Paused!',
+            content: t(i, 'music_paused'),
             flags: MessageFlags.Ephemeral
           });
         } else {
           resumeSong(guildId);
           await i.reply({
-            content: '▶️ Resumed!',
+            content: t(i, 'music_resumed'),
             flags: MessageFlags.Ephemeral
           });
         }
@@ -590,7 +599,7 @@ function setupControlsCollector(message: any, guildId: string): void {
       case 'music_skip':
         skipSong(guildId);
         await i.reply({
-          content: '⏭️ Skipped!',
+          content: t(i, 'music_skipped'),
           flags: MessageFlags.Ephemeral
         });
         break;
@@ -598,7 +607,7 @@ function setupControlsCollector(message: any, guildId: string): void {
       case 'music_loop':
         const loopEnabled = toggleLoop(guildId);
         await i.reply({
-          content: loopEnabled ? '🔂 Loop enabled!' : '🔂 Loop disabled!',
+          content: loopEnabled ? t(i, 'music_loop_song_enabled') : t(i, 'music_loop_disabled'),
           flags: MessageFlags.Ephemeral
         });
         break;
@@ -607,16 +616,16 @@ function setupControlsCollector(message: any, guildId: string): void {
         const currentSong = queue.songs[0];
         const upcomingSongs = queue.songs.slice(1, 6);
 
-        let queueText = `**Now Playing:**\n[${currentSong.title}](${currentSong.url})\n\n`;
+        let queueText = `**${t(i, 'music_now_playing_label')}:**\n[${currentSong.title}](${currentSong.url})\n\n`;
 
         if (upcomingSongs.length > 0) {
-          queueText += '**Up Next:**\n';
+          queueText += `**${t(i, 'music_up_next')}:**\n`;
           upcomingSongs.forEach((song, index) => {
             queueText += `${index + 1}. [${song.title}](${song.url})\n`;
           });
 
           if (queue.songs.length > 6) {
-            queueText += `\n_+${queue.songs.length - 6} more songs_`;
+            queueText += `\n_${t(i, 'music_more_songs').replace('{count}', `${queue.songs.length - 6}`)}_`;
           }
         }
 
@@ -629,7 +638,7 @@ function setupControlsCollector(message: any, guildId: string): void {
       case 'music_stop':
         stopMusic(guildId);
         await i.reply({
-          content: '⏹️ Stopped and cleared queue!',
+          content: t(i, 'music_stopped'),
           flags: MessageFlags.Ephemeral
         });
         collector.stop();
@@ -639,8 +648,13 @@ function setupControlsCollector(message: any, guildId: string): void {
         const currentVolumeUp = getVolume(guildId);
         const newVolumeUp = Math.min(100, currentVolumeUp + 10);
         setVolume(guildId, newVolumeUp);
+        const locale = getLocale(i);
+        const volumeUpText = locale === 'pt-BR' ? `🔊 Volume: ${newVolumeUp}%`
+          : locale === 'es-ES' ? `🔊 Volumen: ${newVolumeUp}%`
+          : locale === 'fr' ? `🔊 Volume: ${newVolumeUp}%`
+          : `🔊 Volume: ${newVolumeUp}%`;
         await i.reply({
-          content: `🔊 Volume: ${newVolumeUp}%`,
+          content: volumeUpText,
           flags: MessageFlags.Ephemeral
         });
         break;
@@ -649,8 +663,13 @@ function setupControlsCollector(message: any, guildId: string): void {
         const currentVolumeDown = getVolume(guildId);
         const newVolumeDown = Math.max(0, currentVolumeDown - 10);
         setVolume(guildId, newVolumeDown);
+        const localeDown = getLocale(i);
+        const volumeDownText = localeDown === 'pt-BR' ? `🔉 Volume: ${newVolumeDown}%`
+          : localeDown === 'es-ES' ? `🔉 Volumen: ${newVolumeDown}%`
+          : localeDown === 'fr' ? `🔉 Volume: ${newVolumeDown}%`
+          : `🔉 Volume: ${newVolumeDown}%`;
         await i.reply({
-          content: `🔉 Volume: ${newVolumeDown}%`,
+          content: volumeDownText,
           flags: MessageFlags.Ephemeral
         });
         break;

@@ -274,6 +274,21 @@ export const commandLocalizations: Record<string, CommandLocalization> = {
       'es-ES': 'Muestra el avatar de un usuario',
       'fr': "Affiche l'avatar d'un utilisateur"
     }
+  },
+  
+  music: {
+    name: {
+      'pt-BR': 'musica',
+      'en-US': 'music',
+      'es-ES': 'musica',
+      'fr': 'musique'
+    },
+    description: {
+      'pt-BR': '🎵 Sistema profissional de reprodução de música',
+      'en-US': '🎵 Professional music player system',
+      'es-ES': '🎵 Sistema profesional de reproducción de música',
+      'fr': '🎵 Système de lecture musicale professionnelle'
+    }
   }
 };
 
