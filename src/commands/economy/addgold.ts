@@ -50,7 +50,7 @@ module.exports = {
       return;
     }
 
-    const result = addItem(targetUser.id, 'gold_bar', amount);
+    const result = addItem(targetUser.id, 'gold', amount);
 
     if (!result.success) {
       await interaction.editReply({
