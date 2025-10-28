@@ -2,6 +2,7 @@ import { SlashCommandBuilder, ChatInputCommandInteraction } from 'discord.js';
 import { applyLocalizations } from '../../utils/commandLocalizations';
 import { warningEmbed, formatCurrency, infoEmbed } from '../../utils/embeds';
 import { getDartEmoji, getMoneybagEmoji, getScrollEmoji, getCowboysEmoji, getStarEmoji } from '../../utils/customEmojis';
+import { t } from '../../utils/i18n';
 const { getAllBounties } = require('../../utils/dataManager');
 
 interface Bounty {
@@ -30,16 +31,15 @@ module.exports = {
 
     if (bounties.length === 0) {
       const embed = warningEmbed(
-        'No Active Bounties',
-        'The Wild West is peaceful today!\n\nNo outlaws are currently wanted.',
-        'Use /wanted to place a bounty'
+        t(interaction, 'bounty_no_active'),
+        t(interaction, 'bounty_west_peaceful'),
+        t(interaction, 'bounty_use_wanted')
       );
       
       await interaction.reply({ embeds: [embed] });
       return;
     }
 
-    // Filtrar apenas procurados que estão no servidor
     let bountiesInServer: Bounty[] = [];
     
     if (interaction.guild) {
@@ -57,9 +57,9 @@ module.exports = {
 
     if (bountiesInServer.length === 0) {
       const embed = warningEmbed(
-        'No Outlaws in Server',
-        'No wanted outlaws are currently in this server!\n\nAll the outlaws have fled.',
-        'Use /wanted to place a bounty'
+        t(interaction, 'bounty_no_outlaws_server'),
+        t(interaction, 'bounty_all_fled'),
+        t(interaction, 'bounty_use_wanted')
       );
       
       await interaction.reply({ embeds: [embed] });
@@ -67,7 +67,7 @@ module.exports = {
     }
 
     const sortedBounties = bountiesInServer.sort((a, b) => b.totalAmount - a.totalAmount);
-    let description = '**Most Wanted Outlaws:**\n\n';
+    let description = t(interaction, 'bounty_most_wanted') + '\n\n';
     const moneyEmoji = getMoneybagEmoji();
     const groupEmoji = getCowboysEmoji();
     
@@ -76,26 +76,26 @@ module.exports = {
       const stars = starEmoji.repeat(Math.min(Math.floor(bounty.totalAmount / 5000), 5)) || '🔸';
       
       description += `${stars} **${bounty.targetTag}**\n`;
-      description += `   ${moneyEmoji} Reward: ${formatCurrency(bounty.totalAmount, 'silver')}\n`;
-      description += `   ${groupEmoji} Contributors: ${bounty.contributors.length}\n\n`;
+      description += `   ${moneyEmoji} ${t(interaction, 'bounty_reward')}: ${formatCurrency(bounty.totalAmount, 'silver')}\n`;
+      description += `   ${groupEmoji} ${t(interaction, 'bounty_contributors')}: ${bounty.contributors.length}\n\n`;
     }
 
     if (bountiesInServer.length > 10) {
-      description += `*...and ${bountiesInServer.length - 10} more outlaws*`;
+      description += t(interaction, 'bounty_more_outlaws', { count: bountiesInServer.length - 10 });
     }
 
     const embed = infoEmbed(
-      `${getScrollEmoji()} Active Bounties`,
+      `${getScrollEmoji()} ${t(interaction, 'bounty_active_bounties')}`,
       description
     )
       .addFields(
-        { name: `${getDartEmoji()} Total Bounties`, value: bountiesInServer.length.toString(), inline: true },
-        { name: `${getMoneybagEmoji()} Total Rewards`, value: formatCurrency(
+        { name: `${getDartEmoji()} ${t(interaction, 'bounty_total_bounties')}`, value: bountiesInServer.length.toString(), inline: true },
+        { name: `${getMoneybagEmoji()} ${t(interaction, 'bounty_total_rewards')}`, value: formatCurrency(
           bountiesInServer.reduce((sum, b) => sum + b.totalAmount, 0),
           'silver'
         ), inline: true }
       )
-      .setFooter({ text: 'Hunt outlaws and claim rewards with /capture!' });
+      .setFooter({ text: t(interaction, 'bounty_hunt_claim') });
 
     await interaction.reply({ embeds: [embed] });
   }

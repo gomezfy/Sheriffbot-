@@ -3,6 +3,7 @@ import { applyLocalizations } from '../../utils/commandLocalizations';
 import { successEmbed, errorEmbed, warningEmbed, formatCurrency } from '../../utils/embeds';
 import { generateWantedPoster } from '../../utils/wantedPoster';
 import { getDartEmoji } from '../../utils/customEmojis';
+import { t } from '../../utils/i18n';
 const { addBounty, getBountyByTarget } = require('../../utils/dataManager');
 const { getItem, removeItem } = require('../../utils/inventoryManager');
 
@@ -38,13 +39,13 @@ module.exports = {
   async execute(interaction: ChatInputCommandInteraction): Promise<void> {
     const target = interaction.options.getUser('user', true);
     const amount = interaction.options.getInteger('amount', true);
-    const reason = interaction.options.getString('reason') || 'General mischief and mayhem';
+    const reason = interaction.options.getString('reason') || t(interaction, 'bounty_general_mischief');
 
     if (target.bot) {
       const embed = errorEmbed(
-        'Invalid Target',
-        'You can\'t place a bounty on a bot, partner!',
-        'Choose a real outlaw'
+        t(interaction, 'bounty_invalid_target'),
+        t(interaction, 'bounty_cant_target_bot'),
+        t(interaction, 'bounty_choose_real_outlaw')
       );
       await interaction.reply({ embeds: [embed], flags: MessageFlags.Ephemeral });
       return;
@@ -52,9 +53,9 @@ module.exports = {
 
     if (target.id === interaction.user.id) {
       const embed = warningEmbed(
-        'Self-Bounty Not Allowed',
-        'You can\'t place a bounty on yourself!',
-        'That would be mighty strange, partner'
+        t(interaction, 'bounty_self_not_allowed'),
+        t(interaction, 'bounty_cant_target_self'),
+        t(interaction, 'bounty_mighty_strange')
       );
       await interaction.reply({ embeds: [embed], flags: MessageFlags.Ephemeral });
       return;
@@ -63,9 +64,9 @@ module.exports = {
     const existingBounty = getBountyByTarget(target.id);
     if (existingBounty) {
       const embed = warningEmbed(
-        'Bounty Already Active',
-        `**${target.tag}** already has an active bounty!\n\n**Current Bounty:** ${formatCurrency(existingBounty.totalAmount, 'silver')}`,
-        'Wait until it\'s cleared before placing a new one'
+        t(interaction, 'bounty_already_active'),
+        t(interaction, 'bounty_user_has_bounty', { user: target.tag, amount: formatCurrency(existingBounty.totalAmount, 'silver') }),
+        t(interaction, 'bounty_wait_cleared')
       );
       await interaction.reply({ embeds: [embed], flags: MessageFlags.Ephemeral });
       return;
@@ -74,9 +75,12 @@ module.exports = {
     const currentSilver = getItem(interaction.user.id, 'silver') || 0;
     if (currentSilver < amount) {
       const embed = errorEmbed(
-        'Insufficient Funds',
-        `You don't have enough Silver Coins!\n\n**Required:** ${formatCurrency(amount, 'silver')}\n**You have:** ${formatCurrency(currentSilver, 'silver')}`,
-        'Earn more silver first'
+        t(interaction, 'bounty_insufficient_funds'),
+        t(interaction, 'bounty_not_enough_silver', { 
+          required: formatCurrency(amount, 'silver'),
+          current: formatCurrency(currentSilver, 'silver')
+        }),
+        t(interaction, 'bounty_earn_more')
       );
       await interaction.reply({ embeds: [embed], flags: MessageFlags.Ephemeral });
       return;
@@ -87,9 +91,9 @@ module.exports = {
     const removeResult = removeItem(interaction.user.id, 'silver', amount);
     if (!removeResult.success) {
       const embed = errorEmbed(
-        'Transaction Failed',
-        `Could not deduct Silver Coins: ${removeResult.error}`,
-        'Please try again'
+        t(interaction, 'bounty_transaction_failed'),
+        t(interaction, 'bounty_could_not_deduct', { error: removeResult.error }),
+        t(interaction, 'bounty_try_again')
       );
       await interaction.editReply({ embeds: [embed] });
       return;
@@ -101,15 +105,15 @@ module.exports = {
     const attachment = new AttachmentBuilder(poster, { name: `wanted-${target.id}.png` });
 
     const embed = successEmbed(
-      `${getDartEmoji()} Bounty Placed!`,
-      `**${target.tag}** is now WANTED!\n\n**Bounty:** ${formatCurrency(amount, 'silver')}\n**Reason:** ${reason}`,
-      'Bounty hunters can now capture this outlaw!'
+      `${getDartEmoji()} ${t(interaction, 'bounty_placed')}`,
+      `${t(interaction, 'bounty_now_wanted', { user: target.tag })}\n\n${t(interaction, 'bounty_reason', { reason })}`,
+      t(interaction, 'bounty_hunters_can_capture')
     )
       .setImage(`attachment://wanted-${target.id}.png`)
       .addFields(
-        { name: '🎯 Target', value: target.tag, inline: true },
-        { name: '💰 Reward', value: formatCurrency(amount, 'silver'), inline: true },
-        { name: '👤 Posted By', value: interaction.user.tag, inline: true }
+        { name: t(interaction, 'bounty_target'), value: target.tag, inline: true },
+        { name: t(interaction, 'bounty_reward'), value: formatCurrency(amount, 'silver'), inline: true },
+        { name: t(interaction, 'bounty_posted_by'), value: interaction.user.tag, inline: true }
       );
 
     await interaction.editReply({ embeds: [embed], files: [attachment] });

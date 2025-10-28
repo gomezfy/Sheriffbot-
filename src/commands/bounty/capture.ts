@@ -1,6 +1,7 @@
 import { SlashCommandBuilder, ChatInputCommandInteraction, MessageFlags } from 'discord.js';
 import { applyLocalizations } from '../../utils/commandLocalizations';
 import { successEmbed, errorEmbed, warningEmbed, formatCurrency } from '../../utils/embeds';
+import { t } from '../../utils/i18n';
 const { getBountyByTarget, removeBounty } = require('../../utils/dataManager');
 const { addItem } = require('../../utils/inventoryManager');
 
@@ -40,9 +41,9 @@ module.exports = {
 
     if (target.bot) {
       const embed = errorEmbed(
-        'Invalid Target',
-        'You can\'t capture a bot, partner!',
-        'Target must be a real outlaw'
+        t(interaction, 'bounty_invalid_target'),
+        t(interaction, 'bounty_cant_target_bot'),
+        t(interaction, 'bounty_choose_real_outlaw')
       );
       await interaction.reply({ embeds: [embed], flags: MessageFlags.Ephemeral });
       return;
@@ -50,20 +51,19 @@ module.exports = {
 
     if (target.id === hunter.id) {
       const embed = warningEmbed(
-        'Can\'t Capture Yourself',
-        'You can\'t capture yourself, that doesn\'t make sense!',
-        'Choose another outlaw'
+        t(interaction, 'bounty_self_not_allowed'),
+        t(interaction, 'bounty_cant_target_self'),
+        t(interaction, 'bounty_mighty_strange')
       );
       await interaction.reply({ embeds: [embed], flags: MessageFlags.Ephemeral });
       return;
     }
 
-    // Verificar se o alvo está no servidor
     if (!interaction.guild) {
       const embed = errorEmbed(
-        'Server Only',
-        'This command can only be used in a server!',
-        'Try using this command in a server'
+        t(interaction, 'bounty_server_only'),
+        t(interaction, 'bounty_command_server_only'),
+        t(interaction, 'bounty_try_in_server')
       );
       await interaction.reply({ embeds: [embed], flags: MessageFlags.Ephemeral });
       return;
@@ -73,9 +73,9 @@ module.exports = {
       await interaction.guild.members.fetch(target.id);
     } catch (error) {
       const embed = errorEmbed(
-        'Outlaw Not in Server',
-        `**${target.tag}** is not in this server!\n\nYou can only capture outlaws who are currently in the server.`,
-        'The outlaw must be present to be captured'
+        t(interaction, 'bounty_not_in_server'),
+        t(interaction, 'bounty_user_not_here', { user: target.tag }),
+        t(interaction, 'bounty_must_be_present')
       );
       await interaction.reply({ embeds: [embed], flags: MessageFlags.Ephemeral });
       return;
@@ -88,9 +88,9 @@ module.exports = {
       const minutesLeft = Math.ceil(timeLeft / 60000);
       
       const embed = warningEmbed(
-        'Capture Cooldown',
-        `You need to rest before attempting another capture!\n\n**Time remaining:** ${minutesLeft} minutes`,
-        'Bounty hunting is exhausting work'
+        t(interaction, 'bounty_capture_cooldown'),
+        t(interaction, 'bounty_need_rest', { minutes: minutesLeft }),
+        t(interaction, 'bounty_hunting_exhausting')
       );
       await interaction.reply({ embeds: [embed], flags: MessageFlags.Ephemeral });
       return;
@@ -99,9 +99,9 @@ module.exports = {
     const bounty: Bounty = getBountyByTarget(target.id);
     if (!bounty) {
       const embed = errorEmbed(
-        'No Bounty Found',
-        `**${target.tag}** doesn't have an active bounty!\n\nThey're not wanted right now.`,
-        'Use /bounties to see active bounties'
+        t(interaction, 'bounty_no_bounty_found'),
+        t(interaction, 'bounty_user_not_wanted', { user: target.tag }),
+        t(interaction, 'bounty_see_active')
       );
       await interaction.reply({ embeds: [embed], flags: MessageFlags.Ephemeral });
       return;
@@ -114,14 +114,14 @@ module.exports = {
       captureData[hunter.id] = now;
       
       const embed = warningEmbed(
-        '💨 Outlaw Escaped!',
-        `**${target.tag}** managed to escape!\n\nThe outlaw slipped through your fingers and fled into the desert.`,
-        'Better luck next time, partner!'
+        t(interaction, 'bounty_outlaw_escaped'),
+        t(interaction, 'bounty_managed_escape', { user: target.tag }),
+        t(interaction, 'bounty_better_luck')
       )
         .addFields(
-          { name: '🎯 Target', value: target.tag, inline: true },
-          { name: '💰 Lost Reward', value: formatCurrency(bounty.totalAmount, 'silver'), inline: true },
-          { name: '📊 Success Rate', value: `${(baseSuccessRate * 100).toFixed(0)}%`, inline: true }
+          { name: t(interaction, 'bounty_target'), value: target.tag, inline: true },
+          { name: t(interaction, 'bounty_lost_reward'), value: formatCurrency(bounty.totalAmount, 'silver'), inline: true },
+          { name: t(interaction, 'bounty_success_rate'), value: `${(baseSuccessRate * 100).toFixed(0)}%`, inline: true }
         );
       
       await interaction.reply({ embeds: [embed] });
@@ -133,9 +133,9 @@ module.exports = {
 
     if (!result.success) {
       const embed = errorEmbed(
-        'Capture Failed',
-        `Your inventory is too full to carry the reward!\n\n**Error:** ${result.error}`,
-        'Free up space and try again'
+        t(interaction, 'bounty_capture_failed'),
+        t(interaction, 'bounty_inventory_full', { error: result.error }),
+        t(interaction, 'bounty_free_space_try')
       );
       await interaction.reply({ embeds: [embed], flags: MessageFlags.Ephemeral });
       return;
@@ -145,14 +145,14 @@ module.exports = {
     captureData[hunter.id] = now;
 
     const embed = successEmbed(
-      '🎯 Outlaw Captured!',
-      `**${hunter.tag}** successfully captured **${target.tag}**!\n\nThe reward has been collected!`,
-      'Justice prevails in the Wild West!'
+      t(interaction, 'bounty_outlaw_captured'),
+      t(interaction, 'bounty_hunter_captured', { hunter: hunter.tag, outlaw: target.tag }),
+      t(interaction, 'bounty_justice_prevails')
     )
       .addFields(
-        { name: '👤 Hunter', value: hunter.tag, inline: true },
-        { name: '🎯 Outlaw', value: target.tag, inline: true },
-        { name: '💰 Reward', value: formatCurrency(reward, 'silver'), inline: true }
+        { name: t(interaction, 'bounty_hunter'), value: hunter.tag, inline: true },
+        { name: t(interaction, 'bounty_outlaw'), value: target.tag, inline: true },
+        { name: t(interaction, 'bounty_reward'), value: formatCurrency(reward, 'silver'), inline: true }
       );
 
     await interaction.reply({ embeds: [embed] });

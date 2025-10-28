@@ -1,6 +1,7 @@
 import { SlashCommandBuilder, ChatInputCommandInteraction, MessageFlags } from 'discord.js';
 import { applyLocalizations } from '../../utils/commandLocalizations';
 import { successEmbed, errorEmbed, warningEmbed, formatCurrency } from '../../utils/embeds';
+import { t } from '../../utils/i18n';
 const { getBountyByTarget, removeBounty } = require('../../utils/dataManager');
 
 interface Bounty {
@@ -33,9 +34,9 @@ module.exports = {
   async execute(interaction: ChatInputCommandInteraction): Promise<void> {
     if (!interaction.memberPermissions?.has('Administrator')) {
       const embed = errorEmbed(
-        'Permission Denied',
-        'Only administrators can clear bounties!',
-        'Contact a server admin'
+        t(interaction, 'bounty_permission_denied'),
+        t(interaction, 'bounty_admin_only'),
+        t(interaction, 'bounty_contact_admin')
       );
       await interaction.reply({ embeds: [embed], flags: MessageFlags.Ephemeral });
       return;
@@ -46,9 +47,9 @@ module.exports = {
     
     if (!bounty) {
       const embed = warningEmbed(
-        'No Bounty Found',
-        `**${target.tag}** doesn't have an active bounty.`,
-        'Nothing to clear'
+        t(interaction, 'bounty_no_bounty_found'),
+        t(interaction, 'bounty_user_no_bounty', { user: target.tag }),
+        t(interaction, 'bounty_nothing_to_clear')
       );
       await interaction.reply({ embeds: [embed], flags: MessageFlags.Ephemeral });
       return;
@@ -57,14 +58,14 @@ module.exports = {
     removeBounty(target.id);
 
     const embed = successEmbed(
-      '🚫 Bounty Cleared',
-      `Bounty on **${target.tag}** has been cleared by an administrator.`,
-      'The outlaw is no longer wanted'
+      t(interaction, 'bounty_cleared'),
+      t(interaction, 'bounty_admin_cleared', { user: target.tag }),
+      t(interaction, 'bounty_no_longer_wanted')
     )
       .addFields(
-        { name: '🎯 Target', value: target.tag, inline: true },
-        { name: '💰 Amount Cleared', value: formatCurrency(bounty.totalAmount, 'silver'), inline: true },
-        { name: '⚙️ Cleared By', value: interaction.user.tag, inline: true }
+        { name: t(interaction, 'bounty_target'), value: target.tag, inline: true },
+        { name: t(interaction, 'bounty_amount_cleared'), value: formatCurrency(bounty.totalAmount, 'silver'), inline: true },
+        { name: t(interaction, 'bounty_cleared_by'), value: interaction.user.tag, inline: true }
       );
 
     await interaction.reply({ embeds: [embed] });

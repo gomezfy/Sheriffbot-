@@ -1,5 +1,6 @@
-import { SlashCommandBuilder, ChatInputCommandInteraction ,MessageFlags} from 'discord.js';
+import { SlashCommandBuilder, ChatInputCommandInteraction, MessageFlags } from 'discord.js';
 import { successEmbed, errorEmbed, warningEmbed, formatCurrency } from '../../utils/embeds';
+import { t } from '../../utils/i18n';
 const { transferItem, ITEMS } = require('../../utils/inventoryManager');
 
 module.exports = {
@@ -35,24 +36,22 @@ module.exports = {
     const itemId = interaction.options.getString('item', true);
     const amount = interaction.options.getInteger('amount', true);
 
-    // Validation: No bots
     if (recipient.bot) {
       const embed = errorEmbed(
-        'Invalid Recipient',
-        'You can\'t give items to bots, partner!',
-        'Choose a real player'
+        t(interaction, 'give_invalid_recipient'),
+        t(interaction, 'give_cant_give_bots'),
+        t(interaction, 'give_choose_real_player')
       );
       
       await interaction.reply({ embeds: [embed], flags: MessageFlags.Ephemeral });
       return;
     }
 
-    // Validation: No self-transfers
     if (recipient.id === interaction.user.id) {
       const embed = warningEmbed(
-        'Self-Transfer Not Allowed',
-        'You can\'t give items to yourself!',
-        'That would be mighty strange'
+        t(interaction, 'give_self_transfer'),
+        t(interaction, 'give_cant_give_self'),
+        t(interaction, 'give_mighty_strange')
       );
       
       await interaction.reply({ embeds: [embed], flags: MessageFlags.Ephemeral });
@@ -61,26 +60,23 @@ module.exports = {
 
     await interaction.deferReply();
 
-    // Attempt transfer
     const result = transferItem(interaction.user.id, recipient.id, itemId, amount);
 
     if (!result.success) {
       const embed = errorEmbed(
-        'Transfer Failed',
+        t(interaction, 'give_transfer_failed'),
         result.error,
-        'Check your inventory and try again'
+        t(interaction, 'give_check_inventory')
       );
       
       await interaction.editReply({ embeds: [embed] });
       return;
     }
 
-    // Get item details
     const item = ITEMS[itemId];
     const itemEmoji = item?.emoji || '📦';
     const itemName = item?.name || itemId;
 
-    // Format currency display
     let amountDisplay = '';
     if (itemId === 'saloon_token') {
       amountDisplay = formatCurrency(amount, 'tokens');
@@ -90,18 +86,17 @@ module.exports = {
       amountDisplay = `${itemEmoji} **${amount.toLocaleString()} ${itemName}**`;
     }
 
-    // Success message
     const embed = successEmbed(
-      'Transfer Successful!',
-      `You gave ${amountDisplay} to **${recipient.tag}**`
+      t(interaction, 'give_transfer_success'),
+      t(interaction, 'give_you_gave', { amount: amountDisplay, user: recipient.tag })
     )
       .addFields(
-        { name: '👤 From', value: interaction.user.tag, inline: true },
-        { name: '👤 To', value: recipient.tag, inline: true },
-        { name: '📦 Item', value: `${itemEmoji} ${itemName}`, inline: true },
-        { name: '🔢 Quantity', value: amount.toLocaleString(), inline: true }
+        { name: t(interaction, 'give_from'), value: interaction.user.tag, inline: true },
+        { name: t(interaction, 'give_to'), value: recipient.tag, inline: true },
+        { name: t(interaction, 'give_item'), value: `${itemEmoji} ${itemName}`, inline: true },
+        { name: t(interaction, 'give_quantity'), value: amount.toLocaleString(), inline: true }
       )
-      .setFooter({ text: 'Generosity is a cowboy virtue!' });
+      .setFooter({ text: t(interaction, 'give_generosity') });
 
     await interaction.editReply({ embeds: [embed] });
   },
