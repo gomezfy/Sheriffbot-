@@ -18,6 +18,12 @@ Sheriff Rex Bot is a Discord bot with a Wild West theme, offering an immersive e
 - ✅ Configured OWNER_ID for owner-only command access
 - ✅ Ensured `/admin` command visibility restricted to server administrators only
 - ✅ Added emoji synchronization feature (`/admin uploademojis sync`)
+- ✅ **Expanded i18n support to additional commands (October 28, 2025):**
+  - ✅ All 4 bounty commands now fully internationalized: `/wanted`, `/capture`, `/clearbounty`, `/bounties`
+  - ✅ Economy command `/give` now fully internationalized
+  - ✅ Added complete translations for give and dice commands in all 4 languages
+  - ✅ Fixed TypeScript compilation issues (removed unused imports)
+  - ✅ All bounty and give commands now automatically detect and respond in user's Discord language
 
 ## System Architecture
 
