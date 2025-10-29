@@ -39,6 +39,13 @@ export const ITEMS: Record<string, Item> = {
     weight: 1,
     stackable: true,
     description: 'Precious gold bar obtained through mining'
+  },
+  diamond: {
+    name: 'Diamond',
+    emoji: '💎',
+    weight: 0.1,
+    stackable: true,
+    description: 'Rare diamond found in mining and bank robberies'
   }
 };
 
