@@ -314,25 +314,10 @@ export const commandLocalizations: Record<string, CommandLocalization> = {
       'fr': 'sondage'
     },
     description: {
-      'pt-BR': 'Crie uma votação estilo Velho Oeste no saloon',
-      'en-US': 'Create a western-style poll in the saloon',
-      'es-ES': 'Crea una votación estilo Viejo Oeste en el saloon',
-      'fr': 'Créez un sondage style Far West dans le saloon'
-    }
-  },
-  
-  quickpoll: {
-    name: {
-      'pt-BR': 'votacao-rapida',
-      'en-US': 'quickpoll',
-      'es-ES': 'votacion-rapida',
-      'fr': 'sondage-rapide'
-    },
-    description: {
-      'pt-BR': 'Crie uma votação rápida Sim/Não',
-      'en-US': 'Create a quick Yes/No poll',
-      'es-ES': 'Crea una votación rápida Sí/No',
-      'fr': 'Créez un sondage rapide Oui/Non'
+      'pt-BR': 'Sistema de votações para o saloon',
+      'en-US': 'Poll system for the saloon',
+      'es-ES': 'Sistema de votaciones para el saloon',
+      'fr': 'Système de sondages pour le saloon'
     }
   }
 };
