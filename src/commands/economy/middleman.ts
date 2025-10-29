@@ -7,6 +7,7 @@ const { addUserSilver } = require('../../utils/dataManager');
 
 const TOKEN_TO_SILVER = 50; // 1 Saloon Token = 50 Silver Coins
 const GOLD_TO_SILVER = 13439; // 1 Gold Bar = 13,439 Silver Coins
+const DIAMOND_TO_SILVER = 41493; // 1 Diamond = 41,493 Silver Coins
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -18,6 +19,7 @@ module.exports = {
     const inventory = getInventory(userId);
     const saloonTokens = inventory.items['saloon_token'] || 0;
     const goldBars = inventory.items['gold'] || 0;
+    const diamonds = inventory.items['diamond'] || 0;
 
     const shopUrl = `https://${process.env.REPLIT_DEV_DOMAIN || 'sheriff-bot.repl.co'}/shop.html`;
 
@@ -35,11 +37,11 @@ module.exports = {
       .setColor(0xFFD700)
       .setTitle(`${currencyEmoji} ${t(interaction, 'middleman_title')}`)
       .setImage('attachment://black-market.png')
-      .setDescription(`**${t(interaction, 'middleman_welcome')}**\n\n${t(interaction, 'middleman_description')}\n\n**${statsEmoji} ${t(interaction, 'middleman_exchange_rates')}**\n${tokenEmoji} 1 ${locale === 'pt-BR' ? 'Ficha Saloon' : 'Saloon Token'} = **50** ${silverEmoji} ${t(interaction, 'silver_coins')}\n${goldEmoji} 1 ${locale === 'pt-BR' ? 'Barra de Ouro' : 'Gold Bar'} = **13,439** ${silverEmoji} ${t(interaction, 'silver_coins')}`)
+      .setDescription(`**${t(interaction, 'middleman_welcome')}**\n\n${t(interaction, 'middleman_description')}\n\n**${statsEmoji} ${t(interaction, 'middleman_exchange_rates')}**\n${tokenEmoji} 1 ${locale === 'pt-BR' ? 'Ficha Saloon' : 'Saloon Token'} = **50** ${silverEmoji} ${t(interaction, 'silver_coins')}\n${goldEmoji} 1 ${locale === 'pt-BR' ? 'Barra de Ouro' : 'Gold Bar'} = **13,439** ${silverEmoji} ${t(interaction, 'silver_coins')}\n💎 1 ${locale === 'pt-BR' ? 'Diamante' : 'Diamond'} = **41,493** ${silverEmoji} ${t(interaction, 'silver_coins')}`)
       .addFields(
         {
           name: `${briefcaseEmoji} ${t(interaction, 'middleman_your_inventory')}`,
-          value: `\`\`\`yaml\n${t(interaction, 'middleman_saloon_tokens')}: ${saloonTokens.toLocaleString()}\n${t(interaction, 'middleman_gold_bars')}: ${goldBars.toLocaleString()}\n\`\`\``,
+          value: `\`\`\`yaml\n${t(interaction, 'middleman_saloon_tokens')}: ${saloonTokens.toLocaleString()}\n${t(interaction, 'middleman_gold_bars')}: ${goldBars.toLocaleString()}\n${locale === 'pt-BR' ? 'Diamantes' : 'Diamonds'}: ${diamonds.toLocaleString()}\n\`\`\``,
           inline: false
         },
         {
@@ -63,6 +65,11 @@ module.exports = {
           .setLabel(t(interaction, 'middleman_gold_to_silver'))
           .setStyle(ButtonStyle.Success)
           .setDisabled(goldBars === 0),
+        new ButtonBuilder()
+          .setCustomId('convert_diamond')
+          .setLabel('💎 → Silver')
+          .setStyle(ButtonStyle.Secondary)
+          .setDisabled(diamonds === 0),
         new ButtonBuilder()
           .setLabel(`🛒 ${t(interaction, 'middleman_visit_shop')}`)
           .setStyle(ButtonStyle.Link)
@@ -274,6 +281,96 @@ module.exports = {
               { name: t(si, 'middleman_silver_received'), value: `${silverAmount.toLocaleString()} ${silverEmoji}`, inline: true }
             )
             .setFooter({ text: t(si, 'middleman_thanks') })
+            .setTimestamp();
+
+          await si.update({ embeds: [successEmbed], components: [] });
+        });
+      } else if (i.customId === 'convert_diamond') {
+        const currentInventory = getInventory(userId);
+        const currentDiamonds = currentInventory.items['diamond'] || 0;
+
+        if (currentDiamonds === 0) {
+          return i.reply({ content: `${cancelEmoji} ${locale === 'pt-BR' ? 'Você não tem diamantes!' : "You don't have any diamonds!"}`, flags: MessageFlags.Ephemeral });
+        }
+
+        const diamondOptions = [
+          new StringSelectMenuOptionBuilder()
+            .setLabel(`1 Diamond → ${DIAMOND_TO_SILVER.toLocaleString()} Silver`)
+            .setValue('1')
+        ];
+
+        if (currentDiamonds >= 5) {
+          diamondOptions.push(
+            new StringSelectMenuOptionBuilder()
+              .setLabel(`5 Diamonds → ${(DIAMOND_TO_SILVER * 5).toLocaleString()} Silver`)
+              .setValue('5')
+          );
+        }
+
+        if (currentDiamonds >= 10) {
+          diamondOptions.push(
+            new StringSelectMenuOptionBuilder()
+              .setLabel(`10 Diamonds → ${(DIAMOND_TO_SILVER * 10).toLocaleString()} Silver`)
+              .setValue('10')
+          );
+        }
+
+        diamondOptions.push(
+          new StringSelectMenuOptionBuilder()
+            .setLabel(`All (${currentDiamonds} Diamonds) → ${(DIAMOND_TO_SILVER * currentDiamonds).toLocaleString()} Silver`)
+            .setValue('all')
+            .setEmoji(getMoneybagEmoji() || '💰')
+        );
+
+        const selectMenu = new StringSelectMenuBuilder()
+          .setCustomId('diamond_amount')
+          .setPlaceholder(locale === 'pt-BR' ? 'Selecione quantos diamantes vender' : 'Select how many diamonds to sell')
+          .addOptions(...diamondOptions);
+
+        const selectRow = new ActionRowBuilder<StringSelectMenuBuilder>().addComponents(selectMenu);
+
+        await i.reply({
+          content: `**${locale === 'pt-BR' ? 'Selecione a quantidade' : 'Select amount'}**\n${locale === 'pt-BR' ? 'Você tem' : 'You have'} **${currentDiamonds}** 💎 ${locale === 'pt-BR' ? (currentDiamonds === 1 ? 'Diamante' : 'Diamantes') : 'Diamond' + (currentDiamonds > 1 ? 's' : '')}`,
+          components: [selectRow],
+          flags: MessageFlags.Ephemeral
+        });
+
+        const selectCollector = i.channel?.createMessageComponentCollector({
+          componentType: ComponentType.StringSelect,
+          time: 60000,
+          filter: (si) => si.user.id === userId && si.customId === 'diamond_amount'
+        });
+
+        selectCollector?.on('collect', async (si) => {
+          const amount = si.values[0] === 'all' ? currentDiamonds : parseInt(si.values[0]);
+          const finalInventory = getInventory(userId);
+          const finalDiamonds = finalInventory.items['diamond'] || 0;
+
+          const cancelEmoji = getCancelEmoji();
+          const locale = getLocale(si);
+          
+          if (finalDiamonds < amount) {
+            return si.update({ content: `${cancelEmoji} ${locale === 'pt-BR' ? `Você não tem diamantes suficientes! Você tem apenas ${finalDiamonds}.` : `You don't have enough diamonds! You only have ${finalDiamonds}.`}`, components: [] });
+          }
+
+          const removeResult = removeItem(userId, 'diamond', amount);
+          if (!removeResult.success) {
+            return si.update({ content: `${cancelEmoji} ${locale === 'pt-BR' ? 'Erro' : 'Error'}: ${removeResult.error}`, components: [] });
+          }
+
+          const silverAmount = amount * DIAMOND_TO_SILVER;
+          addUserSilver(userId, silverAmount);
+
+          const checkEmoji = getCheckEmoji();
+          const successEmbed = new EmbedBuilder()
+            .setColor(0x00FF00)
+            .setTitle(`${checkEmoji} ${locale === 'pt-BR' ? 'Conversão realizada com sucesso!' : 'Conversion successful!'}`)
+            .setDescription(`${locale === 'pt-BR' ? 'Você converteu' : 'You converted'} **${amount}** 💎 ${locale === 'pt-BR' ? (amount === 1 ? 'Diamante' : 'Diamantes') : 'Diamond' + (amount > 1 ? 's' : '')} ${locale === 'pt-BR' ? 'em' : 'into'} **${silverAmount.toLocaleString()}** ${silverEmoji} ${t(si, 'silver_coins')}!`)
+            .addFields(
+              { name: locale === 'pt-BR' ? 'Diamantes convertidos' : 'Diamonds converted', value: `${amount} 💎`, inline: true },
+              { name: locale === 'pt-BR' ? 'Pratas recebidas' : 'Silver received', value: `${silverAmount.toLocaleString()} ${silverEmoji}`, inline: true }
+            )
+            .setFooter({ text: locale === 'pt-BR' ? 'Obrigado por fazer negócio comigo!' : 'Thanks for doing business with me!' })
             .setTimestamp();
 
           await si.update({ embeds: [successEmbed], components: [] });

@@ -42,7 +42,8 @@ export const ITEMS: Record<string, Item> = {
   },
   diamond: {
     name: 'Diamond',
-    emoji: '💎',
+    emoji: EMOJI_TEXT.GEM,
+    customEmoji: 'gem',
     weight: 0.1,
     stackable: true,
     description: 'Rare diamond found in mining and bank robberies'
