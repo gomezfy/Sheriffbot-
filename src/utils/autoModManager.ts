@@ -56,6 +56,15 @@ export const WESTERN_AUTOMOD_RULES: Omit<AutoModRuleConfig, 'actions'>[] = [
     enabled: true
   },
   {
+    name: '🤠 Sheriff - Sexual Content Block',
+    eventType: AutoModerationRuleEventType.MessageSend,
+    triggerType: AutoModerationRuleTriggerType.KeywordPreset,
+    triggerMetadata: {
+      presets: [1, 3] // 1 = Profanity, 3 = Sexual Content
+    },
+    enabled: true
+  },
+  {
     name: '🤠 Sheriff - Profanity Filter',
     eventType: AutoModerationRuleEventType.MessageSend,
     triggerType: AutoModerationRuleTriggerType.Keyword,
