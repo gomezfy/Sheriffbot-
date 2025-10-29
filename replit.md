@@ -9,6 +9,14 @@ Sheriff Rex Bot is a Discord bot with a Wild West theme, offering an immersive e
 - `/admin` command only visible to server administrators
 - Owner-only commands (generatecode, migrate, automodall) require OWNER_ID verification
 
+## Recent Changes (October 29, 2025)
+- ✅ **Added Diamond (💎) item to the economy system:**
+  - New rare item with 0.1kg weight
+  - Can be found in mining (5% chance) and bank robberies (3% chance)
+  - Convertible to 41,493 Silver Coins in `/middleman`
+  - Uses custom emoji 'gem.png'
+  - Fully integrated with inventory system
+
 ## Recent Changes (October 28, 2025)
 - ✅ Removed music system and all related commands
 - ✅ Added full internationalization (i18n) support to `/territories` command
