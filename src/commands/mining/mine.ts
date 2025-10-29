@@ -298,6 +298,16 @@ ${t(i, 'mine_pending_gold')}: ${stats.totalGoldPending} ${goldEmoji}
             });
           }
           
+          // Chance de encontrar diamante (5% de chance)
+          let foundDiamond = false;
+          const diamondChance = Math.random();
+          if (diamondChance < 0.05) {
+            const diamondResult = addItem(userId, 'diamond', 1);
+            if (diamondResult.success) {
+              foundDiamond = true;
+            }
+          }
+          
           claimMining(userId);
           
           const userInventory = getInventory(userId);
@@ -312,11 +322,14 @@ ${t(i, 'mine_pending_gold')}: ${stats.totalGoldPending} ${goldEmoji}
           const weightText = t(interaction, 'weight');
           const valueText = t(interaction, 'mine_value');
           
+          const locale = getLocale(i);
+          const diamondText = foundDiamond ? `\n${sparklesEmoji} **${locale === 'pt-BR' ? 'BÔNUS RARO' : 'RARE BONUS'}:** +1 💎 ${locale === 'pt-BR' ? 'Diamante' : 'Diamond'}!` : '';
+          
           await i.editReply({
             embeds: [{
-              color: 0xFFD700,
+              color: foundDiamond ? 0x00FFFF : 0xFFD700,
               title: `${checkEmoji} ${getPickaxeEmoji()} ${t(interaction, 'mine_collected')} ${sparklesEmoji}`,
-              description: `\`\`\`diff\n+ ${t(interaction, 'mine_you_collected')} ${activeMining.goldAmount} ${goldEmoji} ${goldBarText}!\n\`\`\`\n${backpackEmoji} **${weightText}:** ${addResult.newWeight.toFixed(2)}kg / ${userInventory.maxWeight}kg`,
+              description: `\`\`\`diff\n+ ${t(interaction, 'mine_you_collected')} ${activeMining.goldAmount} ${goldEmoji} ${goldBarText}!\n\`\`\`${diamondText}\n${backpackEmoji} **${weightText}:** ${addResult.newWeight.toFixed(2)}kg / ${userInventory.maxWeight}kg`,
               fields: [
                 {
                   name: `${moneybagEmoji} ${valueText}`,
