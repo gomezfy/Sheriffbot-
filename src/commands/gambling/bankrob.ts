@@ -247,6 +247,16 @@ module.exports = {
             let initiatorGoldResult = addItem(userId, 'gold', goldPerPerson);
             let partnerGoldResult = addItem(i.user.id, 'gold', goldPerPerson + extraGold);
 
+            // Chance de encontrar diamante (3% para cada pessoa)
+            let initiatorDiamondResult = { success: false };
+            let partnerDiamondResult = { success: false };
+            if (Math.random() < 0.03) {
+              initiatorDiamondResult = addItem(userId, 'diamond', 1);
+            }
+            if (Math.random() < 0.03) {
+              partnerDiamondResult = addItem(i.user.id, 'diamond', 1);
+            }
+
             let initiatorLoot: string[] = [];
             let partnerLoot: string[] = [];
             let warnings: string[] = [];
@@ -258,11 +268,15 @@ module.exports = {
             if (initiatorGoldResult.success) initiatorLoot.push(`${goldPerPerson} ${goldEmoji}`);
             else warnings.push(`${warningEmoji} ${interaction.user.username}'s bag too heavy for Gold!`);
             
+            if (initiatorDiamondResult.success) initiatorLoot.push(`1 💎`);
+            
             if (partnerSilverResult.success) partnerLoot.push(`${silverPerPerson} ${silverEmoji}`);
             else warnings.push(`${warningEmoji} ${i.user.username}'s bag too heavy for Silver!`);
             
             if (partnerGoldResult.success) partnerLoot.push(`${goldPerPerson + extraGold} ${goldEmoji}`);
             else warnings.push(`${warningEmoji} ${i.user.username}'s bag too heavy for Gold!`);
+            
+            if (partnerDiamondResult.success) partnerLoot.push(`1 💎`);
 
             const moneybagEmoji = getMoneybagEmoji();
             const successEmbed = new EmbedBuilder()
@@ -296,9 +310,16 @@ module.exports = {
             const silverResult = addUserSilver(escapeeId, silverReward);
             const goldResult = addItem(escapeeId, 'gold', goldBars);
             
+            // Chance de encontrar diamante (3% de chance)
+            let diamondResult = { success: false };
+            if (Math.random() < 0.03) {
+              diamondResult = addItem(escapeeId, 'diamond', 1);
+            }
+            
             let loot: string[] = [];
             if (silverResult.success) loot.push(`${silverReward} ${silverEmoji}`);
             if (goldResult.success) loot.push(`${goldBars} ${goldEmoji}`);
+            if (diamondResult.success) loot.push(`1 💎`);
             
             // Apply punishment to captured person (30 min jail)
             applyPunishment(captured.id, 'Captured during bank robbery');
